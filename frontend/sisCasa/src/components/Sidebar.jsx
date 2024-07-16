@@ -24,6 +24,13 @@ const SidebarContainer = styled.div`
 
     & .icon-sair {
         padding-bottom: 15px;
+        & img{
+                width: 30px;
+                transition: filter 0.3s ease;
+            }
+        &:hover img {
+            filter: brightness(0) saturate(100%) invert(44%) sepia(76%) saturate(800%) hue-rotate(-4deg);
+        }
     }
 
     & nav ul {
@@ -41,6 +48,9 @@ const SidebarContainer = styled.div`
 
             &.active {
                 opacity: 1; 
+            }
+            & img{
+                width: 40px;
             }
         }
     }

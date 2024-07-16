@@ -29,10 +29,10 @@ const Header = () => {
         }
     `;
     const ContainerUsuario = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-        margin-right: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-right: 15px;
         
         & .usuario{
             width: 50px;
