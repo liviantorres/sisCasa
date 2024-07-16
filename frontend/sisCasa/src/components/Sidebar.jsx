@@ -2,7 +2,7 @@ import { Link, NavLink } from "react-router-dom";
 import styled from "styled-components";
 
 const SidebarContainer = styled.div`
-    width: 100px;
+    width: 90px;
     height: 100vh;
     background-color: #6d4abc;
     display: flex;
@@ -32,15 +32,12 @@ const SidebarContainer = styled.div`
         flex-direction: column;
         gap: 18px;
 
-        & li {
-            &:hover {
-                opacity: 1; 
-            }
-        }
-
         & a {
             opacity: 0.5; 
             transition: opacity 0.4s; 
+            &:hover {
+                opacity: 1; 
+            }
 
             &.active {
                 opacity: 1; 
@@ -59,22 +56,22 @@ const Sidebar = () => {
                 <ul>
                     <li>
                         <NavLink to={"/"} exact>
-                            <img src="./home.svg" alt="" />
+                            <img src="./home.svg" alt="Home" />
                         </NavLink>
                     </li>
                     <li>
                         <NavLink to={"/cursos"}>
-                            <img src="./cursos.svg" alt="" />
+                            <img src="./cursos.svg" alt="Seus cursos" />
                         </NavLink>
                     </li>
                     <li>
                         <NavLink to={"/progresso"}>
-                            <img src="./progresso.svg" alt="" />
+                            <img src="./progresso.svg" alt="Seu progresso" />
                         </NavLink>
                     </li>
                     <li>
                         <NavLink to={"/tabela"}>
-                            <img src="./tabela.svg" alt="" />
+                            <img src="./tabela.svg" alt="Tabela de pontos" />
                         </NavLink>
                     </li>
                 </ul>
