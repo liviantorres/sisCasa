@@ -59,28 +59,28 @@ const SidebarContainer = styled.div`
 const Sidebar = () => {
     return (
         <SidebarContainer>
-            <Link className="logo" to={"/"}>
+            <Link className="logo" to={"/home-pep"}>
                 <img src="./logo-siscasa2.svg" alt="" />
             </Link>
             <nav>
                 <ul>
                     <li>
-                        <NavLink to={"/"} exact>
+                        <NavLink to={"/home-pep"} exact>
                             <img src="./home.svg" alt="Home" />
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink to={"/cursos"}>
+                        <NavLink to={"/home-pep/cursos-pep"}>
                             <img src="./cursos.svg" alt="Seus cursos" />
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink to={"/progresso"}>
+                        <NavLink to={"/home-pep/progresso-pep"}>
                             <img src="./progresso.svg" alt="Seu progresso" />
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink to={"/tabela"}>
+                        <NavLink to={"/home-pep/tabela-pep"}>
                             <img src="./tabela.svg" alt="Tabela de pontos" />
                         </NavLink>
                     </li>

@@ -2,7 +2,7 @@ import { styled } from "styled-components";
 
 const Curso = () => {
     const ContainerWrap = styled.div`
-        border-radius: 4px;
+        border-radius: 10px;
         overflow: hidden;
         margin-bottom: 50px;
     `;
@@ -59,7 +59,7 @@ const Curso = () => {
         font-weight: 500;
         background-color: #04D361;
         padding: 15px 20px 15px 20px;
-        border-radius: 6px;
+        border-radius: 8px;
         border: none;
         text-transform: uppercase;
         letter-spacing: .75px;

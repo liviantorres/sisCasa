@@ -13,7 +13,6 @@ const PageLayout = () => {
             <Sidebar />
             <div style={{ flex: 1, padding: '20px' }}>
                 <Outlet />
-           
             </div>
         </LayoutContainer>
         </div>
