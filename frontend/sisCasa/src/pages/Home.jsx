@@ -1,4 +1,5 @@
 import { styled } from "styled-components";
+import { Link } from "react-router-dom";
 
 const Home = () => {
     const ContainerWrap = styled.div`
@@ -123,7 +124,7 @@ const Home = () => {
         display: flex;
         justify-content: space-evenly;
         margin: 5%;
-        animation: moveBg 5s linear infinite;
+        animation: fadeIn 3s ease-in-out;
 
         & .img-home  {
             filter: drop-shadow(0 0 5px white); 
@@ -133,6 +134,7 @@ const Home = () => {
             align-items: center;
             justify-content: center;
             animation: moveBg 5s linear infinite;
+            
         }
 
 
@@ -145,7 +147,7 @@ const Home = () => {
             <Header>
                 <img src="./logo-siscasa2.svg" alt="" />
                 <div>
-                    <Button>Entrar</Button>
+                    <Link to={"/login"}><Button>Entrar</Button></Link>
                     <Button>Cadastrar</Button>
                 </div>
             </Header>

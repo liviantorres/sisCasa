@@ -8,6 +8,8 @@ import ProgressoPep from "../pages/ProgressoPep"
 import TabelaDePontosPep from "../pages/TabelaDePontosPep"
 import NotFound from "../pages/NotFound"
 import Home from "../pages/Home";
+import Login from "../pages/Login"
+import PageLayoutPublic from "../layouts/PageLayoutPublic";
 
 const Paths = () => {
     return ( 
@@ -20,7 +22,10 @@ const Paths = () => {
                     <Route path="/home-pep/progresso-pep" element={<ProgressoPep/>}/>
                     <Route path="/home-pep/tabela-pep" element={<TabelaDePontosPep/>}/>
                 </Route>
-                <Route path="/" element={<Home/>}/>
+                <Route path="/" element={<PageLayoutPublic/>}>
+                        <Route index element={<Home/>}/>
+                        <Route path="/login" element={<Login/>}/>
+                </Route>
                 <Route path="*" element={<NotFound/>}/>
             </Routes>
         </BrowserRouter>
