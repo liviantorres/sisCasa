@@ -1,5 +1,6 @@
 import { Link, NavLink } from "react-router-dom";
 import styled from "styled-components";
+import PropTypes from 'prop-types'
 
 const SidebarContainer = styled.div`
     width: 90px;
@@ -45,7 +46,6 @@ const SidebarContainer = styled.div`
             &:hover {
                 opacity: 1; 
             }
-
             &.active {
                 opacity: 1; 
             }
@@ -56,7 +56,39 @@ const SidebarContainer = styled.div`
     }
 `;
 
-const Sidebar = () => {
+const adminNavItems = [
+    { path: "/admin", label: "Home", icon: "./home-admin.svg" },
+    { path: "/admin/cursos", label: "Cursos", icon: "./solicitacoes-admin.svg" },
+    { path: "/admin/progresso", label: "Progresso", icon: "./addusuario-admin.svg" },
+];
+
+const pepNavItems = [
+    { path: "/pep", label: "Home", icon: "./home.svg" },
+    { path: "/pep/cursos", label: "Cursos", icon: "./cursos.svg" },
+    { path: "/pep/progresso", label: "Progresso", icon: "./progresso.svg" },
+    { path: "/pep/tabela", label: "Tabela", icon: "./tabela.svg" },
+];
+/*
+const servidorNavItems = [
+    { path: "/home-admin", label: "Home", icon: "./home-admin.svg" },
+    { path: "/home-admin/cursos", label: "Cursos", icon: "./cursos-admin.svg" },
+    { path: "/home-admin/progresso", label: "Progresso", icon: "./progresso-admin.svg" },
+];
+*/
+
+const Sidebar = ({type}) => {
+    let navItems;
+    
+
+    if(type === 'admin'){
+        navItems = adminNavItems;
+    }else if (type === 'pep'){
+        navItems = pepNavItems;
+    }else{
+        navItems = [];
+    }
+    console.log("teste" + navItems);
+
     return (
         <SidebarContainer>
             <Link className="logo" to={"/home-pep"}>
@@ -64,26 +96,14 @@ const Sidebar = () => {
             </Link>
             <nav>
                 <ul>
-                    <li>
-                        <NavLink to={"/home-pep"} exact>
-                            <img src="./home.svg" alt="Home" />
-                        </NavLink>
-                    </li>
-                    <li>
-                        <NavLink to={"/home-pep/cursos-pep"}>
-                            <img src="./cursos.svg" alt="Seus cursos" />
-                        </NavLink>
-                    </li>
-                    <li>
-                        <NavLink to={"/home-pep/progresso-pep"}>
-                            <img src="./progresso.svg" alt="Seu progresso" />
-                        </NavLink>
-                    </li>
-                    <li>
-                        <NavLink to={"/home-pep/tabela-pep"}>
-                            <img src="./tabela.svg" alt="Tabela de pontos" />
-                        </NavLink>
-                    </li>
+                    {navItems.map((item, index) => (
+                       
+                        <li key={index}>
+                            <NavLink to={item.path}>
+                                <img src={item.icon} alt={item.label} />
+                            </NavLink>
+                        </li>
+                    ))}
                 </ul>
             </nav>
             <Link className="icon-sair" to={"/sair"}>
@@ -92,5 +112,9 @@ const Sidebar = () => {
         </SidebarContainer>
     );
 };
+
+Sidebar.propType = {
+    type: PropTypes.string.isRequired,
+}
 
 export default Sidebar;

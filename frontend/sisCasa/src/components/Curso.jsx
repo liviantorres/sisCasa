@@ -1,7 +1,8 @@
 import { styled } from "styled-components";
+import PropTypes from 'prop-types';
+import { lighten } from 'polished'
 
-const Curso = () => {
-    const ContainerWrap = styled.div`
+const ContainerWrap = styled.div`
         border-radius: 10px;
         overflow: hidden;
         margin-bottom: 50px;
@@ -46,51 +47,87 @@ const Curso = () => {
         justify-content: space-between;
         align-items: center;
         padding: 20px;
-        & h3{
+        
+        & div {
             font-family: 'Archivo', sans-serif;
             font-weight: 600;
-            font-size: large;
+            font-size: 16px;
+            display: flex;
+            flex-direction: row;
+            gap: 3px;
+            align-items: center;
         }
+        & h2{
+            font-family: 'Archivo', sans-serif;
+            font-weight: 600;
+            font-size: 18px;
+            color: #8257E5;
+        }
+       
+        
+        
         
     `;
 
-    const Butao = styled.button`
+    const Botao = styled.button`
         font-family: 'Archivo', sans-serif;
         font-weight: 500;
-        background-color: #04D361;
+        background-color: ${({ cor }) => cor || '#04D361'};
         padding: 15px 20px 15px 20px;
         border-radius: 8px;
         border: none;
         text-transform: uppercase;
         letter-spacing: .75px;
         color: #FFFFFF;
+        margin: 10px;
         transition: 200ms;
         &:hover{
             cursor: pointer;
-            background-color: #0ce341;
+            background-color: ${({ cor }) => cor ? lighten(0.1, cor) : '#0ce341'};
             transform: scale(1.05);  
         }
     `;
 
+
+const Curso = ({titulo, descricao, cargaHoraria, professor, status, botoes=[]}) => {
+    
     return ( 
         <>
         <ContainerWrap>
-            <Titulo>Curso de Desenvolvimento de Software</Titulo>
+            <Titulo>{titulo}</Titulo>
             <Descricao>
                 <h3>Descrição:</h3>
-                <p>Este curso de Desenvolvimento de Software foi projetado para fornecer uma compreensão abrangente das práticas, ferramentas e metodologias modernas de desenvolvimento de software. Ideal para iniciantes e profissionais que desejam aprimorar suas habilidades, o curso abrange desde os fundamentos da programação até técnicas avançadas de desenvolvimento e implementação.
-                Este curso de Desenvolvimento de Software foi projetado para fornecer uma compreensão abrangente das práticas, ferramentas e metodologias modernas de desenvolvimento de software. Ideal para iniciantes e profissionais que desejam aprimorar suas habilidades, o curso abrange desde os fundamentos da programação até técnicas avançadas de desenvolvimento e implementação.
-                
-                </p>
+                <p>{descricao}</p>
             </Descricao>
             <ContainerInformacoesCurso>
-                <h3 className="carga-horaria">Carga Horária: 30h</h3>
-                <h3>Professor:</h3>
-                <Butao>Inscrever-se</Butao>
+                {cargaHoraria && <div><h3>Carga Horária:</h3> <h2>{cargaHoraria}</h2></div>}
+                {professor &&  <div><h3>Professor:</h3> <h2>{professor}</h2></div>}
+                {status && <div><h3>Status:</h3><h2>{status}</h2></div>}
+               <div>
+                {botoes.map((botao, index)=>(
+                    <Botao key={index} cor={botao.cor} onClick={botao.onclick}>{botao.texto}</Botao>
+                ))}
+               </div>
+                
             </ContainerInformacoesCurso>
         </ContainerWrap>
         </>
      );
 }
+
+Curso.propTypes = {
+    titulo: PropTypes.string.isRequired, 
+    descricao: PropTypes.string.isRequired,
+    cargaHoraria: PropTypes.string,
+    professor: PropTypes.string,
+    status: PropTypes.string,
+    botoes: PropTypes.arrayOf(
+        PropTypes.shape({
+            texto: PropTypes.string.isRequired,
+            cor: PropTypes.string,
+            Onclick: PropTypes.func.isRequired
+        })
+    ).isRequired,
+} 
  
 export default Curso;

@@ -1,40 +1,41 @@
 import { styled } from "styled-components";
 import Header from "../components/Header";
 import Curso from "../components/Curso";
-const ContainerConteudo = styled.div`
-  margin: 50px;
-  display: flex;
-  flex-direction: column;
-`;
 
-const Titulo = styled.h2`
-  font-family: "Archivo", sans-serif;
-  font-weight: 300;
-  font-size: 30px;
-  color: #202b3b;
-  margin-bottom: 40px;
-`;
+const AdminHome = () => {
+  const ContainerConteudo = styled.div`
+    margin: 50px;
+    display: flex;
+    flex-direction: column;
+  `;
 
-const CursosPep = () => {
+  const Titulo = styled.h2`
+    font-family: "Archivo", sans-serif;
+    font-weight: 300;
+    font-size: 30px;
+    color: #202b3b;
+    margin-bottom: 40px;
+  `;
+
   return (
     <>
       <Header />
       <ContainerConteudo>
-        <Titulo>Seus Cursos</Titulo>
-
+        <Titulo>Cursos Adicionados</Titulo>
         <Curso
           titulo="Curso de Desenvolvimento Web"
           descricao="Este curso cobre todos os aspectos do desenvolvimento web moderno, incluindo HTML, CSS, JavaScript e frameworks populares."
           cargaHoraria="40h"
-          professor="João Silva"
           botoes={[
             {
-              texto: "Inscrever-se",
+              texto: "Editar",
               onClick: () => alert("Inscrição realizada!"),
+              cor: '#928AA2'
             },
             {
-              texto: "Mais Informações",
-              onClick: () => alert("Mais informações sobre o curso."),
+              texto: "Remover",
+              onClick: () => alert("Inscrição realizada!"),
+              cor: '#4B3E65'
             },
           ]}
         />
@@ -43,4 +44,4 @@ const CursosPep = () => {
   );
 };
 
-export default CursosPep;
+export default AdminHome;

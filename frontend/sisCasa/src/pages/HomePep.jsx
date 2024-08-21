@@ -23,8 +23,19 @@ const HomePep = () => {
         <Header/>
         <ContainerConteudo>
             <Titulo>Cursos Disponíveis </Titulo>
-            <Curso/>
-            <Curso/>
+            <Curso
+          titulo="Curso de Desenvolvimento Web"
+          descricao="Este curso cobre todos os aspectos do desenvolvimento web moderno, incluindo HTML, CSS, JavaScript e frameworks populares."
+          cargaHoraria="40h"
+          professor="João Silva"
+          botoes={[
+            {
+              texto: "Inscrever-se",
+              onClick: () => alert("Inscrição realizada!"),
+              cor: '#04D361'
+            },
+          ]}
+        />
         </ContainerConteudo>
         </>
      );

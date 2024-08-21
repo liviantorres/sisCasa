@@ -19,7 +19,7 @@ const Header = () => {
             background-image: url("./lupa.svg");
             background-repeat: no-repeat;
             background-position: right 10px center;
-            background-size: 25px;
+            background-size: 20px;
             text-align: start;
             font-family: 'Archivo', sans-serif;
             font-weight: 100;
