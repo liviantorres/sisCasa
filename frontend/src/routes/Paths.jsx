@@ -11,6 +11,7 @@ import Home from "../pages/Home";
 import Login from "../pages/Login"
 import PageLayoutPublic from "../layouts/PageLayoutPublic";
 import AdminHome from "../pages/AdminHome";
+import Register from "../pages/Register";
 
 const Paths = () => {
     return ( 
@@ -32,7 +33,9 @@ const Paths = () => {
                 <Route path="/" element={<PageLayoutPublic/>}>
                         <Route index element={<Home/>}/>
                         <Route path="/login" element={<Login/>}/>
+                        <Route path="/register" element={<Register/>}/>
                 </Route>
+
                 <Route path="*" element={<NotFound/>}/>
             </Routes>
         </BrowserRouter>
