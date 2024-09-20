@@ -4,9 +4,11 @@ const Header = () => {
 
     const ContainerWrap = styled.div`
         display: flex;
-        justify-content: space-between;
+        justify-content: end;
         font-family: 'Archivo', sans-serif;
-        
+        height:5%;
+        margin: 0;
+       
     `;
 
     const ContainerInput = styled.div`
@@ -26,13 +28,14 @@ const Header = () => {
             font-size: 18px;
             border: none; 
             box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2); 
+            outline: none;
         }
     `;
     const ContainerUsuario = styled.div`
         display: flex;
         justify-content: center;
         align-items: center;
-        margin-right: 15px;
+        
         
         & .usuario{
             width: 50px;
@@ -49,9 +52,7 @@ const Header = () => {
     return ( 
         <>
             <ContainerWrap>
-                <ContainerInput>
-                    <input type="text" placeholder="Pesquisar cursos" />
-                </ContainerInput>
+                
                 <ContainerUsuario>
                     <img className="usuario" src="./usuario.svg" alt="" />
                     <img className="seta" src="./seta.svg" alt="" />

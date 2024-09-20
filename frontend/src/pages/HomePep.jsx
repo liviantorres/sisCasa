@@ -1,6 +1,6 @@
 import { styled } from "styled-components";
 import Header from "../components/Header";
-import Curso from "../components/Curso";
+import Atividade from "../components/Atividade";
 
 
 const HomePep = () => {
@@ -23,8 +23,8 @@ const HomePep = () => {
         <Header/>
         <ContainerConteudo>
             <Titulo>Cursos Disponíveis </Titulo>
-            <Curso
-          titulo="Curso de Desenvolvimento Web"
+            <Atividade
+          titulo="Atividade de Desenvolvimento Web"
           descricao="Este curso cobre todos os aspectos do desenvolvimento web moderno, incluindo HTML, CSS, JavaScript e frameworks populares."
           cargaHoraria="40h"
           professor="João Silva"

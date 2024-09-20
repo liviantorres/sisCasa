@@ -3,7 +3,7 @@ import styled from "styled-components";
 import PropTypes from 'prop-types'
 
 const SidebarContainer = styled.div`
-    width: 90px;
+    width: 70px;
     height: 100vh;
     background-color: #6d4abc;
     display: flex;
@@ -26,7 +26,7 @@ const SidebarContainer = styled.div`
     & .icon-sair {
         padding-bottom: 15px;
         & img{
-                width: 30px;
+                width: 25px;
                 transition: filter 0.3s ease;
             }
         &:hover img {
@@ -50,7 +50,7 @@ const SidebarContainer = styled.div`
                 opacity: 1; 
             }
             & img{
-                width: 40px;
+                width: 35px;
             }
         }
     }
@@ -91,7 +91,7 @@ const Sidebar = ({type}) => {
 
     return (
         <SidebarContainer>
-            <Link className="logo" to={"/home-pep"}>
+            <Link className="logo">
                 <img src="./logo-siscasa2.svg" alt="" />
             </Link>
             <nav>

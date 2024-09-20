@@ -1,6 +1,6 @@
 import { styled } from "styled-components";
 import Header from "../components/Header";
-import Curso from "../components/Curso";
+import Atividade from "../components/Atividade";
 const ContainerConteudo = styled.div`
   margin: 50px;
   display: flex;
@@ -15,16 +15,16 @@ const Titulo = styled.h2`
   margin-bottom: 40px;
 `;
 
-const CursosPep = () => {
+const AtividadesPep = () => {
   return (
     <>
       <Header />
       <ContainerConteudo>
-        <Titulo>Seus Cursos</Titulo>
+        <Titulo>Seus Atividades</Titulo>
 
-        <Curso
-          titulo="Curso de Desenvolvimento Web"
-          descricao="Este curso cobre todos os aspectos do desenvolvimento web moderno, incluindo HTML, CSS, JavaScript e frameworks populares."
+        <Atividade
+          titulo="Atividade de Desenvolvimento Web"
+          descricao="Este Atividade cobre todos os aspectos do desenvolvimento web moderno, incluindo HTML, CSS, JavaScript e frameworks populares."
           cargaHoraria="40h"
           professor="João Silva"
           botoes={[
@@ -34,7 +34,7 @@ const CursosPep = () => {
             },
             {
               texto: "Mais Informações",
-              onClick: () => alert("Mais informações sobre o curso."),
+              onClick: () => alert("Mais informações sobre o Atividade."),
             },
           ]}
         />
@@ -43,4 +43,4 @@ const CursosPep = () => {
   );
 };
 
-export default CursosPep;
+export default AtividadesPep;

@@ -1,11 +1,15 @@
 import { styled } from "styled-components";
 import PropTypes from 'prop-types';
 import { lighten } from 'polished'
+import { FaEye } from "react-icons/fa";
+import { FaRegTrashAlt } from "react-icons/fa";
+import { FaEdit } from "react-icons/fa";
+
 
 const ContainerWrap = styled.div`
         border-radius: 10px;
         overflow: hidden;
-        margin-bottom: 50px;
+        margin-bottom: 30px;
     `;
 
 
@@ -18,11 +22,11 @@ const ContainerWrap = styled.div`
         font-size: 22px;
         line-height: 30px;
         letter-spacing: 1px;
-        
+        font-weight:600;
     `;
     
     const Descricao = styled.div`
-        padding: 50px;
+        padding: 20px;
         background-color: #D3CEDE;
         display: flex;
         flex-direction: row;
@@ -36,6 +40,7 @@ const ContainerWrap = styled.div`
         & p{
             font-family: 'Archivo', sans-serif;
             font-weight: 300;
+            font-size: 20px;
             line-height: 1.2;
         }
     `;
@@ -46,7 +51,7 @@ const ContainerWrap = styled.div`
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-        padding: 20px;
+        padding: 5px;
         
         & div {
             font-family: 'Archivo', sans-serif;
@@ -71,8 +76,13 @@ const ContainerWrap = styled.div`
 
     const Botao = styled.button`
         font-family: 'Archivo', sans-serif;
-        font-weight: 500;
-        background-color: ${({ cor }) => cor || '#04D361'};
+        font-weight: 600;
+        display: flex;
+        text-transform: uppercase;
+        flex-direction: row;
+        align-items: center;
+        gap: 5px;
+        background-color: ${({ cor }) => cor || '#47248F'};
         padding: 15px 20px 15px 20px;
         border-radius: 8px;
         border: none;
@@ -83,14 +93,15 @@ const ContainerWrap = styled.div`
         transition: 200ms;
         &:hover{
             cursor: pointer;
-            background-color: ${({ cor }) => cor ? lighten(0.1, cor) : '#0ce341'};
+            background-color: ${({ cor }) => cor ? lighten(0.1, cor) : '#48248fb9'};
             transform: scale(1.05);  
         }
     `;
 
 
-const Curso = ({titulo, descricao, cargaHoraria, professor, status, botoes=[]}) => {
+const Atividade = ({titulo, descricao, professor, status, botoes=[], onVisualizar}) => {
     
+
     return ( 
         <>
         <ContainerWrap>
@@ -100,12 +111,20 @@ const Curso = ({titulo, descricao, cargaHoraria, professor, status, botoes=[]}) 
                 <p>{descricao}</p>
             </Descricao>
             <ContainerInformacoesCurso>
-                {cargaHoraria && <div><h3>Carga Horária:</h3> <h2>{cargaHoraria}</h2></div>}
+            {onVisualizar && (
+            <Botao onClick={onVisualizar}>
+              <FaEye size={18} /> Visualizar
+            </Botao>
+          )}
                 {professor &&  <div><h3>Professor:</h3> <h2>{professor}</h2></div>}
                 {status && <div><h3>Status:</h3><h2>{status}</h2></div>}
                <div>
                 {botoes.map((botao, index)=>(
-                    <Botao key={index} cor={botao.cor} onClick={botao.onclick}>{botao.texto}</Botao>
+                  botao.texto == 'Editar' ? (
+                        <Botao key={index} cor="#9159FF" onClick={botao.onClick}><FaEdit/>{botao.texto}</Botao>
+                  ):(
+                        <Botao key={index} cor="#4B3E65" onClick={botao.onClick}><FaRegTrashAlt/>{botao.texto}</Botao>
+                    )
                 ))}
                </div>
                 
@@ -115,7 +134,7 @@ const Curso = ({titulo, descricao, cargaHoraria, professor, status, botoes=[]}) 
      );
 }
 
-Curso.propTypes = {
+Atividade.propTypes = {
     titulo: PropTypes.string.isRequired, 
     descricao: PropTypes.string.isRequired,
     cargaHoraria: PropTypes.string,
@@ -125,9 +144,10 @@ Curso.propTypes = {
         PropTypes.shape({
             texto: PropTypes.string.isRequired,
             cor: PropTypes.string,
-            Onclick: PropTypes.func.isRequired
+            onClick: PropTypes.func.isRequired
         })
     ).isRequired,
+    onVisualizar: PropTypes.func.isRequired, 
 } 
  
-export default Curso;
+export default Atividade;
