@@ -12,6 +12,8 @@ import Login from "../pages/Login"
 import PageLayoutPublic from "../layouts/PageLayoutPublic";
 import AdminHome from "../pages/AdminHome";
 import Register from "../pages/Register";
+import PerfilAdmin from "../pages/PerfilAdmin";
+import SolicitacoesAdmin from "../components/AdminSolicitacoes/SolicitacoesAdmin";
 
 const Paths = () => {
     return ( 
@@ -26,9 +28,9 @@ const Paths = () => {
                 </Route>
                 <Route path="/admin" element={<PageLayout userType = 'admin' />}>
                     <Route index element={<AdminHome/>}/>
-                    <Route path="/admin/home" element={<AtividadesPep/>}/>
-                    <Route path="/admin/mensagens" element={<ProgressoPep/>}/>
-                    <Route path="/admin/adicionar-usuario" element={<TabelaDePontosPep/>}/>
+                    <Route path="/admin/perfil" element={<PerfilAdmin/>}/>
+                    <Route path="/admin/solicitacoes" element={<SolicitacoesAdmin/>}/>
+                    <Route path="/admin/usuarios" element={<TabelaDePontosPep/>}/>
                 </Route>
                 <Route path="/" element={<PageLayoutPublic/>}>
                         <Route index element={<Home/>}/>
