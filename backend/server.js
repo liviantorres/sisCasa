@@ -2,6 +2,7 @@ const cors = require('cors');
 const sequelize = require('./src/config/Connection'); 
 const authRoutes = require('./src/routes/AuthRoutes');
 const userRoutes = require('./src/routes/UserRoutes')
+const atividadeRoutes = require('./src/routes/atividadeRoutes')
 
 const express = require('express');
 const app = express();
@@ -29,6 +30,9 @@ app.use('/auth', authRoutes);
 
 //Rotas Usuários
 app.use('/user', userRoutes)
+
+//Rotas Atividade
+app.use('/atividade', atividadeRoutes)
 
 
 sequelize.sync({ force: true }) 
