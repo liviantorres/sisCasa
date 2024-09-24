@@ -1,6 +1,6 @@
 import { Link, NavLink } from "react-router-dom";
 import styled from "styled-components";
-import PropTypes from 'prop-types'
+import PropTypes from 'prop-types';
 
 const SidebarContainer = styled.div`
     width: 70px;
@@ -25,10 +25,10 @@ const SidebarContainer = styled.div`
 
     & .icon-sair {
         padding-bottom: 15px;
-        & img{
-                width: 25px;
-                transition: filter 0.3s ease;
-            }
+        & img {
+            width: 25px;
+            transition: filter 0.3s ease;
+        }
         &:hover img {
             filter: brightness(0) saturate(100%) invert(44%) sepia(76%) saturate(800%) hue-rotate(-4deg);
         }
@@ -49,7 +49,7 @@ const SidebarContainer = styled.div`
             &.active {
                 opacity: 1; 
             }
-            & img{
+            & img {
                 width: 35px;
             }
         }
@@ -58,8 +58,8 @@ const SidebarContainer = styled.div`
 
 const adminNavItems = [
     { path: "/admin", label: "Home", icon: "./home-admin.svg" },
-    { path: "/admin/cursos", label: "Cursos", icon: "./solicitacoes-admin.svg" },
-    { path: "/admin/progresso", label: "Progresso", icon: "./addusuario-admin.svg" },
+    { path: "/admin/solicitacoes", label: "Solicitações", icon: "./solicitacoes-admin.svg" },
+    { path: "/admin/usuarios", label: "Usuarios", icon: "./addusuario-admin.svg" },
 ];
 
 const pepNavItems = [
@@ -68,26 +68,17 @@ const pepNavItems = [
     { path: "/pep/progresso", label: "Progresso", icon: "./progresso.svg" },
     { path: "/pep/tabela", label: "Tabela", icon: "./tabela.svg" },
 ];
-/*
-const servidorNavItems = [
-    { path: "/home-admin", label: "Home", icon: "./home-admin.svg" },
-    { path: "/home-admin/cursos", label: "Cursos", icon: "./cursos-admin.svg" },
-    { path: "/home-admin/progresso", label: "Progresso", icon: "./progresso-admin.svg" },
-];
-*/
 
-const Sidebar = ({type}) => {
+const Sidebar = ({ type }) => {
     let navItems;
-    
 
-    if(type === 'admin'){
+    if (type === 'admin') {
         navItems = adminNavItems;
-    }else if (type === 'pep'){
+    } else if (type === 'pep') {
         navItems = pepNavItems;
-    }else{
+    } else {
         navItems = [];
     }
-    console.log("teste" + navItems);
 
     return (
         <SidebarContainer>
@@ -97,9 +88,8 @@ const Sidebar = ({type}) => {
             <nav>
                 <ul>
                     {navItems.map((item, index) => (
-                       
                         <li key={index}>
-                            <NavLink to={item.path}>
+                            <NavLink to={item.path} activeClassName="active" end>
                                 <img src={item.icon} alt={item.label} />
                             </NavLink>
                         </li>
@@ -113,8 +103,8 @@ const Sidebar = ({type}) => {
     );
 };
 
-Sidebar.propType = {
+Sidebar.propTypes = {
     type: PropTypes.string.isRequired,
-}
+};
 
 export default Sidebar;

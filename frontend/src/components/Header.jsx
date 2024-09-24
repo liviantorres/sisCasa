@@ -1,8 +1,10 @@
 import { styled } from "styled-components";
+import { useNavigate } from "react-router-dom"; 
+import { FaRegUserCircle } from "react-icons/fa";
+import { IoIosArrowDown } from "react-icons/io";
 
-const Header = () => {
 
-    const ContainerWrap = styled.div`
+const ContainerWrap = styled.div`
         display: flex;
         justify-content: end;
         font-family: 'Archivo', sans-serif;
@@ -11,34 +13,15 @@ const Header = () => {
        
     `;
 
-    const ContainerInput = styled.div`
-        margin-left: 40rem;
-        
-        & input {
-            padding: 10px 200px 10px 20px;
-            border-radius: 30px;
-            background-color: #D1D1D6;
-            background-image: url("./lupa.svg");
-            background-repeat: no-repeat;
-            background-position: right 10px center;
-            background-size: 20px;
-            text-align: start;
-            font-family: 'Archivo', sans-serif;
-            font-weight: 100;
-            font-size: 18px;
-            border: none; 
-            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2); 
-            outline: none;
-        }
-    `;
     const ContainerUsuario = styled.div`
         display: flex;
         justify-content: center;
         align-items: center;
-        
-        
         & .usuario{
             width: 50px;
+            &:hover{
+                cursor: pointer; 
+            }
         }
         & .seta{
             width: 30px;
@@ -47,15 +30,36 @@ const Header = () => {
             }
         }
     `;
+
+const User = styled(FaRegUserCircle)`
+    color: #774FD1;
+    cursor: pointer;
+    & :hover{
+        color: #3a246d;
+    }
+`
+
+const Seta = styled(IoIosArrowDown)`
+    color: #774FD1;
+    cursor: pointer;
+    & :hover{
+        color: #3a246d;
+    }
+`;
     
+const Header = () => {
+    const navigate = useNavigate();
+
+    const handleProfileClick = () => {
+        navigate('/admin/perfil'); 
+    };
 
     return ( 
         <>
             <ContainerWrap>
-                
                 <ContainerUsuario>
-                    <img className="usuario" src="./usuario.svg" alt="" />
-                    <img className="seta" src="./seta.svg" alt="" />
+                    <User size={45} onClick={handleProfileClick}/>
+                    <Seta size={25} onClick={handleProfileClick}/>
                 </ContainerUsuario>
             </ContainerWrap>
         </>
