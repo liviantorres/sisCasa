@@ -14,6 +14,7 @@ import AdminHome from "../pages/AdminHome";
 import Register from "../pages/Register";
 import PerfilAdmin from "../pages/PerfilAdmin";
 import SolicitacoesAdmin from "../components/AdminSolicitacoes/SolicitacoesAdmin";
+import AdcUsuarioAdmin from "../pages/AdcUsuarioAdmin";
 
 const Paths = () => {
     return ( 
@@ -30,7 +31,7 @@ const Paths = () => {
                     <Route index element={<AdminHome/>}/>
                     <Route path="/admin/perfil" element={<PerfilAdmin/>}/>
                     <Route path="/admin/solicitacoes" element={<SolicitacoesAdmin/>}/>
-                    <Route path="/admin/usuarios" element={<TabelaDePontosPep/>}/>
+                    <Route path="/admin/usuarios" element={<AdcUsuarioAdmin/>}/>
                 </Route>
                 <Route path="/" element={<PageLayoutPublic/>}>
                         <Route index element={<Home/>}/>
