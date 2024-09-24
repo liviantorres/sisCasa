@@ -5,8 +5,9 @@ import { IoMdAddCircleOutline } from "react-icons/io";
 import { useState } from "react";
 import ModalAdicionar from "../components/AdminAtividades/ModalAdicionar"
 import ModalEditar from "../components/AdminAtividades/ModalEditar";
-import ModalRemover from "../components/AdminAtividades/ModalRemover.";
+import ModalRemover from "../components/AdminAtividades/ModalRemover";
 import ModalVisualizar from "../components/AdminAtividades/ModalVisualizar"
+import ModalFrequencia from "../components/AdminAtividades/ModalFrequencia"
 
 
 const ContainerConteudo = styled.div`
@@ -66,6 +67,7 @@ const AdminHome = () => {
   const [modalEditar, setModalEditar] = useState(false);
   const [modalRemover, setModalRemover] = useState(false);
   const [modalVisualizar, setModalVisualizar] = useState(false);
+  const [modalFrequencia, setModalFrequenecia] = useState(false);
 
   // Modal Adicionar Atividade
   const handleOpenModalAdicionar = () => {
@@ -103,7 +105,26 @@ const AdminHome = () => {
     setModalVisualizar(true);
   }
 
+  //Modal Frequencia
+  const handleCloseModalFrequencia = () => {
+    setModalFrequenecia(false)
+    
+  }
+  const handleOpenModalFrequencia = () => {
+    setModalFrequenecia(true)
+    setModalVisualizar(false)
+  }
 
+  //Atividade teste
+  const atividade = {
+    titulo: "Aula de Introdução à Programação",
+    descricao: "Descrição detalhada da atividade.",
+    cargaHoraria: "4 horas",
+    professor: "Professor X",
+    link: "https://linkdaatividade.com",
+  };
+
+  
   return (
     <>
       <Header />
@@ -133,6 +154,7 @@ const AdminHome = () => {
               },
             ]}
             onVisualizar={handleOpenModalVisualizar}
+           
           />
           <Atividade
             titulo="Atividade de Interação Humano-Computador"
@@ -149,6 +171,7 @@ const AdminHome = () => {
               },
             ]}
             onVisualizar={handleOpenModalVisualizar}
+            
           />
           <Atividade
             titulo="Atividade de Design de Interfaces"
@@ -173,7 +196,7 @@ const AdminHome = () => {
         )}
 
         {modalEditar && (
-                <ModalEditar onClose={handleCloseModalEditar}/>
+            <ModalEditar onClose={handleCloseModalEditar}/>
         )}
 
         {modalRemover && (
@@ -181,8 +204,12 @@ const AdminHome = () => {
         )}
 
         {modalVisualizar && (
-            <ModalVisualizar onClose={handleCloseModalVisualizar}/>
+            <ModalVisualizar atividade={atividade} onClose={handleCloseModalVisualizar} modalFrequencia={handleOpenModalFrequencia}/>
         )}
+        {modalFrequencia && (
+            <ModalFrequencia onClose={handleCloseModalFrequencia}/>
+        )}
+
 
       </ContainerConteudo>
     </>
