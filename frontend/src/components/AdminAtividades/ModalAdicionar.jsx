@@ -1,4 +1,6 @@
 import styled from "styled-components";
+import { useState } from "react";
+import PropTypes from "prop-types"; 
 
 const Overlay = styled.div`
   position: fixed;
@@ -57,14 +59,14 @@ const Input = styled.input`
   &::placeholder {
     color: #999;
     font-family: "Archivo", sans-serif;
-  font-weight: 100;
-  font-size: 13px;
+    font-weight: 100;
+    font-size: 13px;
   }
 
   &:focus {
     border-color: #774fd1;
     outline: none;
-    box-shadow: 0 0 2px rgba(119, 79, 209, 0.7); 
+    box-shadow: 0 0 2px rgba(119, 79, 209, 0.7);
   }
 `;
 
@@ -87,9 +89,8 @@ const Select = styled.select`
   &:focus {
     border-color: #774fd1;
     outline: none;
-    box-shadow: 0 0 2px rgba(119, 79, 209, 0.7); 
+    box-shadow: 0 0 2px rgba(119, 79, 209, 0.7);
   }
-  
 `;
 
 const Textarea = styled.textarea`
@@ -107,14 +108,14 @@ const Textarea = styled.textarea`
   &::placeholder {
     color: #999;
     font-family: "Archivo", sans-serif;
-  font-weight: 100;
-  font-size: 13px;
+    font-weight: 100;
+    font-size: 13px;
   }
 
   &:focus {
     border-color: #774fd1;
     outline: none;
-    box-shadow: 0 0 2px rgba(119, 79, 209, 0.7); 
+    box-shadow: 0 0 2px rgba(119, 79, 209, 0.7);
   }
 `;
 
@@ -127,14 +128,14 @@ const ContainerBotoes = styled.div`
 `;
 
 const Button = styled.button`
-font-family: "Archivo", sans-serif;
-font-weight: 600;
-width: 30%;
+  font-family: "Archivo", sans-serif;
+  font-weight: 600;
+  width: 30%;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin: 20px auto 0;
   padding: 10px 20px;
-  background-color: ${({cor})=> cor || '#9186A7'};
+  background-color: ${({ cor }) => cor || "#9186A7"};
   color: white;
   border: none;
   border-radius: 5px;
@@ -143,7 +144,7 @@ width: 30%;
   transition: background-color 0.3s;
   margin: 20px;
   &:hover {
-    background-color: ${({cor})=> cor ? '#177c44' : '#79679d'};
+    background-color: ${({ cor }) => (cor ? "#177c44" : "#79679d")};
   }
 `;
 
@@ -160,7 +161,31 @@ const Header = styled.div`
   border-radius: 8px;
 `;
 
-const ModalAdicionar = ({ onClose }) => {
+const ModalAdicionar = ({ onClose, onSave, professores }) => {
+  
+  const [titulo, setTitulo] = useState("");
+  const [descricao, setDescricao] = useState("");
+  const [professorId, setProfessorId] = useState("");
+  const [cargaHoraria, setCargaHoraria] = useState("");
+  const [link, setLink] = useState("");
+
+
+ 
+  const handleSave = () => {
+    const atividade = {
+      titulo,
+      descricao,
+      professorId: Number(professorId),
+      cargaHoraria,
+      link,
+    };
+
+    console.log(atividade); 
+    onSave(atividade); 
+  };
+
+
+
   return (
     <Overlay onClick={onClose}>
       <ContainerAdc onClick={(e) => e.stopPropagation()}>
@@ -168,32 +193,67 @@ const ModalAdicionar = ({ onClose }) => {
         <ContainerInputsLabels>
           <Div>
             <Label>Título:</Label>
-            <Input placeholder="Adicione o título da atividade" />
+            <Input
+              value={titulo}
+              onChange={(e) => setTitulo(e.target.value)}
+              placeholder="Adicione o título da atividade"
+            />
             <Label>Descrição:</Label>
             <Textarea
-              name=""
-              id=""
+              value={descricao}
+              onChange={(e) => setDescricao(e.target.value)}
               placeholder="Adicione a descrição da atividade"
-            ></Textarea>
+            />
           </Div>
           <Div>
-            <Label>Professor:</Label>
-            <Select name="" id="">
+            <Label htmlFor="professor">Professor:</Label>
+            <Select
+              name="professor"
+              value={professorId}
+              onChange={(e) => setProfessorId(e.target.value)} 
+            >
               <option value="">Selecione um professor</option>
+              {professores.map((professor) => (
+                <option key={professor.id} value={professor.id}>
+                  {professor.nomeCompleto}
+                </option> 
+              ))}
             </Select>
+
             <Label>Carga Horária:</Label>
-            <Input placeholder="Adicione a carga horária da atividade" />
+            <Input
+              value={cargaHoraria}
+              onChange={(e) => setCargaHoraria(e.target.value)}
+              placeholder="Adicione a carga horária da atividade"
+            />
             <Label>Link:</Label>
-            <Input placeholder="Adicione o link da atividade" />
+            <Input
+              value={link}
+              onChange={(e) => setLink(e.target.value)}
+              placeholder="Adicione o link da atividade"
+            />
           </Div>
         </ContainerInputsLabels>
         <ContainerBotoes>
-          <Button cor={'#1EB662'} onClick={onClose}>Salvar</Button>
+          <Button cor={"#1EB662"} onClick={handleSave}>
+            Salvar
+          </Button>
           <Button onClick={onClose}>Cancelar</Button>
         </ContainerBotoes>
       </ContainerAdc>
     </Overlay>
   );
+};
+
+ModalAdicionar.propTypes = {
+  onClose: PropTypes.func.isRequired,
+  onSave: PropTypes.func.isRequired,
+  professores: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired, 
+      nome: PropTypes.string.isRequired,
+    })
+  ).isRequired,
 };
 
 export default ModalAdicionar;
