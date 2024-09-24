@@ -3,11 +3,11 @@ import styled from "styled-components";
 import { FaRegUserCircle } from "react-icons/fa";
 import { FaEdit } from "react-icons/fa";
 import ModalEditarPerfil from "../components/AdminPerfil/ModalEditarPerfil";
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 const ContainerPerfil = styled.div`
-position: relative;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-evenly;
@@ -29,14 +29,14 @@ const InfoPerfil = styled.div`
 
 const Nome = styled.h2`
   font-family: "Archivo", sans-serif;
-  font-size: 28px; 
+  font-size: 28px;
   margin: 0;
   color: #333;
 `;
 
 const Email = styled.p`
   font-family: "Archivo", sans-serif;
-  font-size: 20px; 
+  font-size: 20px;
   margin: 8px 0;
   color: #666;
 `;
@@ -49,7 +49,7 @@ const Role = styled.p`
 
 const InfoAdicional = styled.p`
   font-family: "Archivo", sans-serif;
-  font-size: 20px; 
+  font-size: 20px;
   margin: 50px 10px;
   color: #444;
 `;
@@ -57,8 +57,8 @@ const InfoAdicional = styled.p`
 const User = styled(FaRegUserCircle)`
   color: #774fd1;
   cursor: pointer;
-  width: 150px; 
-  height: 150px; 
+  width: 150px;
+  height: 150px;
   border-radius: 50%;
   margin-right: 30px;
 `;
@@ -77,15 +77,15 @@ const ContainerBottom = styled.div`
   justify-content: space-between;
   gap: 50px;
   margin: 0px;
-  & div{
+  & div {
     margin-top: 60px;
   }
 `;
 
 const EditIcon = styled(FaEdit)`
   position: absolute;
-  top: 20px; 
-  right: 20px; 
+  top: 20px;
+  right: 20px;
   color: #666;
   cursor: pointer;
   &:hover {
@@ -94,57 +94,99 @@ const EditIcon = styled(FaEdit)`
 `;
 
 const PerfilAdmin = () => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [userData, setUserData] = useState({
-      name: "Amanda Pires",
-      email: "admin@email.com",
-      siape: "1234567",
-      cpf: "123.456.789-00",
-      dob: "1980-01-01",
-      whatsapp: "(12) 98765-4321",
-    });
-  
-    const handleSave = (updatedData) => {
-      setUserData(updatedData);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [userData, setUserData] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const token = localStorage.getItem('token');
+    
+      try {
+        const response = await axios.get('http://localhost:3000/user/usuario', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setUserData(response.data);
+      } catch (error) {
+        if (error.response) {
+          setErrorMessage(error.response.data.message || 'Falha ao buscar dados do usuário');
+        } else {
+          setErrorMessage('Erro ao conectar com o servidor');
+        }
+        console.error('Erro ao buscar dados do usuário:', error);
+      }
     };
+
+    fetchUserData();
+  }, []);
+
+  const handleSave = async (userId, updatedData) => {
+    const token = localStorage.getItem('token'); 
   
-    return (
-      <>
-        <Header />
-       
-          <ContainerPerfil>
-            <InfoPerfil>
-              <ContainerTop>
-                <User />
-                <div>
-                  <Nome>{userData.name}</Nome>
-                  <Role>Função: Administrador do Sistema</Role>
-                  <Email>Email: {userData.email}</Email>
-                </div>
-                <EditIcon onClick={() => setIsModalOpen(true)} />
-              </ContainerTop>
-              <ContainerBottom>
-                <div>
-                  <InfoAdicional>SIAPE: {userData.siape}</InfoAdicional>
-                  <InfoAdicional>CPF: {userData.cpf}</InfoAdicional>
-                </div>
-                <div>
-                  <InfoAdicional>Data de Nascimento: {userData.dob}</InfoAdicional>
-                  <InfoAdicional>WhatsApp: {userData.whatsapp}</InfoAdicional>
-                </div>
-              </ContainerBottom>
-            </InfoPerfil>
-          </ContainerPerfil>
-       
-          <ModalEditarPerfil
-            isOpen={isModalOpen}
-            close={() => setIsModalOpen(false)}
-            userData={userData}
-            onSave={handleSave}
-          />
-      
-      </>
-    );
+    try {
+      const response = await axios.put(`http://localhost:3000/user/editar/${userId}`, updatedData, {
+        headers: {
+          Authorization: `Bearer ${token}` 
+        }
+      });
+  
+      console.log('Usuário editado:', response.data);
+      setUserData(prevUserData => ({
+        ...prevUserData,
+        ...response.data, // Atualiza o estado com os novos dados
+      }));
+    } catch (error) {
+      console.error('Erro ao editar usuário:', error);
+    }
   };
+
+  if (!userData) {
+    return <p>Carregando dados do usuário...</p>;
+  }
+
+  return (
+    <>
+      <Header />
+
+      <ContainerPerfil>
+        <InfoPerfil>
+          <ContainerTop>
+            <User />
+            <div>
+              <Nome>{userData.nomeCompleto || userData.name}</Nome>
+              <Role>Função: {userData.roleId}</Role>
+              <Email>Email: {userData.email}</Email>
+              <Email>SIAPE: {userData.siape}</Email>
+            </div>
+            <EditIcon onClick={() => setIsModalOpen(true)} />
+          </ContainerTop>
+          <ContainerBottom>
+            <div>
+             
+              <InfoAdicional>CPF: {userData.cpf}</InfoAdicional>
+              <InfoAdicional>Genero: {userData.genero}</InfoAdicional>
+            </div>
+            <div>
+              <InfoAdicional>Data de Nascimento: {userData.dataDeNascimento}</InfoAdicional>
+              <InfoAdicional>WhatsApp: {userData.whatsapp}</InfoAdicional>
+              
+            </div>
+          </ContainerBottom>
+        </InfoPerfil>
+      </ContainerPerfil>
+
+      <ModalEditarPerfil
+        isOpen={isModalOpen}
+        close={() => setIsModalOpen(false)}
+        userData={userData}
+        onSave={handleSave}
+      />
+
+      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+    </>
+  );
+};
 
 export default PerfilAdmin;

@@ -27,7 +27,6 @@ const ModalContainer = styled.div`
   display: flex; 
   flex-direction: column; 
   justify-content: space-between; 
-  
 `;
 
 const ModalHeader = styled.h2`
@@ -37,7 +36,28 @@ const ModalHeader = styled.h2`
   font-size: 24px;
 `;
 
+const Label = styled.label`
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  margin-bottom: 0px;
+  color: #333;
+`;
+
 const Input = styled.input`
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  transition: border-color 0.3s;
+  width: 90%; 
+  &:focus {
+    border-color: #774fd1;
+    outline: none;
+  }
+`;
+
+const Select = styled.select`
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -61,7 +81,7 @@ const Button = styled.button`
   font-family: 'Poppins', sans-serif;
   font-size: 16px;
   transition: background-color 0.3s;
-  width: 40%; 
+  width: 80%; 
   align-self: center; 
   &:hover {
     background-color: #603abf;
@@ -93,40 +113,82 @@ const Column = styled.div`
 `;
 
 const ModalEditarPerfil = ({ isOpen, close, userData, onSave }) => {
-  const [name, setName] = useState(userData.name);
+  const [nomeCompleto, setNomeCompleto] = useState(userData.nomeCompleto);
   const [email, setEmail] = useState(userData.email);
   const [siape, setSiape] = useState(userData.siape);
   const [cpf, setCpf] = useState(userData.cpf);
-  const [dob, setDob] = useState(userData.dob);
   const [whatsapp, setWhatsapp] = useState(userData.whatsapp);
+  const [genero, setGenero] = useState(userData.genero);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const updatedData = { name, email, siape, cpf, dob, whatsapp };
-    onSave(updatedData);
-    close();
-  };
+  const formattedDataDeNascimento = userData.dataDeNascimento
+    ? userData.dataDeNascimento.split('/').reverse().join('-')
+    : '';
+
+  const [dataDeNascimentoSecund, setDataDeNascimentoSecund] = useState(formattedDataDeNascimento);
+
 
   if (!isOpen) return null;
+
+
+    const handleSave = () => {
+      const dataDeNascimento = dataDeNascimentoSecund.split('-').reverse().join('/');
+
+      const updatedData = {
+        nomeCompleto,
+        genero,
+        email,
+        siape,
+        cpf,
+        whatsapp,
+        dataDeNascimento
+      };
+
+      const usuarioId = localStorage.getItem("id");
+      console.log(usuarioId)
+
+      onSave(usuarioId, updatedData);
+      close(); 
+    };
+
 
   return (
     <ModalBackground>
       <ModalContainer>
         <ModalHeader>Editar Perfil</ModalHeader>
         <CloseIcon onClick={close} />
-        <Form onSubmit={handleSubmit}>
+        <Form>
           <Column>
-            <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Nome" />
+            <Label>Nome</Label>
+            <Input value={nomeCompleto} onChange={(e) => setNomeCompleto(e.target.value)} placeholder="Nome" />
+            
+            <Label>Email</Label>
             <Input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
+            
+            <Label>SIAPE</Label>
             <Input value={siape} onChange={(e) => setSiape(e.target.value)} placeholder="SIAPE" />
+
+            <Label>Gênero</Label>
+            <Select value={genero} onChange={(e) => setGenero(e.target.value)}>
+              <option value="" disabled>Selecione um gênero</option>
+              <option value="masculino">Masculino</option>
+              <option value="feminino">Feminino</option>
+              <option value="outro">Outro</option>
+            </Select>
           </Column>
           <Column>
+            <Label>CPF</Label>
             <Input value={cpf} onChange={(e) => setCpf(e.target.value)} placeholder="CPF" />
-            <Input value={dob} onChange={(e) => setDob(e.target.value)} type="date" />
+            
+            <Label>Data de Nascimento</Label>
+            <Input value={dataDeNascimentoSecund} onChange={(e) => setDataDeNascimentoSecund(e.target.value)} type="date" />
+            
+            <Label>WhatsApp</Label>
             <Input value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} placeholder="WhatsApp" />
+            <Button onClick={handleSave}>Salvar</Button>
+          
           </Column>
         </Form>
-        <Button type="submit">Salvar</Button>
+     
       </ModalContainer>
     </ModalBackground>
   );

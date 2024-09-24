@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 const register = async (req, res) => {
-  const { nomeCompleto, siape, dataDeNascimento, genero, whatsapp, roleId, email, password } = req.body;
+  const { nomeCompleto, siape, cpf, dataDeNascimento, genero, whatsapp, roleId, email, password } = req.body;
 
   try {
     const userExists = await User.findOne({ where: { email } });
@@ -18,6 +18,7 @@ const register = async (req, res) => {
     const novoUsuario = await User.create({
       nomeCompleto,
       siape,
+      cpf,
       dataDeNascimento,
       genero,
       whatsapp,
@@ -46,9 +47,9 @@ const login = async (req, res) => {
       return res.status(401).json({ message: 'Senha incorreta.' });
     }
 
-    const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ id: user.id, email: user.email,  roleId: user.roleId}, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-    res.status(200).json({ message: 'Login bem-sucedido!', token });
+    res.status(200).json({ message: 'Login bem-sucedido!',id: user.id, token, email: user.email, roleId: user.roleId });
   } catch (error) {
     res.status(500).json({ message: 'Erro ao fazer login.', error });
   }

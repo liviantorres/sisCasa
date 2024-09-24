@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { BsExclamationOctagon } from "react-icons/bs";
 import { IoIosClose } from "react-icons/io";
+import { useState } from "react";
 
 const Overlay = styled.div`
   position: fixed;
@@ -160,22 +161,68 @@ const CloseIcon = styled(IoIosClose)`
   color: #000000c6;
 `;
 
-const FormAdcUsuario = ({ onClose }) => {
+
+
+
+const FormAdcUsuario = ({ onClose, onSave }) => {
+  const [nomeCompleto, setNomeCompleto] = useState('');
+  const [email, setEmail] = useState('');
+  const [confirmEmail, setConfirmEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmSenha, setConfirmSenha] = useState('');
+  const [siape, setSiape] = useState('');
+  const [cpf, setCpf] = useState('');
+  const [whatsapp, setWhatsapp] = useState('');
+  const [genero, setGenero] = useState('');
+  const [dataDeNascimento, setDataDeNascimento] = useState('');
+  const [roleId, setRoleId] = useState('');
+
+  const handleSave = (e) => {
+    e.preventDefault();
+
+    // Validação das senhas e emails
+    if (email !== confirmEmail) {
+      alert("Os emails não coincidem.");
+      return;
+    }
+
+    if (password !== confirmSenha) {
+      alert("As senhas não coincidem.");
+      return;
+    }
+
+    const novoUsuario = {
+      nomeCompleto,
+      genero,
+      email,
+      siape,
+      cpf,
+      whatsapp,
+      dataDeNascimento,
+      password,
+      roleId
+    };
+  
+    onSave(novoUsuario);
+    onClose(); 
+  };
+
   return (
-    <Overlay onClick={onClose}>
+    <Overlay>
       <ContainerAdc onClick={(e) => e.stopPropagation()}>
         <FormWrapper>
-            <CloseIcon onClick={onClose}/>
+          <CloseIcon onClick={onClose} />
           <div className="section-container">
             <div className="section">
               <h2>Dados do Usuário: </h2>
               <hr />
-              <form>
+              <form onSubmit={handleSave}>
                 <label>
                   Nome Completo:
                   <input
                     type="text"
-                    name="nomeCompleto"
+                    value={nomeCompleto}
+                    onChange={(e) => setNomeCompleto(e.target.value)}
                     required
                     className="full-width"
                   />
@@ -184,13 +231,22 @@ const FormAdcUsuario = ({ onClose }) => {
                   <div>
                     <label>
                       SIAPE:
-                      <input type="text" name="siape" required />
+                      <input
+                        type="text"
+                        value={siape}
+                        onChange={(e) => setSiape(e.target.value)}
+                        required
+                      />
                     </label>
                   </div>
                   <div>
                     <label>
                       CPF:
-                      <input type="text" name="cpf" />
+                      <input
+                        type="text"
+                        value={cpf}
+                        onChange={(e) => setCpf(e.target.value)}
+                      />
                     </label>
                   </div>
                 </div>
@@ -198,13 +254,22 @@ const FormAdcUsuario = ({ onClose }) => {
                   <div>
                     <label>
                       Data de Nascimento:
-                      <input type="date" name="dataDeNascimento" required />
+                      <input
+                        type="date"
+                        value={dataDeNascimento}
+                        onChange={(e) => setDataDeNascimento(e.target.value)}
+                        required
+                      />
                     </label>
                   </div>
                   <div>
                     <label>
                       Gênero:
-                      <select name="genero" required>
+                      <select
+                        value={genero}
+                        onChange={(e) => setGenero(e.target.value)}
+                        required
+                      >
                         <option value="">Selecione</option>
                         <option value="masculino">Masculino</option>
                         <option value="feminino">Feminino</option>
@@ -217,13 +282,21 @@ const FormAdcUsuario = ({ onClose }) => {
                   <div>
                     <label>
                       WhatsApp:
-                      <input type="tel" name="whatsapp" required />
+                      <input
+                        type="tel"
+                        value={whatsapp}
+                        onChange={(e) => setWhatsapp(e.target.value)}
+                        required
+                      />
                     </label>
                   </div>
                   <div>
                     <label>
                       Tipo de Perfil:
-                      <select name="roleId" required>
+                      <select 
+                      value={roleId}
+                      onChange={(e) => setRoleId(e.target.value)}
+                      required>
                         <option value="">Selecione</option>
                         <option value="admin">Administrador</option>
                         <option value="servidor">Servidor</option>
@@ -232,24 +305,27 @@ const FormAdcUsuario = ({ onClose }) => {
                     </label>
                   </div>
                 </div>
-              </form>
-            </div>
-
-            <div className="section">
-              <h2>Dados de acesso</h2>
-              <hr />
-              <form>
                 <div className="form-row">
                   <div>
                     <label>
                       Email:
-                      <input type="email" name="email" required />
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                      />
                     </label>
                   </div>
                   <div>
                     <label>
-                      Confirme o email:
-                      <input type="email" required />
+                      Confirme o Email:
+                      <input 
+                        type="email" 
+                        value={confirmEmail}
+                        onChange={(e) => setConfirmEmail(e.target.value)}
+                        required 
+                      />
                     </label>
                   </div>
                 </div>
@@ -257,19 +333,29 @@ const FormAdcUsuario = ({ onClose }) => {
                   <div>
                     <label>
                       Senha:
-                      <input type="password" name="password" required />
+                      <input
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                      />
                     </label>
                   </div>
                   <div>
                     <label>
-                      Confirme a senha:
-                      <input type="password" required />
+                      Confirme a Senha:
+                      <input
+                        type="password"
+                        value={confirmSenha}
+                        onChange={(e) => setConfirmSenha(e.target.value)}
+                        required
+                      />
                     </label>
                   </div>
                 </div>
                 <div>
                   <div className="required-info">
-                  <BsExclamationOctagon/>
+                    <BsExclamationOctagon />
                     <span>Todos os campos são obrigatórios</span>
                   </div>
                   <div className="button-container">
@@ -286,3 +372,4 @@ const FormAdcUsuario = ({ onClose }) => {
 };
 
 export default FormAdcUsuario;
+
