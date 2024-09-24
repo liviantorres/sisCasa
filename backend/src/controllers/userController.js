@@ -20,3 +20,36 @@ exports.getAllUsers = async (req, res) => {
     return res.status(500).json({ message: 'Erro no servidor' });
   }
 };
+
+
+// Função para editar um usuário
+exports.editUser = async (req, res) => {
+  const { userId } = req.params; // Obtém o ID do usuário da URL
+  const { nomeCompleto, siape, dataDeNascimento, genero, whatsapp, email, password, roleId } = req.body; // Obtém os dados do corpo da requisição
+
+  try {
+    // Encontra o usuário pelo ID
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'Usuário não encontrado' });
+    }
+
+    // Atualiza as informações do usuário
+    const updatedUser = await user.update({
+      nomeCompleto,
+      siape,
+      dataDeNascimento,
+      genero,
+      whatsapp,
+      email,
+      password,
+      roleId
+    });
+
+    return res.status(200).json(updatedUser); // Retorna o usuário atualizado
+  } catch (error) {
+    console.error('Erro ao editar usuário:', error);
+    return res.status(500).json({ message: 'Erro no servidor' });
+  }
+};
+

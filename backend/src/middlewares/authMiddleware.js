@@ -20,7 +20,7 @@ exports.auth = (req, res, next) => {
 
 // Middleware de autorização para administradores
 exports.admin = (req, res, next) => {
-  if (req.user.role !== 'admin') {  
+  if (req.user.roleId !== 'admin') {  
     return res.status(403).json({ message: 'Acesso negado' });
   }
   next(); 

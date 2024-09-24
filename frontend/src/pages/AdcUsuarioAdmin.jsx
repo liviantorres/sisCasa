@@ -1,8 +1,9 @@
 import Header from "../components/Header";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { styled } from "styled-components";
-import { useState } from "react";
-import FormAdcUsuario from "../components/AdminUsuarios/FormAdcUsuario"
+import { useState, useEffect } from "react";
+import FormAdcUsuario from "../components/AdminUsuarios/FormAdcUsuario";
+import axios from "axios";
 
 const ContainerConteudo = styled.div`
   margin: 50px;
@@ -39,15 +40,12 @@ const Botao = styled.button`
   height: 3rem;
   border-radius: 8px;
   border: none;
-  background-color: #774fd1;
-  text-transform: uppercase;
-  letter-spacing: 0.75px;
   color: #ffffff;
   margin: 10px;
   transition: 200ms;
   &:hover {
     cursor: pointer;
-    background-color: "#6a3cc8";
+    background-color: #6a3cc8;
     transform: scale(1.05);
   }
 `;
@@ -55,7 +53,7 @@ const Botao = styled.button`
 const UsuarioLista = styled.ul`
   list-style-type: none;
   padding: 0;
-  font-family: "Archivo", sans-serif;
+  font-family: "Arquivo", sans-serif;
 `;
 
 const UsuarioItem = styled.li`
@@ -68,7 +66,7 @@ const UsuarioItem = styled.li`
   align-items: center;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s, box-shadow 0.2s;
-cursor: pointer;
+  cursor: pointer;
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
@@ -90,28 +88,73 @@ const UsuarioFuncao = styled.span`
   border-radius: 20px;
 `;
 
-
-const usuarios = [
-  { nome: "João Silva", funcao: "Administrador" },
-  { nome: "Maria Oliveira", funcao: "Professor" },
-  { nome: "Carlos Souza", funcao: "Professor" },
-  { nome: "Ana Costa", funcao: "Servidor" },
-];
-
 const AdcUsuarioAdmin = () => {
-    const [modaldAdcUsuario, setModalAdcUsuario] = useState(false);
+  const [modalAdcUsuario, setModalAdcUsuario] = useState(false);
+  const [usuarios, setUsuarios] = useState([]);
+  const [usuarioLogadoId, setUsuarioLogadoId] = useState(null); // Mudar para email
 
-    //Modal Adicionar Usuario
-    const handleCloseModalAdcUsuario = () =>{
-        setModalAdcUsuario(false)
-    }
-    const handleOpenModalAdcUsuario = () =>{
-        setModalAdcUsuario(true)
-    }
+  const handleCloseModalAdcUsuario = () => {
+    setModalAdcUsuario(false);
+  };
 
+  const handleOpenModalAdcUsuario = () => {
+    setModalAdcUsuario(true);
+  };
+
+  const handleSave = async (novoUsuario) => {
+    const token = localStorage.getItem('token'); // Obtém o token do localStorage
+    
+    try {
+      const response = await axios.post('http://localhost:3000/auth/register', novoUsuario, {
+        headers: {
+          Authorization: `Bearer ${token}`, // Inclui o token no cabeçalho
+        }
+      });
+  
+      console.log("Usuário adicionado:", response.data);
+      fetchUsuarios(); // Recarrega a lista de usuários após adicionar um novo
+      setModalAdcUsuario(false); // Fecha o modal após a adição
+    } catch (error) {
+      if (error.response) {
+        // A requisição foi feita e o servidor respondeu com um código de status
+        // que sai do intervalo de 2xx
+        console.error('Erro ao adicionar usuário:', error.response.data);
+        console.error('Status:', error.response.status);
+      } else if (error.request) {
+        // A requisição foi feita, mas não houve resposta
+        console.error('Erro na requisição:', error.request);
+      } else {
+        // Algum erro ocorreu ao configurar a requisição
+        console.error('Erro:', error.message);
+      }
+    }
+  };
+  
+
+  const fetchUsuarios = async () => {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await axios.get('http://localhost:3000/user/admin', {
+        headers: {
+          Authorization: `Bearer ${token}` 
+        }
+      });
+      console.log("Usuarios", response.data);
+      setUsuarios(response.data);
+    } catch (error) {
+      console.error('Erro ao buscar usuários:', error);
+    }
+  };
+
+  useEffect(() => {
+    
+    const loggedInUserId = localStorage.getItem('id');
+    setUsuarioLogadoId(loggedInUserId);
+
+    fetchUsuarios();
+  }, []);
 
   return (
-
     <>
       <Header />
       <ContainerConteudo>
@@ -122,15 +165,26 @@ const AdcUsuarioAdmin = () => {
           </Botao>
         </Div>
         <UsuarioLista>
-          {usuarios.map((usuario, index) => (
-            <UsuarioItem key={index}>
-              <UsuarioNome>{usuario.nome}</UsuarioNome>
-              <UsuarioFuncao>{usuario.funcao}</UsuarioFuncao>
-            </UsuarioItem>
-          ))}
+          {Array.isArray(usuarios) ? (
+            usuarios.map((usuario) => (
+              <UsuarioItem key={usuario.id}>
+                <UsuarioNome>
+                  {usuario.nomeCompleto}
+                  {usuario.id === Number(usuarioLogadoId) && " (Você)"}
+                </UsuarioNome>
+                <UsuarioFuncao>{usuario.roleId}</UsuarioFuncao>
+              </UsuarioItem>
+            ))
+          ) : (
+            <li>Nenhum usuário encontrado.</li>
+          )}
         </UsuarioLista>
-        {modaldAdcUsuario && (
-            <FormAdcUsuario onClose={handleCloseModalAdcUsuario}/>
+
+        {modalAdcUsuario && (
+          <FormAdcUsuario 
+          onClose={handleCloseModalAdcUsuario} 
+          onSave={handleSave}
+          />
         )}
       </ContainerConteudo>
     </>
