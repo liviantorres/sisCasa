@@ -67,7 +67,10 @@ const ContainerBotoes = styled.div`
   width: 100%;
 `;
 
-const ModalRemover = ({ onClose }) => {
+const ModalRemover = ({ onClose, onConfirm, atividade}) => {
+    const confirmRemove = () =>{
+      onConfirm(atividade)
+    }
     return ( 
         <>
          <Overlay onClick={onClose}>
@@ -75,8 +78,8 @@ const ModalRemover = ({ onClose }) => {
             <Title>Tem certeza que deseja excluir essa atividade?</Title>
             <Hr></Hr>
             <ContainerBotoes>
-            <Botao cor='#1EB662'>Sim</Botao>
-            <Botao>Não</Botao>
+            <Botao onClick={confirmRemove} cor='#1EB662'>Sim</Botao>
+            <Botao onClick={onClose}>Não</Botao>
         </ContainerBotoes>
         </ContainerAdc>
          </Overlay>

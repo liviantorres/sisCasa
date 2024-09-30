@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
 const Overlay = styled.div`
@@ -23,6 +24,7 @@ const ContainerAdc = styled.div`
   width: 40%;
   z-index: 1000;
 `;
+
 const ContainerInputsLabels = styled.div`
   display: flex;
   gap: 80px;
@@ -57,14 +59,14 @@ const Input = styled.input`
   &::placeholder {
     color: #999;
     font-family: "Archivo", sans-serif;
-  font-weight: 100;
-  font-size: 13px;
+    font-weight: 100;
+    font-size: 13px;
   }
 
   &:focus {
     border-color: #774fd1;
     outline: none;
-    box-shadow: 0 0 2px rgba(119, 79, 209, 0.7); 
+    box-shadow: 0 0 2px rgba(119, 79, 209, 0.7);
   }
 `;
 
@@ -78,18 +80,12 @@ const Select = styled.select`
   padding-left: 4px;
   margin-bottom: 8px;
   border-radius: 6px;
-  &::placeholder {
-    color: #999;
-    font-family: "Archivo", sans-serif;
-    font-weight: 100;
-    font-size: 13px;
-  }
+  
   &:focus {
     border-color: #774fd1;
     outline: none;
-    box-shadow: 0 0 2px rgba(119, 79, 209, 0.7); 
+    box-shadow: 0 0 2px rgba(119, 79, 209, 0.7);
   }
-  
 `;
 
 const Textarea = styled.textarea`
@@ -107,14 +103,14 @@ const Textarea = styled.textarea`
   &::placeholder {
     color: #999;
     font-family: "Archivo", sans-serif;
-  font-weight: 100;
-  font-size: 13px;
+    font-weight: 100;
+    font-size: 13px;
   }
 
   &:focus {
     border-color: #774fd1;
     outline: none;
-    box-shadow: 0 0 2px rgba(119, 79, 209, 0.7); 
+    box-shadow: 0 0 2px rgba(119, 79, 209, 0.7);
   }
 `;
 
@@ -127,23 +123,22 @@ const ContainerBotoes = styled.div`
 `;
 
 const Button = styled.button`
-font-family: "Archivo", sans-serif;
-font-weight: 600;
-width: 30%;
+  font-family: "Archivo", sans-serif;
+  font-weight: 600;
+  width: 30%;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin: 20px auto 0;
   padding: 10px 20px;
-  background-color: ${({cor})=> cor || '#9186A7'};
+  background-color: ${({ cor }) => cor || "#9186A7"};
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   font-size: 14px;
   transition: background-color 0.3s;
-  margin: 20px;
   &:hover {
-    background-color: ${({cor})=> cor ? '#177c44' : '#79679d'};
+    background-color: ${({ cor }) => (cor ? "#177c44" : "#79679d")};
   }
 `;
 
@@ -160,7 +155,36 @@ const Header = styled.div`
   border-radius: 8px;
 `;
 
-const ModalEditar = ({ onClose }) => {
+const ModalEditar = ({ onClose, onSave, atividade, professores }) => {
+  const [titulo, setTitulo] = useState("");
+  const [descricao, setDescricao] = useState("");
+  const [professorId, setProfessorId] = useState("");
+  const [cargaHoraria, setCargaHoraria] = useState("");
+  const [link, setLink] = useState("");
+
+  useEffect(() => {
+    if (atividade) {
+      setTitulo(atividade.titulo || "");
+      setDescricao(atividade.descricao || "");
+      setProfessorId(atividade.professorId || "");
+      setCargaHoraria(atividade.cargaHoraria || "");
+      setLink(atividade.link || "");
+    }
+  }, [atividade]);
+
+  const handleSave = () => {
+    const updatedAtividade = {
+      ...atividade,
+      titulo,
+      descricao,
+      professorId,
+      cargaHoraria,
+      link,
+    };
+    onSave(updatedAtividade);
+    onClose();
+  };
+
   return (
     <Overlay onClick={onClose}>
       <ContainerAdc onClick={(e) => e.stopPropagation()}>
@@ -168,27 +192,49 @@ const ModalEditar = ({ onClose }) => {
         <ContainerInputsLabels>
           <Div>
             <Label>Título:</Label>
-            <Input placeholder="Adicione o título da atividade" />
+            <Input
+              placeholder="Adicione o título da atividade"
+              value={titulo}
+              onChange={(e) => setTitulo(e.target.value)}
+            />
             <Label>Descrição:</Label>
             <Textarea
-              name=""
-              id=""
               placeholder="Adicione a descrição da atividade"
-            ></Textarea>
+              value={descricao}
+              onChange={(e) => setDescricao(e.target.value)}
+            />
           </Div>
           <Div>
             <Label>Professor:</Label>
-            <Select name="" id="">
+            <Select
+              value={professorId}
+              onChange={(e) => setProfessorId(e.target.value)}
+            >
               <option value="">Selecione um professor</option>
+              {professores.map((prof) => (
+                <option key={prof.id} value={prof.id}>
+                  {prof.nomeCompleto}
+                </option>
+              ))}
             </Select>
             <Label>Carga Horária:</Label>
-            <Input placeholder="Adicione a carga horária da atividade" />
+            <Input
+              placeholder="Adicione a carga horária da atividade"
+              value={cargaHoraria}
+              onChange={(e) => setCargaHoraria(e.target.value)}
+            />
             <Label>Link:</Label>
-            <Input placeholder="Adicione o link da atividade" />
+            <Input
+              placeholder="Adicione o link da atividade"
+              value={link}
+              onChange={(e) => setLink(e.target.value)}
+            />
           </Div>
         </ContainerInputsLabels>
         <ContainerBotoes>
-          <Button cor={'#1EB662'} onClick={onClose}>Salvar</Button>
+          <Button cor={"#1EB662"} onClick={handleSave}>
+            Salvar
+          </Button>
           <Button onClick={onClose}>Cancelar</Button>
         </ContainerBotoes>
       </ContainerAdc>

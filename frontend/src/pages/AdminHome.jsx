@@ -26,7 +26,7 @@ const Titulo = styled.h2`
 
 const Botao = styled.button`
   background-color: #774fd1;
-  font-family: "Archivo", sans-serif;
+  font-family: "Arquivo", sans-serif;
   font-weight: 600;
   display: flex;
   text-transform: uppercase;
@@ -78,6 +78,7 @@ const AdminHome = () => {
   const [modalVisualizar, setModalVisualizar] = useState(false);
   const [modalFrequencia, setModalFrequenecia] = useState(false);
   const [professores, setProfessores] = useState([]);
+  const [atividadeSelecionada, setAtividadeSelecionada] = useState(null);
 
   // Modal Adicionar Atividade
   const handleOpenModalAdicionar = () => {
@@ -93,7 +94,8 @@ const AdminHome = () => {
     setModalEditar(false);
   };
 
-  const handleOpenModalEditar = () => {
+  const handleOpenModalEditar = (atividade) => {
+    setAtividadeSelecionada(atividade);
     setModalEditar(true);
   };
 
@@ -102,7 +104,8 @@ const AdminHome = () => {
     setModalRemover(false);
   };
 
-  const handleOpenModalRemover = () => {
+  const handleOpenModalRemover = (atividade) => {
+    setAtividadeSelecionada(atividade);
     setModalRemover(true);
   };
 
@@ -111,7 +114,8 @@ const AdminHome = () => {
     setModalVisualizar(false);
   };
 
-  const handleOpenModalVisualizar = () => {
+  const handleOpenModalVisualizar = (atividade) => {
+    setAtividadeSelecionada(atividade); 
     setModalVisualizar(true);
   };
 
@@ -119,7 +123,10 @@ const AdminHome = () => {
   const handleCloseModalFrequencia = () => {
     setModalFrequenecia(false);
   };
-  const handleOpenModalFrequencia = () => {
+
+  const handleOpenModalFrequencia = (atividade) => {
+    setAtividadeSelecionada(atividade);
+    console.log("Atividade:" + atividade)
     setModalFrequenecia(true);
     setModalVisualizar(false);
   };
@@ -138,7 +145,6 @@ const AdminHome = () => {
     }
   };
 
-  
   const fetchAtividades = async () => {
     const token = localStorage.getItem('token'); 
     try {
@@ -153,11 +159,11 @@ const AdminHome = () => {
     }
   };
 
-  
   useEffect(() => {
     fetchAtividades(); 
     fetchProfessores();
   }, []);
+
   const handleSave = async (novaAtividade) => {
     const token = localStorage.getItem('token'); 
     if (!token) {
@@ -166,21 +172,69 @@ const AdminHome = () => {
     }
   
     try {
-   
       console.log("Enviando nova atividade:", novaAtividade);
-      
       const response = await axios.post("http://localhost:3000/atividade/criar", novaAtividade, {
         headers: {
           Authorization: `Bearer ${token}`, 
         }
       });
-  
-     
       console.log("Resposta da API:", response.data);
       setAtividades([...atividades, response.data]); 
       setModalAdicionar(false);
     } catch (error) {
       console.error("Erro ao adicionar atividade:", error);
+    }
+  };
+
+  
+  const handleUpdate = async (atividadeAtualizada) => {
+    const token = localStorage.getItem('token');
+    const { id } = atividadeSelecionada;
+
+    if (!token) {
+      console.error("Token não encontrado");
+      return;
+    }
+
+    try {
+      const response = await axios.put(`http://localhost:3000/atividade/editar/${id}`, atividadeAtualizada, {
+        headers: {
+          Authorization: `Bearer ${token}`, 
+        }
+      });
+      console.log("Resposta da API:", response.data);
+      
+    
+      setAtividades(atividades.map((atividade) => 
+        atividade.id === id ? response.data : atividade
+      ));
+      setModalEditar(false);
+    } catch (error) {
+      console.error("Erro ao atualizar atividade:", error);
+    }
+  };
+
+  const handleRemove = async (atividadeSelecionada) => {
+    const token = localStorage.getItem('token');
+    const { id } = atividadeSelecionada;
+  
+    if (!token) {
+      console.error("Token não encontrado");
+      return;
+    }
+  
+    try {
+      const response = await axios.delete(`http://localhost:3000/atividade/deletar/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`, 
+        }
+      });
+      console.log("Resposta da API:", response.data);
+  
+      setAtividades(atividades.filter((atividade) => atividade.id !== id));
+      setModalRemover(false);
+    } catch (error) {
+      console.error("Erro ao remover atividade:", error);
     }
   };
   
@@ -207,16 +261,16 @@ const AdminHome = () => {
                 botoes={[
                   {
                     texto: "Editar",
-                    onClick: handleOpenModalEditar,
+                    onClick: () => handleOpenModalEditar(atividade), 
                     cor: "#928AA2",
                   },
                   {
                     texto: "Remover",
-                    onClick: handleOpenModalRemover,
+                    onClick: () => handleOpenModalRemover(atividade),
                     cor: "#4B3E65",
                   },
                 ]}
-                onVisualizar={handleOpenModalVisualizar}
+                onVisualizar={() => handleOpenModalVisualizar(atividade)}
               />
             ))
           ) : (
@@ -224,13 +278,13 @@ const AdminHome = () => {
           )}
         </ScrollableAtividades>
 
-        {modalAdicionar && <ModalAdicionar onClose={handleCloseModalAdicionar} onSave={handleSave} professores={professores}/>}
-        {modalEditar && <ModalEditar onClose={handleCloseModalEditar} />}
-        {modalRemover && <ModalRemover onClose={handleCloseModalRemover} />}
+        {modalAdicionar && <ModalAdicionar onClose={handleCloseModalAdicionar} onSave={handleSave} professores={professores} />}
+        {modalEditar && <ModalEditar professores={professores} atividade={atividadeSelecionada} onClose={handleCloseModalEditar} onSave={handleUpdate} />}
+        {modalRemover && <ModalRemover atividade={atividadeSelecionada} onConfirm={handleRemove} onClose={handleCloseModalRemover} />}
         {modalVisualizar && (
-          <ModalVisualizar atividade={atividades[0]} onClose={handleCloseModalVisualizar} modalFrequencia={handleOpenModalFrequencia} />
+          <ModalVisualizar atividade={atividadeSelecionada} onClose={handleCloseModalVisualizar} modalFrequencia={handleOpenModalFrequencia} />
         )}
-        {modalFrequencia && <ModalFrequencia onClose={handleCloseModalFrequencia} />}
+        {modalFrequencia && <ModalFrequencia atividade={atividadeSelecionada} onClose={handleCloseModalFrequencia} />}
       </ContainerConteudo>
     </>
   );

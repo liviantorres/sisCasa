@@ -1,6 +1,5 @@
 import styled from "styled-components";
-import { useState } from "react";
-import { IoIosClose  } from "react-icons/io";
+import { IoIosClose } from "react-icons/io";
 
 const Overlay = styled.div`
   position: fixed;
@@ -62,7 +61,7 @@ const Input = styled.input`
 const Table = styled.table`
   border-collapse: collapse;
   width: 100%;
-  padding: 0px ;
+  padding: 0px;
   margin-bottom: 30px;
 `;
 
@@ -89,9 +88,8 @@ const RadioContainer = styled.div`
   justify-content: center;
 `;
 
-
 const Header = styled.div`
-position: relative;
+  position: relative;
   font-family: "Poppins", sans-serif;
   font-weight: 500;
   letter-spacing: 0.9px;
@@ -103,17 +101,14 @@ position: relative;
   background-color: #774fd1;
   border-radius: 8px;
 `;
-const CloseIcon = styled(IoIosClose )`
+
+const CloseIcon = styled(IoIosClose)`
   position: absolute;
-  right: 8px; 
+  right: 8px;
   top: 5px;
   cursor: pointer;
   font-size: 32px;
   color: #000000c6;
-`;
-
-const RadioInput = styled.input`
-  display: none;
 `;
 
 const CustomRadio = styled.label`
@@ -121,98 +116,117 @@ const CustomRadio = styled.label`
   align-items: center;
   cursor: pointer;
   margin-right: 10px;
+ 
+
+  input {
+    display: none; /* Oculta o input do tipo radio */
+  }
 
   &::before {
     content: "";
     display: inline-block;
-    width: 12px;
-    height: 12px;
+    width: 12px; 
+    height: 12px; 
     border: 2px solid #774fd1;
-    border-radius: 50%;
-    margin-right: 6px;
-    background-color: white;
-    transition: background-color 0.3s;
+    border-radius: 50%; 
+    margin-right: 6px; 
+    background-color: ${(props) => (props.checked ? '#774fd1' : '#ffff')}; 
+    transition: background-color 0.3s; 
   }
 
-  ${RadioInput}:checked + &::before {
-    background-color: #774fd1;
+
+  input:checked + &::before {
+    background-color: #774fd1; 
+  }
+
+
+  input:checked + &::after {
+    content: "";
+    display: block;
+    width: 8px; 
+    height: 8px; 
+    border-radius: 50%; 
+    background-color: white; 
+    position: absolute; 
+    top: 2px; 
+    left: 2px; 
   }
 `;
 
-const ModalFrequencia = ({ onClose }) => {
-  const [data, setData] = useState("");
 
+const NoFrequencyMessage = styled.p`
+  font-family: "Archivo", sans-serif;
+  font-size: 18px;
+  color: #202b3b; 
+  text-align: center; 
+  margin-top: 20px;
+  margin-bottom: 20px;
+  font-weight: 500; 
+`;
+
+const ModalFrequencia = ({ onClose, atividade }) => {
+  console.log("Atividade:", atividade);
+  console.log("Frequências:", atividade?.frequencias); 
 
   return (
     <Overlay onClick={onClose}>
       <ContainerAdc onClick={(e) => e.stopPropagation()}>
-     
-        <Header> <CloseIcon onClick={onClose}/> FREQUÊNCIA</Header>
-        <ContainerInputsLabels>
-          <Label htmlFor="data">DATA:</Label>
-          <Input
-            id="data"
-            placeholder="Adicione a data"
-            type="date"
-            value={data}
-            onChange={(e) => setData(e.target.value)}
-            disabled
-          />
-        </ContainerInputsLabels>
+        <Header>
+          <CloseIcon onClick={onClose} /> FREQUÊNCIA
+        </Header>
 
-        <Table>
-          <thead>
-            <tr>
-              <TableHeader>Aluno</TableHeader>
-              <TableHeader>Presente?</TableHeader>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <TableCell>Teste 1</TableCell>
-              <TableCell>
-                <RadioContainer>
-                  <RadioInput
-                    type="radio"
-                    id="presente1-sim"
-                    name="presente1"
-                    disabled
-                  />
-                  <CustomRadio htmlFor="presente1-sim"  >Sim</CustomRadio>
-                  <RadioInput
-                    type="radio"
-                    id="presente1-nao"
-                    name="presente1"
-                    disabled
-                  />
-                  <CustomRadio htmlFor="presente1-nao">Não</CustomRadio>
-                </RadioContainer>
-              </TableCell>
-            </tr>
-            <tr>
-              <TableCell>Teste 2</TableCell>
-              <TableCell>
-                <RadioContainer>
-                  <RadioInput
-                    type="radio"
-                    id="presente2-sim"
-                    name="presente2"
-                    disabled
-                  />
-                  <CustomRadio htmlFor="presente2-sim">Sim</CustomRadio>
+        {atividade?.frequencias?.length > 0 ? (
+          atividade.frequencias.map((frequencia, index) => (
+            <div key={index}>
+              <ContainerInputsLabels>
+                <Label>DATA:</Label>
+                <Input type="date" value={frequencia.data} disabled />
+              </ContainerInputsLabels>
 
-                  <RadioInput
-                    type="radio"
-                    id="presente2-nao"
-                    name="presente2"
-                    disabled
-                  />
-                  <CustomRadio htmlFor="presente2-nao">Não</CustomRadio>
-                </RadioContainer>
-              </TableCell>
-            </tr>
-          </tbody>
-        </Table>
+              <Table>
+                <thead>
+                  <tr>
+                    <TableHeader>Aluno</TableHeader>
+                    <TableHeader>Presente?</TableHeader>
+                  </tr>
+                </thead>
+                <tbody>
+                  {frequencia.alunos.map((aluno) => (
+                    <tr key={aluno.idAluno}>
+                      <TableCell>{aluno.nome}</TableCell>
+                      <TableCell>
+                        <RadioContainer>
+                        <CustomRadio checked={aluno.presente}>
+                            <input 
+                              type="radio" 
+                              name={`presenca-${aluno.idAluno}`} 
+                              value="sim" 
+                              checked={aluno.presente} 
+                              readOnly 
+                            />
+                            Sim
+                          </CustomRadio>
+                          <CustomRadio checked={!aluno.presente}>
+                            <input 
+                              type="radio" 
+                              name={`presenca-${aluno.idAluno}`} 
+                              value="nao" 
+                              checked={!aluno.presente} 
+                              readOnly 
+                            />
+                            Não
+                          </CustomRadio>
+                        </RadioContainer>
+                      </TableCell>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </div>
+          ))
+        ) : (
+          <NoFrequencyMessage>Nenhuma frequência registrada.</NoFrequencyMessage>
+        )}
       </ContainerAdc>
     </Overlay>
   );

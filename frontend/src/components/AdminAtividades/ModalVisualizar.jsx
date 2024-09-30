@@ -95,7 +95,13 @@ const Header = styled.div`
   border-radius: 8px;
 `;
 
+
+
 const ModalVisualizar = ({ onClose, modalFrequencia, atividade}) => {
+
+  const handleOpenModal = () =>{
+    modalFrequencia(atividade)
+  }
   return (
     <Overlay onClick={onClose}>
       <ContainerAdc onClick={(e) => e.stopPropagation()}>
@@ -109,7 +115,7 @@ const ModalVisualizar = ({ onClose, modalFrequencia, atividade}) => {
           </Div>
           <Div>
             <Label>Professor:</Label>
-            <P>{atividade.professor}</P>
+            <P>{atividade.professorId}</P>
             <Label>Carga Horária:</Label>
             <P>{atividade.cargaHoraria}</P>
             <Label>Link:</Label>
@@ -117,7 +123,7 @@ const ModalVisualizar = ({ onClose, modalFrequencia, atividade}) => {
           </Div>
         </ContainerInputsLabels>
         <ContainerBotoes>
-          <Button onClick={modalFrequencia}>Frequência</Button>
+          <Button onClick={handleOpenModal}>Frequência</Button>
         </ContainerBotoes>
       </ContainerAdc>
     </Overlay>

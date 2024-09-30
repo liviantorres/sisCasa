@@ -66,7 +66,7 @@ exports.obterAtividadePorId = async (req, res) => {
 exports.atualizarAtividade = async (req, res) => {
   try {
     const { id } = req.params;
-    const { titulo, descricao, usuarioId, cargaHoraria, link, frequencias } = req.body;
+    const { titulo, descricao, professorId, cargaHoraria, link, frequencias } = req.body;
 
   
     const atividade = await Atividade.findByPk(id);
@@ -78,7 +78,7 @@ exports.atualizarAtividade = async (req, res) => {
     await atividade.update({
       titulo,
       descricao,
-      usuarioId,
+      professorId,
       cargaHoraria,
       link,
       frequencias

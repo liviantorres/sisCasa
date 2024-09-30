@@ -135,7 +135,7 @@ const PerfilAdmin = () => {
       console.log('Usuário editado:', response.data);
       setUserData(prevUserData => ({
         ...prevUserData,
-        ...response.data, // Atualiza o estado com os novos dados
+        ...response.data,
       }));
     } catch (error) {
       console.error('Erro ao editar usuário:', error);
