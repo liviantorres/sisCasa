@@ -1,8 +1,10 @@
 const cors = require('cors');
 const sequelize = require('./src/config/Connection'); 
+const path = require('path');
 const authRoutes = require('./src/routes/AuthRoutes');
 const userRoutes = require('./src/routes/UserRoutes')
 const atividadeRoutes = require('./src/routes/atividadeRoutes')
+const solicitacaoRoutes = require('./src/routes/solicitacaoRoutes')
 
 const express = require('express');
 const app = express();
@@ -14,6 +16,7 @@ dotenv.config();
 // Middlewares
 app.use(cors());
 app.use(express.json());
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 sequelize.authenticate()
@@ -33,6 +36,9 @@ app.use('/user', userRoutes)
 
 //Rotas Atividade
 app.use('/atividade', atividadeRoutes)
+
+//Rotas Solicitações
+app.use('/solicitacao', solicitacaoRoutes);
 
 
 sequelize.sync({ force: true }) 
