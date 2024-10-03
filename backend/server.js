@@ -6,6 +6,7 @@ const authRoutes = require('./src/routes/authRoutes');
 const userRoutes = require('./src/routes/userRoutes')
 const atividadeRoutes = require('./src/routes/atividadeRoutes')
 const solicitacaoRoutes = require('./src/routes/solicitacaoRoutes')
+const pontuacaoRoutes = require('./src/routes/pontuacaoRoutes')
 
 const express = require('express');
 const app = express();
@@ -40,6 +41,9 @@ app.use('/atividade', atividadeRoutes)
 
 //Rotas Solicitações
 app.use('/solicitacao', solicitacaoRoutes);
+
+//Tabela de Pontos 
+app.use('/pontuacao', pontuacaoRoutes)
 
 
 sequelize.authenticate()

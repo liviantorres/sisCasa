@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/Connection');
-const User = require('./User'); // Assumindo que o model User já existe
+const User = require('./User'); 
 
 const Atividade = sequelize.define('Atividade', {
   id: {
@@ -22,18 +22,22 @@ const Atividade = sequelize.define('Atividade', {
       model: 'Users', 
       key: 'id',
     },
-    allowNull: false,
+    allowNull: true,
   },
   cargaHoraria: {
     type: DataTypes.FLOAT,
-    allowNull: false,
+    allowNull: true,
   },
   link: {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  categoria: {
+    type:DataTypes.STRING,
+    allowNull: true,
+  },
   frequencias: {
-    type: DataTypes.JSONB, // JSONB para armazenar os objetos de frequência
+    type: DataTypes.JSONB, 
     allowNull: true,
     defaultValue: [],
     // Estrutura do JSON esperado:
