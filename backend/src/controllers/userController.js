@@ -25,7 +25,7 @@ exports.getAllUsers = async (req, res) => {
 
 exports.editUser = async (req, res) => {
   const { userId } = req.params; 
-  const { nomeCompleto, siape, dataDeNascimento, genero, whatsapp, email, password, roleId } = req.body; // Obtém os dados do corpo da requisição
+  const { nomeCompleto, siape, dataDeNascimento, whatsapp, email, password, roleId } = req.body; 
 
   try {
    
@@ -39,7 +39,6 @@ exports.editUser = async (req, res) => {
       nomeCompleto,
       siape,
       dataDeNascimento,
-      genero,
       whatsapp,
       email,
       password,
