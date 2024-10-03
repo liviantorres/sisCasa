@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/Connection');
+const Role = require('./Role'); 
 
 const User = sequelize.define('User', {
   id: {
@@ -23,10 +24,6 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  genero: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
   whatsapp: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -40,10 +37,9 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  roleId: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
 }, { timestamps: true });
+
+User.belongsToMany(Role, { through: 'UserRole', foreignKey: 'userId' });
+Role.belongsToMany(User, { through: 'UserRole', foreignKey: 'roleId' });
 
 module.exports = User;
