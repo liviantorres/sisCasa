@@ -1,9 +1,10 @@
 const User = require("../models/User");
-const Pontuacao = require("../models/Pontuacao");
+
+const {Categoria, Pontuacao} = require("../models/AssociacaoTabelaDePontos");
 
 exports.criarPontuacao = async (req, res) => {
   const {
-    categoria,
+    categoriaId, // Deve ser passado o ID da categoria na requisição
     descricao,
     metrica,
     tetoHoras,
@@ -12,8 +13,15 @@ exports.criarPontuacao = async (req, res) => {
   } = req.body;
 
   try {
+    // Verifica se a categoria existe
+    const categoria = await Categoria.findByPk(categoriaId);
+    if (!categoria) {
+      return res.status(404).json({ message: "Categoria não encontrada." });
+    }
+
+    // Cria a nova pontuação associada à categoria
     const novaPontuacao = await Pontuacao.create({
-      categoria,
+      categoriaId, // Associa à categoria
       descricao,
       metrica,
       tetoHoras,
@@ -44,14 +52,17 @@ exports.associarHoras = async (req, res) => {
 
     return res.status(200).json({ message: "Horas submetidas com sucesso!" });
   } catch (error) {
-    console.error("Erro ao associar horas:", error); // Adicione este log
-  return res.status(500).json({ message: "Erro ao associar horas.", error });
+    console.error("Erro ao associar horas:", error);
+    return res.status(500).json({ message: "Erro ao associar horas.", error });
   }
 };
 
 exports.obterPontuacoes = async (req, res) => {
   try {
-    const pontuacoes = await Pontuacao.findAll();
+    // Inclui a categoria associada na resposta
+    const pontuacoes = await Pontuacao.findAll({
+      include: [{ model: Categoria, as: "categoria" }],
+    });
     return res.status(200).json(pontuacoes);
   } catch (error) {
     return res
@@ -85,7 +96,7 @@ exports.obterPontuacoesUsuario = async (req, res) => {
 
 exports.atualizarPontuacao = async (req, res) => {
   const { id } = req.params;
-  const { nome, tetoAutorizado, horasSubmetidas, horasConsideradas } = req.body;
+  const { descricao, tetoHoras, horasSubmetidas, horasConsideradas, categoriaId } = req.body;
 
   try {
     const pontuacao = await Pontuacao.findByPk(id);
@@ -94,11 +105,20 @@ exports.atualizarPontuacao = async (req, res) => {
       return res.status(404).json({ message: "Pontuação não encontrada." });
     }
 
+    // Verifica se a categoria a ser associada existe
+    if (categoriaId) {
+      const categoria = await Categoria.findByPk(categoriaId);
+      if (!categoria) {
+        return res.status(404).json({ message: "Categoria não encontrada." });
+      }
+    }
+
     await pontuacao.update({
-      nome,
-      tetoAutorizado,
+      descricao,
+      tetoHoras,
       horasSubmetidas,
       horasConsideradas,
+      categoriaId, // Atualiza a categoria se for fornecida
     });
 
     return res.status(200).json(pontuacao);

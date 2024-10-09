@@ -1,11 +1,8 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/Connection'); 
 
+
 const Pontuacao = sequelize.define('Pontuacao', {
-  categoria: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
   descricao: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -28,7 +25,8 @@ const Pontuacao = sequelize.define('Pontuacao', {
   },
 }, {
   tableName: 'Pontuacoes',
-  timestamps: true, 
+  timestamps: true,
 });
+
 
 module.exports = Pontuacao;
