@@ -6,12 +6,15 @@ const authRoutes = require('./src/routes/authRoutes');
 const userRoutes = require('./src/routes/userRoutes')
 const atividadeRoutes = require('./src/routes/atividadeRoutes')
 const solicitacaoRoutes = require('./src/routes/solicitacaoRoutes')
+
 const pontuacaoRoutes = require('./src/routes/pontuacaoRoutes')
+const categoriaRoutes= require('./src/routes/categoriaRoutes');
 
 const express = require('express');
 const app = express();
 
 const dotenv = require('dotenv');
+
 dotenv.config();
 
 
@@ -43,6 +46,7 @@ app.use('/atividade', atividadeRoutes)
 app.use('/solicitacao', solicitacaoRoutes);
 
 //Tabela de Pontos 
+app.use('/categoria', categoriaRoutes)
 app.use('/pontuacao', pontuacaoRoutes)
 
 
