@@ -2,19 +2,27 @@ const Solicitacao = require('../models/Solicitacao');
 
 // Criar uma nova solicitação
 exports.createSolicitacao = async (req, res) => {
-  const { usuarioId, cursoId } = req.body;
+  const { usuarioId, tipoSolicitacao, cursoId, descricao } = req.body;
 
   try {
-    const comprovante = req.file.path; // Obtém o caminho do comprovante PDF
+    let comprovante = null;
+    let certificado = null;
 
+    if (tipoSolicitacao === 'Contabilizar Horas' && req.file) {
+      comprovante = req.file.path; 
+    }
+
+  
     const novaSolicitacao = await Solicitacao.create({
       usuarioId,
-      cursoId,
+      tipoSolicitacao,
+      cursoId: tipoSolicitacao === 'Certificado de Curso' ? cursoId : null, 
       comprovante,
-      status: 'pendente'
+      descricao,
+      status: 'Pendente'
     });
 
-    return res.status(201).json(novaSolicitacao); // Retorna a nova solicitação criada
+    return res.status(201).json(novaSolicitacao); 
   } catch (error) {
     console.error('Erro ao criar solicitação:', error);
     return res.status(500).json({ message: 'Erro no servidor' });
@@ -25,7 +33,7 @@ exports.createSolicitacao = async (req, res) => {
 exports.getAllSolicitacoes = async (req, res) => {
   try {
     const solicitacoes = await Solicitacao.findAll();
-    return res.status(200).json(solicitacoes); // Retorna todas as solicitações
+    return res.status(200).json(solicitacoes); 
   } catch (error) {
     console.error('Erro ao listar solicitações:', error);
     return res.status(500).json({ message: 'Erro no servidor' });
@@ -43,34 +51,47 @@ exports.getSolicitacaoById = async (req, res) => {
       return res.status(404).json({ message: 'Solicitação não encontrada' });
     }
 
-    return res.status(200).json(solicitacao); // Retorna a solicitação encontrada
+    return res.status(200).json(solicitacao); 
   } catch (error) {
     console.error('Erro ao buscar solicitação:', error);
     return res.status(500).json({ message: 'Erro no servidor' });
   }
 };
 
+// Atualizar status, motivo e certificado da solicitação
 exports.updateStatusSolicitacao = async (req, res) => {
-    const { solicitacaoId } = req.params;
-    const { status, motivo } = req.body; // Obtém o status e o motivo do corpo da requisição
-  
-    try {
-      const solicitacao = await Solicitacao.findByPk(solicitacaoId);
-  
-      if (!solicitacao) {
-        return res.status(404).json({ message: 'Solicitação não encontrada' });
-      }
-  
-      solicitacao.status = status;
-      solicitacao.motivo = motivo; // Atualiza o motivo
-      await solicitacao.save();
-  
-      return res.status(200).json(solicitacao); // Retorna a solicitação com status e motivo atualizados
-    } catch (error) {
-      console.error('Erro ao atualizar solicitação:', error);
-      return res.status(500).json({ message: 'Erro no servidor' });
+  const { solicitacaoId } = req.params;
+  const { status, motivo } = req.body; 
+
+  try {
+    const solicitacao = await Solicitacao.findByPk(solicitacaoId);
+
+    if (!solicitacao) {
+      return res.status(404).json({ message: 'Solicitação não encontrada' });
     }
-  };
+
+    solicitacao.status = status || solicitacao.status;
+
+    if (motivo) {
+      solicitacao.motivo = motivo;
+    }
+
+    if (req.file) {
+      solicitacao.certificado = req.file.path; 
+    }
+
+    await solicitacao.save();
+
+    return res.status(200).json(solicitacao); 
+  } catch (error) {
+    console.error('Erro ao atualizar solicitação:', error);
+    return res.status(500).json({ message: 'Erro no servidor' });
+  }
+};
+
+
+
+
 // Deletar uma solicitação
 exports.deleteSolicitacao = async (req, res) => {
   const { solicitacaoId } = req.params;
@@ -90,23 +111,47 @@ exports.deleteSolicitacao = async (req, res) => {
   }
 };
 
-//Ver comprovante
+// Ver comprovante de uma solicitação do tipo "Contabilizar Horas"
 exports.getComprovante = async (req, res) => {
-    const { solicitacaoId } = req.params;
-  
-    try {
-      const solicitacao = await Solicitacao.findByPk(solicitacaoId);
-  
-      if (!solicitacao) {
-        return res.status(404).json({ message: 'Solicitação não encontrada' });
-      }
-  
-      const comprovantePath = solicitacao.comprovante;
-  
-      // Retorna o link do comprovante
-      return res.status(200).json({ comprovanteUrl: `${req.protocol}://${req.get('host')}/${comprovantePath}` });
-    } catch (error) {
-      console.error('Erro ao buscar o comprovante:', error);
-      return res.status(500).json({ message: 'Erro no servidor' });
+  const { solicitacaoId } = req.params;
+
+  try {
+    const solicitacao = await Solicitacao.findByPk(solicitacaoId);
+
+    if (!solicitacao) {
+      return res.status(404).json({ message: 'Solicitação não encontrada' });
     }
-  };
+
+    if (solicitacao.tipoSolicitacao !== 'Contabilizar Horas') {
+      return res.status(400).json({ message: 'Solicitação não requer comprovante' });
+    }
+
+    const comprovantePath = solicitacao.comprovante;
+
+    return res.status(200).json({ comprovanteUrl: `${req.protocol}://${req.get('host')}/${comprovantePath}` });
+  } catch (error) {
+    console.error('Erro ao buscar o comprovante:', error);
+    return res.status(500).json({ message: 'Erro no servidor' });
+  }
+};
+
+// Buscar solicitações por usuarioId
+exports.getSolicitacoesByUsuarioId = async (req, res) => {
+  const { usuarioId } = req.params;
+
+  try {
+    const solicitacoes = await Solicitacao.findAll({
+      where: { usuarioId },
+    });
+
+    if (!solicitacoes || solicitacoes.length === 0) {
+      return res.status(404).json({ message: 'Nenhuma solicitação encontrada para este usuário' });
+    }
+
+    return res.status(200).json(solicitacoes);
+  } catch (error) {
+    console.error('Erro ao buscar solicitações pelo usuarioId:', error);
+    return res.status(500).json({ message: 'Erro no servidor' });
+  }
+};
+

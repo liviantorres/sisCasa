@@ -1,8 +1,8 @@
-import Header from "../components/Header";
+import Header from "../../components/Header";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { styled } from "styled-components";
 import { useState, useEffect } from "react";
-import FormAdcUsuario from "../components/AdminUsuarios/FormAdcUsuario";
+import FormAdcUsuario from "../../components/AdminUsuarios/FormAdcUsuario";
 import axios from "axios";
 
 const ContainerConteudo = styled.div`
@@ -91,7 +91,7 @@ const UsuarioFuncao = styled.span`
 const AdcUsuarioAdmin = () => {
   const [modalAdcUsuario, setModalAdcUsuario] = useState(false);
   const [usuarios, setUsuarios] = useState([]);
-  const [usuarioLogadoId, setUsuarioLogadoId] = useState(null); // Mudar para email
+  const [usuarioLogadoId, setUsuarioLogadoId] = useState(null);
 
   const handleCloseModalAdcUsuario = () => {
     setModalAdcUsuario(false);
@@ -102,53 +102,51 @@ const AdcUsuarioAdmin = () => {
   };
 
   const handleSave = async (novoUsuario) => {
-    const token = localStorage.getItem('token'); // Obtém o token do localStorage
-    
+    const token = localStorage.getItem("token");
+
     try {
-      const response = await axios.post('http://localhost:3000/auth/register', novoUsuario, {
-        headers: {
-          Authorization: `Bearer ${token}`, // Inclui o token no cabeçalho
+      const response = await axios.post(
+        "http://localhost:3000/auth/register",
+        novoUsuario,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      });
-  
+      );
+
       console.log("Usuário adicionado:", response.data);
-      fetchUsuarios(); // Recarrega a lista de usuários após adicionar um novo
-      setModalAdcUsuario(false); // Fecha o modal após a adição
+      fetchUsuarios();
+      setModalAdcUsuario(false);
     } catch (error) {
       if (error.response) {
-        // A requisição foi feita e o servidor respondeu com um código de status
-        // que sai do intervalo de 2xx
-        console.error('Erro ao adicionar usuário:', error.response.data);
-        console.error('Status:', error.response.status);
+        console.error("Erro ao adicionar usuário:", error.response.data);
+        console.error("Status:", error.response.status);
       } else if (error.request) {
-        // A requisição foi feita, mas não houve resposta
-        console.error('Erro na requisição:', error.request);
+        console.error("Erro na requisição:", error.request);
       } else {
-        // Algum erro ocorreu ao configurar a requisição
-        console.error('Erro:', error.message);
+        console.error("Erro:", error.message);
       }
     }
   };
-  
 
   const fetchUsuarios = async () => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     try {
-      const response = await axios.get('http://localhost:3000/user/admin', {
+      const response = await axios.get("http://localhost:3000/user/admin", {
         headers: {
-          Authorization: `Bearer ${token}` 
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
       console.log("Usuarios", response.data);
       setUsuarios(response.data);
     } catch (error) {
-      console.error('Erro ao buscar usuários:', error);
+      console.error("Erro ao buscar usuários:", error);
     }
   };
 
   useEffect(() => {
-    
-    const loggedInUserId = localStorage.getItem('id');
+    const loggedInUserId = localStorage.getItem("id");
     setUsuarioLogadoId(loggedInUserId);
 
     fetchUsuarios();
@@ -172,7 +170,10 @@ const AdcUsuarioAdmin = () => {
                   {usuario.nomeCompleto}
                   {usuario.id === Number(usuarioLogadoId) && " (Você)"}
                 </UsuarioNome>
-                <UsuarioFuncao>{usuario.roleId}</UsuarioFuncao>
+                <UsuarioFuncao>
+                  {usuario.Roles.map((role) => role.roleName).join(", ") ||
+                    "Nenhum papel atribuído"}
+                </UsuarioFuncao>
               </UsuarioItem>
             ))
           ) : (
@@ -181,9 +182,9 @@ const AdcUsuarioAdmin = () => {
         </UsuarioLista>
 
         {modalAdcUsuario && (
-          <FormAdcUsuario 
-          onClose={handleCloseModalAdcUsuario} 
-          onSave={handleSave}
+          <FormAdcUsuario
+            onClose={handleCloseModalAdcUsuario}
+            onSave={handleSave}
           />
         )}
       </ContainerConteudo>

@@ -1,5 +1,6 @@
 
 const User = require('../models/User');
+const Role = require('../models/Role')
 
 exports.getUser = async (req, res) => {
   try {
@@ -13,10 +14,14 @@ exports.getUser = async (req, res) => {
 };
 
 exports.getAllUsers = async (req, res) => {
+  console.log("Buscando todos os usuários..."); // Log para depuração
   try {
-    const users = await User.findAll();
+    const users = await User.findAll({
+      include: { model: Role, through: { attributes: [] } }
+    });
     return res.status(200).json(users);
   } catch (error) {
+    console.error('Erro ao buscar usuários:', error); // Log do erro
     return res.status(500).json({ message: 'Erro no servidor' });
   }
 };

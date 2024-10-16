@@ -1,8 +1,8 @@
-import Header from "../components/Header";
+import Header from "../../components/Header";
 import styled from "styled-components";
 import { FaRegUserCircle } from "react-icons/fa";
 import { FaEdit } from "react-icons/fa";
-import ModalEditarPerfil from "../components/AdminPerfil/ModalEditarPerfil";
+import ModalEditarPerfil from "../../components/AdminPerfil/ModalEditarPerfil";
 import { useState, useEffect } from "react";
 import axios from "axios";
 

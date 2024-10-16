@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { styled } from "styled-components";
 import { useNavigate } from "react-router-dom";
+import axios from "axios"; // Importe o axios
 
 const ContainerWrapp = styled.div`
     height: 100vh;
     position: relative;
 `;
-
 const ContainerTop = styled.div`
     background-image: url('./background-home.svg');
     height: 40%;
@@ -47,9 +47,9 @@ const ContainerTop = styled.div`
         }
      
     }
-`;
+;`
 
-const FormWrapper = styled.div`
+const FormWrapper = styled.div `
     position: absolute;
     top: 60%; 
     left: 50%;
@@ -172,7 +172,9 @@ const FormWrapper = styled.div`
         background-color: #03a14a;
         box-shadow: 0 0 12px rgba(255, 255, 255, 0.9); 
     }
-`;
+;`
+
+
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -180,12 +182,13 @@ const Register = () => {
     siape: '',
     cpf: '',
     dataDeNascimento: '',
-    genero: '',
     whatsapp: '',
     email: '',
     password: '',
-    roleId: ''
+    roleIds: [] 
   });
+  
+  const [errorMessage, setErrorMessage] = useState(""); 
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -196,23 +199,55 @@ const Register = () => {
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Dados do formulário:', formData);
-  };
+  const handleRoleChange = (e) => {
+    const { value } = e.target;
   
+    setFormData((prevState) => ({
+      ...prevState,
+      roleIds: [...prevState.roleIds, Number(value)] 
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErrorMessage(""); 
+
+    const formattedDate = new Date(formData.dataDeNascimento).toLocaleDateString('pt-BR'); 
+    const requestBody = {
+      ...formData,
+      dataDeNascimento: formattedDate,
+   
+    };
+
+    try {
+      const response = await axios.post("http://localhost:3000/auth/register", requestBody);
+
+      if (response.status === 201) {
+        alert('Usuário cadastrado com sucesso!');
+        navigate('/login'); 
+      }
+    } catch (error) {
+      if (error.response) {
+        setErrorMessage(error.response.data.message || "Erro ao cadastrar usuário");
+      } else {
+        setErrorMessage("Erro ao conectar com o servidor");
+      }
+      console.error("Erro ao registrar:", error);
+    }
+  };
+
   const handleBackClick = () => {
-    navigate('/'); // Navega para a página inicial
+    navigate('/'); 
   };
 
   const handleLogoClick = () => {
-    navigate('/'); // Navega para a página inicial
+    navigate('/'); 
   };
 
   return (
     <ContainerWrapp>
         <ContainerTop>
-        <img src="./logo-completa.svg" alt="Logo" onClick={handleLogoClick} style={{ cursor: 'pointer' }} />
+            <img src="./logo-completa.svg" alt="Logo" onClick={handleLogoClick} style={{ cursor: 'pointer' }} />
             <h2>Olá, vamos iniciar seu cadastro.</h2>
             <button onClick={handleBackClick}>Voltar</button>
         </ContainerTop>
@@ -273,22 +308,6 @@ const Register = () => {
                                     />
                                 </label>
                             </div>
-                            <div>
-                                <label>
-                                    Gênero:
-                                    <select
-                                        name="genero"
-                                        value={formData.genero}
-                                        onChange={handleChange}
-                                        required
-                                    >
-                                        <option value="">Selecione</option>
-                                        <option value="masculino">Masculino</option>
-                                        <option value="feminino">Feminino</option>
-                                        <option value="outro">Outro</option>
-                                    </select>
-                                </label>
-                            </div>
                         </div>
                         <div className="form-row">
                             <div>
@@ -307,14 +326,13 @@ const Register = () => {
                                 <label>
                                     Tipo de Perfil:
                                     <select
-                                        name="roleId"
-                                        value={formData.roleId}
-                                        onChange={handleChange}
+                                        name="roleIds"
+                                        onChange={handleRoleChange}
                                         required
                                     >
                                         <option value="">Selecione</option>
-                                        <option value="servidor">Servidor</option>
-                                        <option value="professor">Professor</option>
+                                        <option value="1">Admin</option>
+                                        <option value="2">Servidor</option>
                                     </select>
                                 </label>
                             </div>
@@ -372,17 +390,11 @@ const Register = () => {
                                 </label>
                             </div>
                         </div>
-                        <div>
-                            <div className="required-info">
-                           <img src="./important.svg" alt="Preencha todos os campos!" />
-                            <span>Todos os campos são obrigatórios</span>
-                        </div>
+                        {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>} 
                         <div className="button-container">
                             <button type="submit">
-
                                 Cadastrar
                             </button>
-                        </div>
                         </div>
                     </form>
                 </div>

@@ -33,14 +33,14 @@ const ContainerLeft = styled.div`
   min-height: 500px;
 
   & img {
-    margin: 8px;
+    margin: 0px;
   }
 
   & p {
     font-family: "Poppins", sans-serif;
     font-weight: 100;
     letter-spacing: 1px;
-    margin: 10px;
+    margin: 6px;
   }
 
   & .titleContainer {
@@ -84,10 +84,18 @@ const ContainerLeft = styled.div`
     & input {
       border-radius: 6px;
       border: 1px solid #ccc;
-      padding: 10px;
-      margin: 4px 0;
+      padding: 8px;
       font-family: "Archivo", sans-serif;
-      font-size: 16px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    & select {  
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      padding: 8px;
+      font-family: "Archivo", sans-serif;
+      font-size: 14px;
       outline: none;
     }
 
@@ -96,7 +104,7 @@ const ContainerLeft = styled.div`
       padding: 10px;
       border-radius: 6px;
       margin-top: 20px;
-      color: #f5f0f7;
+      color: #ffff;
       font-family: "Poppins", sans-serif;
       font-weight: 400;
       font-size: 15px;
@@ -195,6 +203,7 @@ const ContainerRigth = styled.div`
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [roleId, setRoleId] = useState(""); 
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
@@ -203,23 +212,29 @@ const Login = () => {
     setErrorMessage("");
 
     try {
+    
       const response = await axios.post("http://localhost:3000/auth/login", {
         email,
         password,
+        roleId: Number(roleId)
+        , 
       });
 
       if (response.status === 200) {
-        const { token, roleId, id } = response.data;
+        const { token, id } = response.data;
 
         localStorage.setItem("token", token);
-        localStorage.setItem("roleId", roleId);
         localStorage.setItem("user", email);
         localStorage.setItem("id", id);
+        localStorage.setItem("roleId", roleId); 
 
-        if (roleId === "admin") {
+   
+        if (roleId === "1") {
           navigate("/admin");
-        } else if (roleId === "pep") {
+        } else if (roleId === "3") {
           navigate("/pep");
+        } else if (roleId === "2") {
+          navigate("/servidor");
         }
       }
     } catch (error) {
@@ -247,6 +262,19 @@ const Login = () => {
             onChange={(e) => setEmail(e.target.value)}
             required
           />
+          <label>
+            Perfil <p>*</p>
+          </label>
+          <select
+            value={roleId}
+            onChange={(e) => setRoleId(e.target.value)}
+            required
+          >
+            <option value="">Selecione um perfil</option>
+            <option value="3">Professor</option>
+            <option value="2">Servidor</option>
+            <option value="1">Administrador</option>
+          </select>
           <label>
             <span>
               Senha <p>*</p>

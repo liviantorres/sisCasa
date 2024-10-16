@@ -4,7 +4,7 @@ const {Categoria, Pontuacao} = require("../models/AssociacaoTabelaDePontos");
 
 exports.criarPontuacao = async (req, res) => {
   const {
-    categoriaId, // Deve ser passado o ID da categoria na requisição
+    categoriaId, 
     descricao,
     metrica,
     tetoHoras,

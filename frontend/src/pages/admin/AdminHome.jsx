@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { styled } from "styled-components";
-import Header from "../components/Header";
-import Atividade from "../components/Atividade";
+import Header from "../../components/Header";
+import Atividade from "../../components/Atividade";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import axios from "axios"; 
-import ModalAdicionar from "../components/AdminAtividades/ModalAdicionar";
-import ModalEditar from "../components/AdminAtividades/ModalEditar";
-import ModalRemover from "../components/AdminAtividades/ModalRemover";
-import ModalVisualizar from "../components/AdminAtividades/ModalVisualizar";
-import ModalFrequencia from "../components/AdminAtividades/ModalFrequencia";
+import ModalAdicionar from "../../components/AdminAtividades/ModalAdicionar";
+import ModalEditar from "../../components/AdminAtividades/ModalEditar";
+import ModalRemover from "../../components/AdminAtividades/ModalRemover";
+import ModalVisualizar from "../../components/AdminAtividades/ModalVisualizar";
+import ModalFrequencia from "../../components/AdminAtividades/ModalFrequencia";
 
 const ContainerConteudo = styled.div`
   margin: 50px;
