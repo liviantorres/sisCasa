@@ -1,6 +1,6 @@
 import { styled } from "styled-components";
-import Header from "../components/Header";
-import Atividade from "../components/Atividade";
+import Header from "../../components/Header";
+import Atividade from "../../components/Atividade";
 
 
 const HomePep = () => {

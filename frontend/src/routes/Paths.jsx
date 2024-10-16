@@ -2,19 +2,19 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import PageLayout from "../layouts/PageLayout";
 
-import HomePep from "../pages/HomePep"
-import AtividadesPep from "../pages/AtividadesPep"
-import ProgressoPep from "../pages/ProgressoPep"
-import TabelaDePontosPep from "../pages/TabelaDePontosPep"
+import HomePep from "../pages/pep/HomePep"
+import SolicitacoesPep from "../pages/pep/SolicitacoesPep"
+import ProgressoPep from "../pages/pep/ProgressoPep"
+import TabelaDePontosPep from "../pages/pep/TabelaDePontosPep"
 import NotFound from "../pages/NotFound"
 import Home from "../pages/Home";
 import Login from "../pages/Login"
 import PageLayoutPublic from "../layouts/PageLayoutPublic";
-import AdminHome from "../pages/AdminHome";
+import AdminHome from "../pages/admin/AdminHome";
 import Register from "../pages/Register";
-import PerfilAdmin from "../pages/PerfilAdmin";
+import PerfilAdmin from "../pages/admin/PerfilAdmin";
 import SolicitacoesAdmin from "../components/AdminSolicitacoes/SolicitacoesAdmin";
-import AdcUsuarioAdmin from "../pages/AdcUsuarioAdmin";
+import AdcUsuarioAdmin from "../pages/admin/AdcUsuarioAdmin";
 
 const Paths = () => {
     return ( 
@@ -23,7 +23,7 @@ const Paths = () => {
             <Routes>
                 <Route path="/pep" element={<PageLayout userType = 'pep' />}>
                     <Route index element={<HomePep/>}/>
-                    <Route path="/pep/cursos" element={<AtividadesPep/>}/>
+                    <Route path="/pep/cursos" element={<SolicitacoesPep/>}/>
                     <Route path="/pep/progresso" element={<ProgressoPep/>}/>
                     <Route path="/pep/tabela" element={<TabelaDePontosPep/>}/>
                 </Route>
