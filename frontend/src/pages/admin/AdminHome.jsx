@@ -9,6 +9,7 @@ import ModalEditar from "../../components/AdminAtividades/ModalEditar";
 import ModalRemover from "../../components/AdminAtividades/ModalRemover";
 import ModalVisualizar from "../../components/AdminAtividades/ModalVisualizar";
 import ModalFrequencia from "../../components/AdminAtividades/ModalFrequencia";
+import ModalSelecionarTipo from "../../components/AdminAtividades/ModalSelecionarTipo";
 
 const ContainerConteudo = styled.div`
   margin: 50px;
@@ -79,14 +80,28 @@ const AdminHome = () => {
   const [modalFrequencia, setModalFrequenecia] = useState(false);
   const [professores, setProfessores] = useState([]);
   const [atividadeSelecionada, setAtividadeSelecionada] = useState(null);
+  
+  const [tipoAtividade, setTipoAtividade] = useState(null);
+  const [modalSelecionarTipo, setModalSelecionarTipo] = useState(false);
 
   // Modal Adicionar Atividade
   const handleOpenModalAdicionar = () => {
-    setModalAdicionar(true);
+    setModalSelecionarTipo(true); 
   };
 
   const handleCloseModalAdicionar = () => {
     setModalAdicionar(false);
+  };
+
+  // Lida com a seleção de tipo de atividade
+  const handleTipoSelecionado = (tipo) => {
+    setTipoAtividade(tipo); // Armazena o tipo de atividade escolhido
+    setModalSelecionarTipo(false); // Fecha o modal de seleção
+    setModalAdicionar(true); // Abre o modal de adicionar a atividade
+  };
+
+  const handleCloseModalSelecionarTipo = () => {
+    setModalSelecionarTipo(false); // Fecha o modal de seleção de tipo
   };
 
   //Modal Editar
@@ -190,21 +205,26 @@ const AdminHome = () => {
   const handleUpdate = async (atividadeAtualizada) => {
     const token = localStorage.getItem('token');
     const { id } = atividadeSelecionada;
-
+  
     if (!token) {
       console.error("Token não encontrado");
       return;
     }
 
+    const updatedAtividade = {
+      ...atividadeAtualizada,
+      professorId: atividadeAtualizada.professorId === "" ? null : atividadeAtualizada.professorId,
+      cargaHoraria: atividadeAtualizada.cargaHoraria === "" ? null : atividadeAtualizada.cargaHoraria,
+    };
+  
     try {
-      const response = await axios.put(`http://localhost:3000/atividade/editar/${id}`, atividadeAtualizada, {
+      const response = await axios.put(`http://localhost:3000/atividade/editar/${id}`, updatedAtividade, {
         headers: {
           Authorization: `Bearer ${token}`, 
         }
       });
       console.log("Resposta da API:", response.data);
       
-    
       setAtividades(atividades.map((atividade) => 
         atividade.id === id ? response.data : atividade
       ));
@@ -213,6 +233,7 @@ const AdminHome = () => {
       console.error("Erro ao atualizar atividade:", error);
     }
   };
+  
 
   const handleRemove = async (atividadeSelecionada) => {
     const token = localStorage.getItem('token');
@@ -278,7 +299,14 @@ const AdminHome = () => {
           )}
         </ScrollableAtividades>
 
-        {modalAdicionar && <ModalAdicionar onClose={handleCloseModalAdicionar} onSave={handleSave} professores={professores} />}
+        {modalSelecionarTipo && (
+          <ModalSelecionarTipo 
+            onClose={handleCloseModalSelecionarTipo}
+            onSelect={handleTipoSelecionado}
+          />
+        )}
+
+        {modalAdicionar && <ModalAdicionar tipo={tipoAtividade}  onClose={handleCloseModalAdicionar} onSave={handleSave} professores={professores} />}
         {modalEditar && <ModalEditar professores={professores} atividade={atividadeSelecionada} onClose={handleCloseModalEditar} onSave={handleUpdate} />}
         {modalRemover && <ModalRemover atividade={atividadeSelecionada} onConfirm={handleRemove} onClose={handleCloseModalRemover} />}
         {modalVisualizar && (

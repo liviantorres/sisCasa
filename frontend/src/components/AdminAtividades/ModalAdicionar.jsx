@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { useState } from "react";
 import PropTypes from "prop-types"; 
+import { AiOutlineClose } from "react-icons/ai"; // Importando ícone de fechar
 
 const Overlay = styled.div`
   position: fixed;
@@ -16,6 +17,7 @@ const Overlay = styled.div`
 `;
 
 const ContainerAdc = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   background-color: #fff;
@@ -25,6 +27,19 @@ const ContainerAdc = styled.div`
   width: 40%;
   z-index: 1000;
 `;
+
+const CloseIcon = styled(AiOutlineClose)`
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #ffff;
+  &:hover {
+    color: #5a3cae;
+  }
+`;
+
 const ContainerInputsLabels = styled.div`
   display: flex;
   gap: 80px;
@@ -48,7 +63,7 @@ const Label = styled.h3`
 const Input = styled.input`
   font-family: "Archivo", sans-serif;
   font-weight: 100;
-  color: #0000008a;
+  color: #000;
   border: 1px solid #ccc;
   width: 100%;
   height: 30px;
@@ -73,19 +88,14 @@ const Input = styled.input`
 const Select = styled.select`
   font-family: "Archivo", sans-serif;
   font-weight: 100;
-  color: #0000008a;
+  color: #000;
   border: 1px solid #ccc;
   width: 100%;
   height: 30px;
   padding-left: 4px;
   margin-bottom: 8px;
   border-radius: 6px;
-  &::placeholder {
-    color: #999;
-    font-family: "Archivo", sans-serif;
-    font-weight: 100;
-    font-size: 13px;
-  }
+
   &:focus {
     border-color: #774fd1;
     outline: none;
@@ -119,32 +129,23 @@ const Textarea = styled.textarea`
   }
 `;
 
-const ContainerBotoes = styled.div`
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
-  align-items: center;
-  justify-content: center;
-`;
-
 const Button = styled.button`
   font-family: "Archivo", sans-serif;
   font-weight: 600;
-  width: 30%;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin: 20px auto 0;
-  padding: 10px 20px;
-  background-color: ${({ cor }) => cor || "#9186A7"};
+  margin-bottom: 20px;
+  padding: 10px 40px;
+  background-color: #4CAF50;
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 10px;
   cursor: pointer;
   font-size: 14px;
   transition: background-color 0.3s;
-  margin: 20px;
   &:hover {
-    background-color: ${({ cor }) => (cor ? "#177c44" : "#79679d")};
+    background-color: #388E3C;
   }
 `;
 
@@ -161,35 +162,31 @@ const Header = styled.div`
   border-radius: 8px;
 `;
 
-const ModalAdicionar = ({ onClose, onSave, professores }) => {
-  
+const ModalAdicionar = ({ onClose, onSave, professores, tipo }) => {
   const [titulo, setTitulo] = useState("");
   const [descricao, setDescricao] = useState("");
   const [professorId, setProfessorId] = useState("");
   const [cargaHoraria, setCargaHoraria] = useState("");
   const [link, setLink] = useState("");
 
-
- 
   const handleSave = () => {
     const atividade = {
       titulo,
       descricao,
-      professorId: Number(professorId),
-      cargaHoraria,
+      professorId: tipo === "curso" ? Number(professorId) : null,
+      cargaHoraria: tipo === "curso" ? cargaHoraria : null,
+      categoria: tipo,
       link,
     };
 
-    console.log(atividade); 
-    onSave(atividade); 
+    onSave(atividade);
   };
-
-
 
   return (
     <Overlay onClick={onClose}>
       <ContainerAdc onClick={(e) => e.stopPropagation()}>
-        <Header>NOVA ATIVIDADE</Header>
+        <Header>NOVA ATIVIDADE - {tipo}</Header>
+        <CloseIcon onClick={onClose} /> 
         <ContainerInputsLabels>
           <Div>
             <Label>Título:</Label>
@@ -206,26 +203,31 @@ const ModalAdicionar = ({ onClose, onSave, professores }) => {
             />
           </Div>
           <Div>
-            <Label htmlFor="professor">Professor:</Label>
-            <Select
-              name="professor"
-              value={professorId}
-              onChange={(e) => setProfessorId(e.target.value)} 
-            >
-              <option value="">Selecione um professor</option>
-              {professores.map((professor) => (
-                <option key={professor.id} value={professor.id}>
-                  {professor.nomeCompleto}
-                </option> 
-              ))}
-            </Select>
+            {tipo !== "edital" && (
+              <>
+                <Label htmlFor="professor">Professor:</Label>
+                <Select
+                  name="professor"
+                  value={professorId}
+                  onChange={(e) => setProfessorId(e.target.value)}
+                >
+                  <option value="">Selecione um professor</option>
+                  {professores.map((professor) => (
+                    <option key={professor.id} value={professor.id}>
+                      {professor.nomeCompleto}
+                    </option>
+                  ))}
+                </Select>
 
-            <Label>Carga Horária:</Label>
-            <Input
-              value={cargaHoraria}
-              onChange={(e) => setCargaHoraria(e.target.value)}
-              placeholder="Adicione a carga horária da atividade"
-            />
+                <Label>Carga Horária:</Label>
+                <Input
+                  value={cargaHoraria}
+                  onChange={(e) => setCargaHoraria(e.target.value)}
+                  placeholder="Adicione a carga horária da atividade"
+                />
+              </>
+            )}
+
             <Label>Link:</Label>
             <Input
               value={link}
@@ -234,12 +236,7 @@ const ModalAdicionar = ({ onClose, onSave, professores }) => {
             />
           </Div>
         </ContainerInputsLabels>
-        <ContainerBotoes>
-          <Button cor={"#1EB662"} onClick={handleSave}>
-            Salvar
-          </Button>
-          <Button onClick={onClose}>Cancelar</Button>
-        </ContainerBotoes>
+        <Button onClick={handleSave}>Salvar</Button>
       </ContainerAdc>
     </Overlay>
   );
@@ -250,10 +247,11 @@ ModalAdicionar.propTypes = {
   onSave: PropTypes.func.isRequired,
   professores: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.number.isRequired, 
-      nome: PropTypes.string.isRequired,
+      id: PropTypes.number.isRequired,
+      nomeCompleto: PropTypes.string.isRequired,
     })
   ).isRequired,
+  tipo: PropTypes.string.isRequired,
 };
 
 export default ModalAdicionar;

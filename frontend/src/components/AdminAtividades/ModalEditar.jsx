@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
+import { MdClose } from "react-icons/md"; // Importando o ícone de fechar
 
 const Overlay = styled.div`
   position: fixed;
@@ -23,6 +24,18 @@ const ContainerAdc = styled.div`
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   width: 40%;
   z-index: 1000;
+  position: relative; 
+`;
+
+const CloseButton = styled.button`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 24px; 
+  color: #ffff; 
 `;
 
 const ContainerInputsLabels = styled.div`
@@ -71,7 +84,7 @@ const Input = styled.input`
 `;
 
 const Select = styled.select`
-  font-family: "Archivo", sans-serif;
+  font-family: "Arquivo", sans-serif;
   font-weight: 100;
   color: #0000008a;
   border: 1px solid #ccc;
@@ -80,7 +93,7 @@ const Select = styled.select`
   padding-left: 4px;
   margin-bottom: 8px;
   border-radius: 6px;
-  
+
   &:focus {
     border-color: #774fd1;
     outline: none;
@@ -89,7 +102,7 @@ const Select = styled.select`
 `;
 
 const Textarea = styled.textarea`
-  font-family: "Archivo", sans-serif;
+  font-family: "Arquivo", sans-serif;
   font-weight: 100;
   font-size: 12px;
   width: 100%;
@@ -102,7 +115,7 @@ const Textarea = styled.textarea`
 
   &::placeholder {
     color: #999;
-    font-family: "Archivo", sans-serif;
+    font-family: "Arquivo", sans-serif;
     font-weight: 100;
     font-size: 13px;
   }
@@ -123,22 +136,22 @@ const ContainerBotoes = styled.div`
 `;
 
 const Button = styled.button`
-  font-family: "Archivo", sans-serif;
+  font-family: "Arquivo", sans-serif;
   font-weight: 600;
-  width: 30%;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin: 20px auto 0;
-  padding: 10px 20px;
-  background-color: ${({ cor }) => cor || "#9186A7"};
+  margin-bottom: 20px;
+  padding: 10px 40px;
+  background-color: #4caf50;
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 10px;
   cursor: pointer;
   font-size: 14px;
   transition: background-color 0.3s;
   &:hover {
-    background-color: ${({ cor }) => (cor ? "#177c44" : "#79679d")};
+    background-color: #388e3c;
   }
 `;
 
@@ -160,6 +173,7 @@ const ModalEditar = ({ onClose, onSave, atividade, professores }) => {
   const [descricao, setDescricao] = useState("");
   const [professorId, setProfessorId] = useState("");
   const [cargaHoraria, setCargaHoraria] = useState("");
+  const [categoria, setCategoria] = useState("");
   const [link, setLink] = useState("");
 
   useEffect(() => {
@@ -168,6 +182,7 @@ const ModalEditar = ({ onClose, onSave, atividade, professores }) => {
       setDescricao(atividade.descricao || "");
       setProfessorId(atividade.professorId || "");
       setCargaHoraria(atividade.cargaHoraria || "");
+      setCategoria(atividade.categoria || "")
       setLink(atividade.link || "");
     }
   }, [atividade]);
@@ -179,6 +194,7 @@ const ModalEditar = ({ onClose, onSave, atividade, professores }) => {
       descricao,
       professorId,
       cargaHoraria,
+      categoria,
       link,
     };
     onSave(updatedAtividade);
@@ -188,6 +204,9 @@ const ModalEditar = ({ onClose, onSave, atividade, professores }) => {
   return (
     <Overlay onClick={onClose}>
       <ContainerAdc onClick={(e) => e.stopPropagation()}>
+        <CloseButton onClick={onClose}>
+          <MdClose />
+        </CloseButton>
         <Header>EDITAR ATIVIDADE</Header>
         <ContainerInputsLabels>
           <Div>
@@ -205,37 +224,40 @@ const ModalEditar = ({ onClose, onSave, atividade, professores }) => {
             />
           </Div>
           <Div>
-            <Label>Professor:</Label>
-            <Select
-              value={professorId}
-              onChange={(e) => setProfessorId(e.target.value)}
-            >
-              <option value="">Selecione um professor</option>
-              {professores.map((prof) => (
-                <option key={prof.id} value={prof.id}>
-                  {prof.nomeCompleto}
-                </option>
-              ))}
-            </Select>
-            <Label>Carga Horária:</Label>
-            <Input
-              placeholder="Adicione a carga horária da atividade"
-              value={cargaHoraria}
-              onChange={(e) => setCargaHoraria(e.target.value)}
-            />
+            {categoria !== "edital" && (
+              <>
+                <Label>Professor:</Label>
+                <Select
+                  value={professorId}
+                  onChange={(e) => setProfessorId(e.target.value)}
+                >
+                  <option value="">Selecione um professor</option>
+                  {professores.map((prof) => (
+                    <option key={prof.id} value={prof.id}>
+                      {prof.nomeCompleto}
+                    </option>
+                  ))}
+                </Select>
+                <Label>Carga Horária:</Label>
+                <Input
+                  placeholder="Adicione a carga horária da atividade"
+                  value={cargaHoraria}
+                  onChange={(e) => setCargaHoraria(e.target.value)}
+                />
+              </>
+            )}
             <Label>Link:</Label>
-            <Input
-              placeholder="Adicione o link da atividade"
-              value={link}
-              onChange={(e) => setLink(e.target.value)}
-            />
+                <Input
+                  placeholder="Adicione o link da atividade"
+                  value={link}
+                  onChange={(e) => setLink(e.target.value)}
+                />
           </Div>
         </ContainerInputsLabels>
         <ContainerBotoes>
           <Button cor={"#1EB662"} onClick={handleSave}>
             Salvar
           </Button>
-          <Button onClick={onClose}>Cancelar</Button>
         </ContainerBotoes>
       </ContainerAdc>
     </Overlay>

@@ -1,6 +1,13 @@
 import { Link, NavLink } from "react-router-dom";
 import styled from "styled-components";
 import PropTypes from 'prop-types';
+import { IoHomeOutline } from "react-icons/io5";
+import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
+import { IoPersonAddOutline } from "react-icons/io5";
+import { IoLogOutOutline } from "react-icons/io5";
+
+
+
 
 const SidebarContainer = styled.div`
     width: 70px;
@@ -56,14 +63,45 @@ const SidebarContainer = styled.div`
     }
 `;
 
+const IconLogoutWrapper = styled(Link)` 
+    svg {
+        width: 35px;  
+        height: 35px;
+        color: #fff;  
+        transition: color 0.3s ease, transform 0.3s ease;
+
+        &:hover {
+            color: #DE2D41;  
+            transform: scale(1.1); 
+        }
+    }
+
+`;
+
+
+const IconWrapper = styled.div`
+    svg {
+        width: 35px; 
+        height: 35px;
+        color: #fff;  
+        transition: color 0.3s ease, transform 0.3s ease;
+
+        &:hover {
+            color: #ddd; 
+            transform: scale(1.1);  
+        }
+    }
+`;
+
+
 const adminNavItems = [
-    { path: "/admin", label: "Home", icon: "./home-admin.svg" },
-    { path: "/admin/solicitacoes", label: "Solicitações", icon: "./solicitacoes-admin.svg" },
-    { path: "/admin/usuarios", label: "Usuarios", icon: "./addusuario-admin.svg" },
+    { path: "/admin", label: "Home", icon: <IconWrapper><IoHomeOutline size={35} color="#fff"/> </IconWrapper> },
+    { path: "/admin/solicitacoes", label: "Solicitações", icon: <IconWrapper> <IoChatbubbleEllipsesOutline size={35} color="#fff"/> </IconWrapper> },
+    { path: "/admin/usuarios", label: "Usuarios", icon: <IconWrapper><IoPersonAddOutline size={35} color="#fff"/></IconWrapper> },
 ];
 
 const pepNavItems = [
-    { path: "/pep", label: "Home", icon: "./home.svg" },
+    { path: "/pep", label: "Home", icon: <IoHomeOutline/>  },
     { path: "/pep/cursos", label: "Cursos", icon: "./cursos.svg" },
     { path: "/pep/progresso", label: "Progresso", icon: "./progresso.svg" },
     { path: "/pep/tabela", label: "Tabela", icon: "./tabela.svg" },
@@ -90,14 +128,14 @@ const Sidebar = ({ type }) => {
                     {navItems.map((item, index) => (
                         <li key={index}>
                             <NavLink to={item.path} activeClassName="active" end>
-                                <img src={item.icon} alt={item.label} />
+                               {item.icon}
                             </NavLink>
                         </li>
                     ))}
                 </ul>
             </nav>
             <Link className="icon-sair" to={"/sair"}>
-                <img src="./sair.svg" alt="" />
+               <IconLogoutWrapper> <IoLogOutOutline size={25}/> </IconLogoutWrapper>
             </Link>
         </SidebarContainer>
     );
