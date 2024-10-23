@@ -4,12 +4,15 @@ const User = require('../models/User');
 
 exports.criarAtividade = async (req, res) => {
   try {
-    const { titulo, descricao, professorId, cargaHoraria, link, frequencias } = req.body;
+    const { titulo, descricao, professorId, cargaHoraria, categoria, link, frequencias } = req.body;
 
    
-    const usuario = await User.findByPk(professorId);
-    if (!usuario) {
-      return res.status(404).json({ message: 'Usuário não encontrado' });
+    
+    if (categoria === 'curso') {
+      const usuario = await User.findByPk(professorId);
+      if(!usuario){
+        return res.status(404).json({ message: 'Professor não encontrado' });
+      }
     }
 
    
@@ -18,6 +21,7 @@ exports.criarAtividade = async (req, res) => {
       descricao,
       professorId,
       cargaHoraria,
+      categoria, 
       link,
       frequencias
     });
@@ -66,7 +70,7 @@ exports.obterAtividadePorId = async (req, res) => {
 exports.atualizarAtividade = async (req, res) => {
   try {
     const { id } = req.params;
-    const { titulo, descricao, professorId, cargaHoraria, link, frequencias } = req.body;
+    const { titulo, descricao, professorId, categoria, cargaHoraria, link, frequencias } = req.body;
 
   
     const atividade = await Atividade.findByPk(id);
@@ -80,6 +84,7 @@ exports.atualizarAtividade = async (req, res) => {
       descricao,
       professorId,
       cargaHoraria,
+      categoria,
       link,
       frequencias
     });
@@ -87,8 +92,10 @@ exports.atualizarAtividade = async (req, res) => {
     return res.status(200).json(atividade);
   } catch (error) {
     console.error('Erro ao atualizar atividade:', error);
-    return res.status(500).json({ message: 'Erro ao atualizar atividade' });
+    console.error('Detalhes do erro:', error.message);
+    return res.status(500).json({ message: 'Erro ao atualizar atividade', error: error.message });
   }
+  
 };
 
 

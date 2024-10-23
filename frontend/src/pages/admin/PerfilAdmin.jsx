@@ -41,11 +41,6 @@ const Email = styled.p`
   color: #666;
 `;
 
-const Role = styled.p`
-  font-family: "Archivo", sans-serif;
-  font-size: 18px;
-  color: #999;
-`;
 
 const InfoAdicional = styled.p`
   font-family: "Archivo", sans-serif;
@@ -97,6 +92,13 @@ const PerfilAdmin = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [userData, setUserData] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
+  const [roles, setRoles] = useState([]); 
+
+  const availableRoles = [
+    { id: 1, name: 'Admin' },
+    { id: 2, name: 'Servidor' },
+    { id: 3, name: 'Professor' }
+  ];
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -109,6 +111,9 @@ const PerfilAdmin = () => {
           },
         });
         setUserData(response.data);
+        setRoles(response.data.Roles);
+        console.log("roles " + roles)
+        console.log(userData)
       } catch (error) {
         if (error.response) {
           setErrorMessage(error.response.data.message || 'Falha ao buscar dados do usuário');
@@ -131,12 +136,12 @@ const PerfilAdmin = () => {
           Authorization: `Bearer ${token}` 
         }
       });
-  
-      console.log('Usuário editado:', response.data);
+      
       setUserData(prevUserData => ({
         ...prevUserData,
         ...response.data,
       }));
+      setRoles(response.data.Roles || []); 
     } catch (error) {
       console.error('Erro ao editar usuário:', error);
     }
@@ -156,7 +161,6 @@ const PerfilAdmin = () => {
             <User />
             <div>
               <Nome>{userData.nomeCompleto || userData.name}</Nome>
-              <Role>Função: {userData.roleId}</Role>
               <Email>Email: {userData.email}</Email>
               <Email>SIAPE: {userData.siape}</Email>
             </div>
@@ -166,7 +170,8 @@ const PerfilAdmin = () => {
             <div>
              
               <InfoAdicional>CPF: {userData.cpf}</InfoAdicional>
-              <InfoAdicional>Genero: {userData.genero}</InfoAdicional>
+              <InfoAdicional>Função: {roles.length > 0 ? roles.map(role => role.roleName).join(", ") : "Nenhum papel atribuído"}</InfoAdicional>
+
             </div>
             <div>
               <InfoAdicional>Data de Nascimento: {userData.dataDeNascimento}</InfoAdicional>
@@ -182,6 +187,8 @@ const PerfilAdmin = () => {
         close={() => setIsModalOpen(false)}
         userData={userData}
         onSave={handleSave}
+        roles={roles}
+        availableRoles = {availableRoles}
       />
 
       {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}

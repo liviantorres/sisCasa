@@ -49,9 +49,19 @@ const Seta = styled(IoIosArrowDown)`
     
 const Header = () => {
     const navigate = useNavigate();
+    const papel = localStorage.getItem('roleId'); 
+   
 
     const handleProfileClick = () => {
-        navigate('/admin/perfil'); 
+        
+        if(papel === '1'){
+            navigate('/admin/perfil'); 
+        }else if (papel === '2'){
+            navigate('/servidor/perfil'); 
+        }else if(papel === '3'){
+            navigate('/professor/perfil'); 
+        }
+        
     };
 
     return ( 

@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { AiOutlineClose } from "react-icons/ai"; 
 
 const Overlay = styled.div`
   position: fixed;
@@ -22,6 +23,18 @@ const ContainerAdc = styled.div`
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   width: 40%;
   z-index: 1000;
+  position: relative;
+`;
+
+
+const CloseIcon = styled(AiOutlineClose)`
+  font-size: 24px;
+  cursor: pointer;
+  color: #ffff; 
+  margin-top: -20px;
+  &:hover {
+    color: #5a3cae;
+  }
 `;
 
 const ContainerInputsLabels = styled.div`
@@ -36,7 +49,6 @@ const Div = styled.div`
   display: flex;
   flex-direction: column;
   align-items: start;
- 
 `;
 
 const Label = styled.h3`
@@ -44,8 +56,6 @@ const Label = styled.h3`
   font-weight: 400;
   margin: 10px 0px;
 `;
-
-
 
 const ContainerBotoes = styled.div`
   display: flex;
@@ -62,24 +72,32 @@ const Button = styled.button`
   text-transform: uppercase;
   letter-spacing: 0.1em;
   padding: 10px 20px;
-  background-color: #8257E5;
+  background-color: #8257e5;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   font-size: 14px;
   transition: background-color 0.3s;
-    margin: 20px;
+  margin: 20px;
   &:hover {
     background-color: #372263;
   }
 `;
 
 const P = styled.p`
-    font-family: 'Archivo', sans-serif;
-    color: #000000d5;
-    font-size: 15px;
-    margin: 4px;
+  font-family: 'Archivo', sans-serif;
+  color: #000000d5;
+  font-size: 15px;
+  margin: 4px;
+`;
+
+const HeaderContainer = styled.div`
+  display: flex;
+  align-items: center; 
+  padding: 20px; 
+  background-color: #774fd1;
+  border-radius: 8px 8px 0 0;
 `;
 
 const Header = styled.div`
@@ -87,25 +105,23 @@ const Header = styled.div`
   font-weight: 500;
   letter-spacing: 0.9px;
   font-size: 24px;
-  display: flex;
-  justify-content: center;
-  padding: 20px;
+  flex: 1; 
+  text-align: center; 
   color: #ffff;
-  background-color: #774fd1;
-  border-radius: 8px;
 `;
 
-
-
-const ModalVisualizar = ({ onClose, modalFrequencia, atividade}) => {
-
-  const handleOpenModal = () =>{
-    modalFrequencia(atividade)
-  }
+const ModalVisualizar = ({ onClose, modalFrequencia, atividade }) => {
+  const handleOpenModal = () => {
+    modalFrequencia(atividade);
+  };
+  
   return (
     <Overlay onClick={onClose}>
       <ContainerAdc onClick={(e) => e.stopPropagation()}>
-        <Header>VISUALIZAR ATIVIDADE</Header>
+        <HeaderContainer>
+          <Header>VISUALIZAR ATIVIDADE</Header>
+          <CloseIcon onClick={onClose} /> 
+        </HeaderContainer>
         <ContainerInputsLabels>
           <Div>
             <Label>Título:</Label>
@@ -114,16 +130,22 @@ const ModalVisualizar = ({ onClose, modalFrequencia, atividade}) => {
             <P>{atividade.descricao}</P>
           </Div>
           <Div>
-            <Label>Professor:</Label>
-            <P>{atividade.professorId}</P>
-            <Label>Carga Horária:</Label>
-            <P>{atividade.cargaHoraria}</P>
+            {atividade.categoria !== "edital" && (
+              <>
+                <Label>Professor:</Label>
+                <P>{atividade.professorId}</P>
+                <Label>Carga Horária:</Label>
+                <P>{atividade.cargaHoraria}</P>
+              </>
+            )}
             <Label>Link:</Label>
             <P>{atividade.link}</P>
           </Div>
         </ContainerInputsLabels>
         <ContainerBotoes>
-          <Button onClick={handleOpenModal}>Frequência</Button>
+          {atividade.categoria === "curso" && (
+            <Button onClick={handleOpenModal}>Frequência</Button>
+          )}
         </ContainerBotoes>
       </ContainerAdc>
     </Overlay>

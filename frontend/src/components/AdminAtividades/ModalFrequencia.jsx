@@ -119,7 +119,7 @@ const CustomRadio = styled.label`
  
 
   input {
-    display: none; /* Oculta o input do tipo radio */
+    display: none; 
   }
 
   &::before {
