@@ -13,15 +13,15 @@ exports.criarPontuacao = async (req, res) => {
   } = req.body;
 
   try {
-    // Verifica se a categoria existe
+
     const categoria = await Categoria.findByPk(categoriaId);
     if (!categoria) {
       return res.status(404).json({ message: "Categoria não encontrada." });
     }
 
-    // Cria a nova pontuação associada à categoria
+
     const novaPontuacao = await Pontuacao.create({
-      categoriaId, // Associa à categoria
+      categoriaId, 
       descricao,
       metrica,
       tetoHoras,
@@ -105,7 +105,6 @@ exports.atualizarPontuacao = async (req, res) => {
       return res.status(404).json({ message: "Pontuação não encontrada." });
     }
 
-    // Verifica se a categoria a ser associada existe
     if (categoriaId) {
       const categoria = await Categoria.findByPk(categoriaId);
       if (!categoria) {
@@ -118,7 +117,7 @@ exports.atualizarPontuacao = async (req, res) => {
       tetoHoras,
       horasSubmetidas,
       horasConsideradas,
-      categoriaId, // Atualiza a categoria se for fornecida
+      categoriaId, 
     });
 
     return res.status(200).json(pontuacao);

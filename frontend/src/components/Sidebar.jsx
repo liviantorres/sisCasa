@@ -5,7 +5,7 @@ import { IoHomeOutline } from "react-icons/io5";
 import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
 import { IoPersonAddOutline } from "react-icons/io5";
 import { IoLogOutOutline } from "react-icons/io5";
-
+import { ImFileText2 } from "react-icons/im";
 
 
 
@@ -45,6 +45,7 @@ const SidebarContainer = styled.div`
         list-style-type: none;
         display: flex;
         flex-direction: column;
+        align-items: center;
         gap: 18px;
 
         & a {
@@ -101,8 +102,9 @@ const adminNavItems = [
 ];
 
 const pepNavItems = [
-    { path: "/pep", label: "Home", icon: <IoHomeOutline/>  },
-    { path: "/pep/cursos", label: "Cursos", icon: "./cursos.svg" },
+    { path: "/pep", label: "Home", icon: <IconWrapper><IoHomeOutline size={35} color="#fff"/> </IconWrapper> },
+    { path: "/pep/cursos", label: "Cursos", icon: <IconWrapper><ImFileText2 size={35} color="#fff"/></IconWrapper> },
+    { path: "/pep/solicitacoes", label: "Solicitacoes", icon: <IconWrapper> <IoChatbubbleEllipsesOutline size={35} color="#fff"/> </IconWrapper>},
     { path: "/pep/progresso", label: "Progresso", icon: "./progresso.svg" },
     { path: "/pep/tabela", label: "Tabela", icon: "./tabela.svg" },
 ];

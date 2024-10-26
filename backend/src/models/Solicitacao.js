@@ -14,33 +14,33 @@ Solicitacao.init({
   },
   cursoId: {
     type: DataTypes.INTEGER,
-    allowNull: true // Apenas para 'Certificado de Curso'
+    allowNull: true 
   },
   comprovante: {
     type: DataTypes.STRING,
-    allowNull: true // Apenas para 'Contabilizar Horas'
+    allowNull: true 
   },
   certificado: {
     type: DataTypes.STRING,
-    allowNull: true // Para 'Certificado de Horas' e 'Certificado de Curso'
+    allowNull: true 
   },
   descricao: {
     type: DataTypes.STRING,
-    allowNull: false // Descrição fornecida pelo usuário
+    allowNull: false 
   },
   data: {
     type: DataTypes.DATE,
     allowNull: false,
-    defaultValue: DataTypes.NOW // Data de solicitação
+    defaultValue: DataTypes.NOW 
   },
   status: {
     type: DataTypes.STRING,
     allowNull: false,
-    defaultValue: 'Pendente' // Status inicial da solicitação
+    defaultValue: 'Pendente'
   },
   motivo: {
     type: DataTypes.STRING,
-    allowNull: true // Motivo de aceitação/rejeição
+    allowNull: true
   }
 }, {
   sequelize,

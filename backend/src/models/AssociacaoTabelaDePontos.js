@@ -1,11 +1,16 @@
-const Categoria = require('./Categoria'); // Caminho correto para o modelo Categoria
-const Pontuacao = require('./Pontuacao'); // Caminho correto para o modelo Pontuacao
+const Categoria = require('./Categoria');
+const Pontuacao = require('./Pontuacao');
 
-// Definir as associações
-Categoria.hasMany(Pontuacao, { foreignKey: 'categoriaId', as: 'pontuacoes' });
-Pontuacao.belongsTo(Categoria, { foreignKey: 'categoriaId', as: 'categoria' });
+
+const defineAssociations = () => {
+  Categoria.hasMany(Pontuacao, { foreignKey: 'categoriaId', as: 'pontuacoes' });
+  Pontuacao.belongsTo(Categoria, { foreignKey: 'categoriaId', as: 'categoria' });
+
+};
+
+defineAssociations();
 
 module.exports = {
   Categoria,
-  Pontuacao
+  Pontuacao,
 };

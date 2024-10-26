@@ -1,6 +1,6 @@
 const Solicitacao = require('../models/Solicitacao');
 
-// Criar uma nova solicitação
+
 exports.createSolicitacao = async (req, res) => {
   const { usuarioId, tipoSolicitacao, cursoId, descricao } = req.body;
 
@@ -29,7 +29,7 @@ exports.createSolicitacao = async (req, res) => {
   }
 };
 
-// Listar todas as solicitações
+
 exports.getAllSolicitacoes = async (req, res) => {
   try {
     const solicitacoes = await Solicitacao.findAll();
@@ -40,7 +40,7 @@ exports.getAllSolicitacoes = async (req, res) => {
   }
 };
 
-// Buscar uma solicitação por ID
+
 exports.getSolicitacaoById = async (req, res) => {
   const { solicitacaoId } = req.params;
 
@@ -58,7 +58,7 @@ exports.getSolicitacaoById = async (req, res) => {
   }
 };
 
-// Atualizar status, motivo e certificado da solicitação
+
 exports.updateStatusSolicitacao = async (req, res) => {
   const { solicitacaoId } = req.params;
   const { status, motivo } = req.body; 
@@ -91,8 +91,6 @@ exports.updateStatusSolicitacao = async (req, res) => {
 
 
 
-
-// Deletar uma solicitação
 exports.deleteSolicitacao = async (req, res) => {
   const { solicitacaoId } = req.params;
 
@@ -111,7 +109,7 @@ exports.deleteSolicitacao = async (req, res) => {
   }
 };
 
-// Ver comprovante de uma solicitação do tipo "Contabilizar Horas"
+
 exports.getComprovante = async (req, res) => {
   const { solicitacaoId } = req.params;
 
@@ -135,7 +133,7 @@ exports.getComprovante = async (req, res) => {
   }
 };
 
-// Buscar solicitações por usuarioId
+
 exports.getSolicitacoesByUsuarioId = async (req, res) => {
   const { usuarioId } = req.params;
 
