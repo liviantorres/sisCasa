@@ -93,15 +93,15 @@ const AdminHome = () => {
     setModalAdicionar(false);
   };
 
-  // Lida com a seleção de tipo de atividade
+ 
   const handleTipoSelecionado = (tipo) => {
-    setTipoAtividade(tipo); // Armazena o tipo de atividade escolhido
-    setModalSelecionarTipo(false); // Fecha o modal de seleção
-    setModalAdicionar(true); // Abre o modal de adicionar a atividade
+    setTipoAtividade(tipo); 
+    setModalSelecionarTipo(false); 
+    setModalAdicionar(true); 
   };
 
   const handleCloseModalSelecionarTipo = () => {
-    setModalSelecionarTipo(false); // Fecha o modal de seleção de tipo
+    setModalSelecionarTipo(false); 
   };
 
   //Modal Editar

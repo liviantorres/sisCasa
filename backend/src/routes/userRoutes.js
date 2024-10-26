@@ -4,14 +4,8 @@ const { getUser, getAllUsers, editUser } = require('../controllers/userControlle
 const router = express.Router();
 
 
-router.get('/usuario', auth, getUser); // buscar usuário
-router.put(`/editar/:userId`, auth, editUser); // editar usuario
-
-//Rotas admin
-router.get('/admin', auth, admin, getAllUsers); // buscar todos os usuários
-
-//Rotas PEP
-
-//Rotas Servidor
+router.get('/usuario', auth, getUser);
+router.put(`/editar/:userId`, auth, editUser); 
+router.get('/admin', auth, admin, getAllUsers);
 
 module.exports = router;

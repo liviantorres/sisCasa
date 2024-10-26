@@ -10,15 +10,10 @@ const {
 } = require("../controllers/pontuacaoController");
 
 router.post("/", criarPontuacao);
-
 router.post("/associar-horas", associarHoras);
-
 router.get("/", obterPontuacoes);
-
 router.get("/usuario/:usuarioId", obterPontuacoesUsuario);
-
 router.put("/:id", atualizarPontuacao);
-
 router.delete("/:id", removerPontuacao);
 
 module.exports = router;

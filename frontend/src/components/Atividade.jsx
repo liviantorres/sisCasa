@@ -1,9 +1,7 @@
 import { styled } from "styled-components";
 import PropTypes from 'prop-types';
 import { lighten } from 'polished'
-import { FaEye } from "react-icons/fa";
-import { FaRegTrashAlt } from "react-icons/fa";
-import { FaEdit } from "react-icons/fa";
+import { FaEye, FaEdit, FaUserPlus, FaRegTrashAlt  } from "react-icons/fa";
 
 
 const ContainerWrap = styled.div`
@@ -49,7 +47,7 @@ const ContainerWrap = styled.div`
         background-color: #CCC5DF;
         display: flex;
         flex-direction: row;
-        justify-content: space-between;
+        justify-content: ${({ hasInscreverSe }) => (hasInscreverSe ? 'flex-end' : 'space-between')};
         align-items: center;
         padding: 5px;
         
@@ -100,7 +98,7 @@ const ContainerWrap = styled.div`
 
 
 const Atividade = ({titulo, descricao, professor, status, botoes=[], onVisualizar}) => {
-    
+    const hasInscreverSe = botoes.some((botao) => botao.texto === "Inscrever-se");
 
     return ( 
         <>
@@ -110,7 +108,7 @@ const Atividade = ({titulo, descricao, professor, status, botoes=[], onVisualiza
                 <h3>Descrição:</h3>
                 <p>{descricao}</p>
             </Descricao>
-            <ContainerInformacoesCurso>
+            <ContainerInformacoesCurso hasInscreverSe={hasInscreverSe}>
             {onVisualizar && (
             <Botao onClick={onVisualizar}>
               <FaEye size={18} /> Visualizar
@@ -119,13 +117,18 @@ const Atividade = ({titulo, descricao, professor, status, botoes=[], onVisualiza
                 {professor &&  <div><h3>Professor:</h3> <h2>{professor}</h2></div>}
                 {status && <div><h3>Status:</h3><h2>{status}</h2></div>}
                <div>
-                {botoes.map((botao, index)=>(
-                  botao.texto == 'Editar' ? (
-                        <Botao key={index} cor="#9159FF" onClick={botao.onClick}><FaEdit/>{botao.texto}</Botao>
-                  ):(
-                        <Botao key={index} cor="#4B3E65" onClick={botao.onClick}><FaRegTrashAlt/>{botao.texto}</Botao>
-                    )
-                ))}
+               {botoes.map((botao, index) => (
+                        <Botao key={index} cor={botao.cor} onClick={botao.onClick}>
+                             {botao.texto === "Inscrever-se" ? (
+                                <FaUserPlus />
+                            ) : botao.texto === 'Editar' ? (
+                                <FaEdit />
+                            ) : (
+                                <FaRegTrashAlt />
+                            )}
+                            {botao.texto}
+                        </Botao>
+                    ))}
                </div>
                 
             </ContainerInformacoesCurso>

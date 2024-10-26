@@ -7,9 +7,7 @@ obterPontuacoesPorCategoria
 } = require("../controllers/categoriaController");
 
 router.get("/", listarCategorias);
-
 router.post("/", criarCategoria);
-
 router.get("/:categoriaId", obterPontuacoesPorCategoria)
 
 module.exports = router;
