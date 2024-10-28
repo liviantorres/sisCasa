@@ -1,14 +1,16 @@
 import { styled } from "styled-components";
 import PropTypes from 'prop-types';
-import { lighten } from 'polished'
-import { FaEye, FaEdit, FaUserPlus, FaRegTrashAlt  } from "react-icons/fa";
-
+import { darken } from 'polished'
+import { FaEye, FaEdit, FaUserPlus, FaRegTrashAlt } from "react-icons/fa";
+import { IoMdAttach } from "react-icons/io";
 
 const ContainerWrap = styled.div`
         border-radius: 10px;
         overflow: hidden;
         margin-bottom: 30px;
     `;
+
+
 
 
     const Titulo = styled.h2`
@@ -47,7 +49,7 @@ const ContainerWrap = styled.div`
         background-color: #CCC5DF;
         display: flex;
         flex-direction: row;
-        justify-content: ${({ hasInscreverSe }) => (hasInscreverSe ? 'flex-end' : 'space-between')};
+        justify-content: ${({ onlyButtons }) => (onlyButtons ? 'flex-end' : 'space-between')};
         align-items: center;
         padding: 5px;
         
@@ -91,14 +93,14 @@ const ContainerWrap = styled.div`
         transition: 200ms;
         &:hover{
             cursor: pointer;
-            background-color: ${({ cor }) => cor ? lighten(0.1, cor) : '#48248fb9'};
+            background-color: ${({ cor }) => cor ? darken(0.1, cor) : '#48248fb9'};
             transform: scale(1.05);  
         }
     `;
 
 
-const Atividade = ({titulo, descricao, professor, status, botoes=[], onVisualizar}) => {
-    const hasInscreverSe = botoes.some((botao) => botao.texto === "Inscrever-se");
+const Atividade = ({titulo, descricao, cargaHoraria, situacao, professor, status, botoes=[], onVisualizar}) => {
+    const hasDetails = professor || status || cargaHoraria || situacao;
 
     return ( 
         <>
@@ -108,7 +110,7 @@ const Atividade = ({titulo, descricao, professor, status, botoes=[], onVisualiza
                 <h3>Descrição:</h3>
                 <p>{descricao}</p>
             </Descricao>
-            <ContainerInformacoesCurso hasInscreverSe={hasInscreverSe}>
+            <ContainerInformacoesCurso onlyButtons={!hasDetails}>
             {onVisualizar && (
             <Botao onClick={onVisualizar}>
               <FaEye size={18} /> Visualizar
@@ -116,16 +118,25 @@ const Atividade = ({titulo, descricao, professor, status, botoes=[], onVisualiza
           )}
                 {professor &&  <div><h3>Professor:</h3> <h2>{professor}</h2></div>}
                 {status && <div><h3>Status:</h3><h2>{status}</h2></div>}
-               <div>
+                {cargaHoraria && <div><h3>Carga Horária:</h3><h2>{cargaHoraria} Horas</h2></div>}
+                {situacao && <div><h3>Situação:</h3><h2>{situacao}</h2></div>}
+               <div >
                {botoes.map((botao, index) => (
                         <Botao key={index} cor={botao.cor} onClick={botao.onClick}>
                              {botao.texto === "Inscrever-se" ? (
                                 <FaUserPlus />
                             ) : botao.texto === 'Editar' ? (
                                 <FaEdit />
-                            ) : (
+                            ) : botao.texto === 'Anexar Comprovante' ? (
+                                <IoMdAttach size={18} />
+                            ): botao.texto === 'Remover'? (
                                 <FaRegTrashAlt />
-                            )}
+                            ) : botao.texto === 'Visualizar'? (
+                                <FaEye/>
+                            ) : (
+                                <></>
+                            )
+                            }
                             {botao.texto}
                         </Botao>
                     ))}

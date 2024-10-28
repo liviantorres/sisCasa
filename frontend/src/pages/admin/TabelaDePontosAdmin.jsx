@@ -24,13 +24,13 @@ const ScrollableAtividades = styled.div`
 
 
 
-const TabelaDePontosPep = () => {
+const TabelaDePontosAdmin = () => {
 
   return (
     <>
       <Header />
       <ContainerConteudo>
-        <Titulo>Tabela de Pontos</Titulo>
+        <Titulo>Tabela de Pontos Admin</Titulo>
 
         <ScrollableAtividades>
          
@@ -40,5 +40,5 @@ const TabelaDePontosPep = () => {
   );
 };
 
-export default TabelaDePontosPep;
+export default TabelaDePontosAdmin;
 

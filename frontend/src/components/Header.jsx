@@ -59,7 +59,7 @@ const Header = () => {
         }else if (papel === '2'){
             navigate('/servidor/perfil'); 
         }else if(papel === '3'){
-            navigate('/professor/perfil'); 
+            navigate('/pep/perfil'); 
         }
         
     };

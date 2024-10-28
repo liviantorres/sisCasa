@@ -254,7 +254,7 @@ const Home = () => {
               <h2 className="cas">CAS</h2>
               <h2 className="a">a</h2>
             </div>
-            <Text>Sua plataforma de atividades acadêmicas!</Text>
+            <Text>Sua plataforma de atividades CASa!</Text>
           </ContainerLeft>
           <img className="img-home" src="./img-home.svg" alt="Imagem Home" />
         </ContainerLeftRigth>
