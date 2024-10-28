@@ -3,15 +3,19 @@ import Header from "../../components/Header";
 import Solicitacao from "../../components/AdminSolicitacoes/Solicitacao";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { IoMdAddCircleOutline } from "react-icons/io";
+import ModalAdcSolicitacao from "../../components/PepSolicitacao/ModalAdcSolicitacao";
+import ModalVisualizarSolicitacao from "../../components/PepSolicitacao/ModalVisualizarSolicitacao";
+import ModalAtividade from "../../components/PepSolicitacao/ModalAtividade";
+import ModalContabilizarHoras from "../../components/PepSolicitacao/ModalContabilizarHoras";
+import ModalConclusao from "../../components/PepSolicitacao/ModalConclusao";
 
-// Estilização do container do conteúdo
 const ContainerConteudo = styled.div`
   margin: 50px;
   display: flex;
   flex-direction: column;
 `;
 
-// Estilização do título
 const Titulo = styled.h2`
   font-family: "Archivo", sans-serif;
   font-weight: 300;
@@ -20,57 +24,66 @@ const Titulo = styled.h2`
   margin-bottom: 40px;
 `;
 
-// Estilização do modal
-const ModalOverlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-// Estilização do conteúdo do modal
-const ModalContent = styled.div`
-  background-color: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 400px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-`;
-
-// Botão para fechar o modal
-const CloseButton = styled.button`
+const Botao = styled.button`
   background-color: #774fd1;
-  color: white;
-  padding: 10px;
+  font-family: "Arquivo", sans-serif;
+  font-weight: 600;
+  display: flex;
+  text-transform: uppercase;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  width: 18%;
+  height: 3rem;
+  border-radius: 8px;
   border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 10px;
-
+  background-color: #774fd1;
+  text-transform: uppercase;
+  letter-spacing: 0.75px;
+  color: #ffffff;
+  margin: 10px;
+  transition: 200ms;
   &:hover {
-    background-color: #47248f;
+    cursor: pointer;
+    background-color: "#774FD1";
+    transform: scale(1.05);
   }
+`;
+
+const ScrollableAtividades = styled.div`
+  max-height: 500px;
+  overflow-y: auto;
+  padding-right: 20px;
+`;
+
+const Div = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 `;
 
 const SolicitacoesPep = () => {
   const [solicitacoes, setSolicitacoes] = useState([]);
-  const [modalSolicitacao, setModalSolicitacao] = useState(null); // Armazena a solicitação atual para o modal
+  const [modalSolicitacao, setModalSolicitacao] = useState(null);
+  const [modalAdcSolicitacao, setModalAdcSolicitacao] = useState(null);
+  const [modalAtividade, setModalAtividade] = useState(null);
+  const [modalContabilizar, setModalContabilizar] = useState(null);
+  const [modalConclusao, setModalConclusao] = useState(null);
 
   const fetchSolicitacoes = async () => {
-    const token = localStorage.getItem('token'); 
-    const userId = localStorage.getItem('id');
+    const token = localStorage.getItem("token");
+    const userId = localStorage.getItem("id");
     try {
-      const response = await axios.get(`http://localhost:3000/solicitacao/${userId}/usuario`, {
-        headers: {
-          Authorization: `Bearer ${token}`, 
+      const response = await axios.get(
+        `http://localhost:3000/solicitacao/${userId}/usuario`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      });
-      setSolicitacoes(response.data); 
+      );
+      setSolicitacoes(response.data);
     } catch (error) {
       console.error("Erro ao buscar solicitacoes", error);
     }
@@ -81,42 +94,96 @@ const SolicitacoesPep = () => {
   }, []);
 
   // Função para abrir o modal com a solicitação selecionada
-  const openModal = (solicitacao) => {
-    setModalSolicitacao(solicitacao);
+  const openModal = () => {
+    setModalSolicitacao(true);
   };
 
   // Função para fechar o modal
   const closeModal = () => {
-    setModalSolicitacao(null);
+    setModalSolicitacao(false);
+  };
+
+  const openModalAdcSolicitacao = () => {
+    setModalAtividade(false);
+    setModalAdcSolicitacao(true);
+  };
+
+  const closeModalAdcSolicitacao = () => {
+    setModalAdcSolicitacao(false);
+  };
+
+  const openModalAtividade = () => {
+    setModalAdcSolicitacao(false);
+    setModalAtividade(true);
+  };
+
+  const closeModalAtividade = () => {
+    setModalAtividade(false);
+  };
+
+  const openModalContabilizar = () => {
+    setModalAdcSolicitacao(false);
+    setModalContabilizar(true);
+  };
+
+  const closeModalContabilizar = () => {
+    setModalContabilizar(false);
+  };
+
+  const openModalConclusao = () => {
+    setModalAdcSolicitacao(false);
+    setModalConclusao(true);
+  };
+
+  const closeModalConclusao = () => {
+    setModalConclusao(false);
   };
 
   return (
     <>
       <Header />
       <ContainerConteudo>
-        <Titulo>Suas Solicitações</Titulo>
+        <Div>
+          <Titulo>Suas Solicitações</Titulo>
+          <Botao onClick={openModalAdcSolicitacao}>
+            <IoMdAddCircleOutline size={18} /> Adicionar Solicitação
+          </Botao>
+        </Div>
 
-        {solicitacoes.map((solicitacao, index) => (
-          <Solicitacao 
-            key={index} 
-            solicitacao={solicitacao} 
-            onDetalhes={() => openModal(solicitacao)} // Passa a função para abrir o modal
+        <ScrollableAtividades>
+          {solicitacoes.map((solicitacao, index) => (
+            <Solicitacao
+              key={index}
+              solicitacao={solicitacao}
+              onDetalhes={() => openModal(solicitacao)}
+            />
+          ))}
+          <Solicitacao
+            solicitacao={{
+              status: "pendente",
+              tipoSolicitacao: "Contabilizar Horas",
+              descricao: "Teste de Solicitacao",
+            }}
           />
-        ))}
+        </ScrollableAtividades>
 
-        {/* Exibir modal se houver uma solicitação selecionada */}
+        {modalAdcSolicitacao && (
+          <ModalAdcSolicitacao onClose={closeModalAdcSolicitacao} modalAtividade={openModalAtividade} modalContabilizar={openModalContabilizar} modalConclusao={openModalConclusao}/>
+        )}
+        {modalAtividade && (
+          <ModalAtividade onClose={closeModalAtividade} />
+        )}
+        {modalContabilizar && (
+          <ModalContabilizarHoras onClose={closeModalContabilizar} />
+        )}
+        {modalConclusao && (
+          <ModalConclusao onClose={closeModalConclusao} />
+        )}
         {modalSolicitacao && (
-          <ModalOverlay>
-            <ModalContent>
-              <h2>Detalhes da Solicitação</h2>
-              <p><strong>Título:</strong> {modalSolicitacao.titulo}</p>
-              <p><strong>Professor:</strong> {modalSolicitacao.professor}</p>
-              <p><strong>Status:</strong> {modalSolicitacao.status}</p>
-              <p><strong>Data:</strong> {modalSolicitacao.data}</p>
-              {/* Adicione mais detalhes conforme necessário */}
-              <CloseButton onClick={closeModal}>Fechar</CloseButton>
-            </ModalContent>
-          </ModalOverlay>
+          <ModalVisualizarSolicitacao
+            onClose={closeModal}
+            solicitacao={solicitacoes}
+          />
         )}
       </ContainerConteudo>
     </>

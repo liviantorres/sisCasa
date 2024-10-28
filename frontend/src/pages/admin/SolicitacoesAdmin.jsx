@@ -1,6 +1,6 @@
-import Header from "../Header";
+import Header from "../../components/Header";
 import styled from "styled-components";
-import Solicitacao from "./Solicitacao";
+import Solicitacao from "../../components/AdminSolicitacoes/Solicitacao";
 
 const Titulo = styled.h2`
   font-family: "Archivo", sans-serif;

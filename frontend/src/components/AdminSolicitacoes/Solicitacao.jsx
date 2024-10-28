@@ -2,6 +2,7 @@ import { styled } from "styled-components";
 import { lighten } from 'polished';
 import { useState } from 'react';
 import { AiOutlineClose } from 'react-icons/ai'; // Adicionando ícone de fechar
+import ModalVisualizar from "./ModalVisualizar";
 
 const ContainerWrap = styled.div`
     border-radius: 10px;
@@ -195,7 +196,15 @@ const Header = styled.div`
 
 const Solicitacao = ({ solicitacao }) => {
     const { id, data, status, tipoSolicitacao, descricao, motivo, certificado, comprovante } = solicitacao; 
-    const [isModalOpen, setIsModalOpen] = useState(false); 
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [modalDetalhesSolicitacao, setModalDetalhesSolicitacao] = useState(false);
+
+    const openModalDetalhesSolicitacao = () => {
+        setModalDetalhesSolicitacao(true);
+    }
+    const closeModalDetalhesSolicitacao = () => {
+        setModalDetalhesSolicitacao(false)
+    }
 
     const formatarData = (dataISO) => {
         const dataObj = new Date(dataISO);
@@ -244,58 +253,13 @@ const Solicitacao = ({ solicitacao }) => {
                         <StatusDot status={status} />
                         <P>{status}</P>
                     </div>
-                    <Botao onClick={() => setIsModalOpen(true)}>Detalhes</Botao>
+                    <Botao onClick={openModalDetalhesSolicitacao}>Detalhes</Botao>
                 </ContainerInformacoesCurso>
             </ContainerWrap>
 
-            {isModalOpen && (
-                <ModalOverlay>
-                    <ModalContent>
-                        <CloseButton onClick={() => setIsModalOpen(false)}>
-                            <AiOutlineClose />
-                        </CloseButton>
-                        <Header>Detalhes da Solicitação</Header>
-                        <ContentIntern>
-                        <div>
+        {modalDetalhesSolicitacao && <ModalVisualizar onClose={closeModalDetalhesSolicitacao}/>}
 
-                            <p><Label>Tipo de Solicitação:</Label> {tipoSolicitacao}</p>
-                            <p><Label>Descrição:</Label> {descricao}</p>
-                            <p><Label>Status:</Label><StatusDot status={status}/> {status}</p>
-
-
-                        </div>
-                       <div>
-                       {status === "aceito" && tipoSolicitacao === "Certificado de Curso" && (
-                            <>
-                                <p><Label>Motivo:</Label> {motivo}</p>
-                                {certificado && (
-                                    <p>
-                                        <Label>Certificado:</Label> 
-                                        <a href={certificado} target="_blank" rel="noopener noreferrer">Baixar Certificado</a>
-                                    </p>
-                                )}
-                            </>
-                        )}
-
-                        {status === "aceito" && tipoSolicitacao === "Certificado de Horas" && certificado && (
-                            <p>
-                                <Label>Certificado:</Label> 
-                                <a href={certificado} target="_blank" rel="noopener noreferrer">Baixar Certificado</a>
-                            </p>
-                        )}
-
-                        {comprovante && (
-                            <p>
-                                <Label>Comprovante:</Label> 
-                                <button onClick={() => visualizarComprovante(id)}>
-                                    Visualizar Comprovante (PDF)
-                                </button>
-                            </p>
-                        )}
-                       </div></ContentIntern>
-                    </ModalContent>
-                </ModalOverlay>
-            )}
+            
         </>
     );
 }

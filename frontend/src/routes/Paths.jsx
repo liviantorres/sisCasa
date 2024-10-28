@@ -4,7 +4,6 @@ import PageLayout from "../layouts/PageLayout";
 
 import HomePep from "../pages/pep/HomePep"
 import SolicitacoesPep from "../pages/pep/SolicitacoesPep"
-import ProgressoPep from "../pages/pep/ProgressoPep"
 import TabelaDePontosPep from "../pages/pep/TabelaDePontosPep"
 import NotFound from "../pages/NotFound"
 import Home from "../pages/Home";
@@ -13,8 +12,11 @@ import PageLayoutPublic from "../layouts/PageLayoutPublic";
 import AdminHome from "../pages/admin/AdminHome";
 import Register from "../pages/Register";
 import PerfilAdmin from "../pages/admin/PerfilAdmin";
-import SolicitacoesAdmin from "../components/AdminSolicitacoes/SolicitacoesAdmin";
+import CursosPep from "../pages/pep/CursosPep"
+import SolicitacoesAdmin from "../pages/admin/SolicitacoesAdmin";
 import AdcUsuarioAdmin from "../pages/admin/AdcUsuarioAdmin";
+import PerfilPep from "../pages/pep/PerfilPep";
+import TabelaDePontosAdmin from "../pages/admin/TabelaDePontosAdmin";
 
 const Paths = () => {
     return ( 
@@ -23,8 +25,9 @@ const Paths = () => {
             <Routes>
                 <Route path="/pep" element={<PageLayout userType = 'pep' />}>
                     <Route index element={<HomePep/>}/>
-                    <Route path="/pep/cursos" element={<SolicitacoesPep/>}/>
-                    <Route path="/pep/progresso" element={<ProgressoPep/>}/>
+                    <Route path="/pep/perfil" element={<PerfilPep/>}/>
+                    <Route path="/pep/solicitacoes" element={<SolicitacoesPep/>}/>
+                    <Route path="/pep/cursos" element={<CursosPep/>}/>
                     <Route path="/pep/tabela" element={<TabelaDePontosPep/>}/>
                 </Route>
                 <Route path="/admin" element={<PageLayout userType = 'admin' />}>
@@ -32,6 +35,7 @@ const Paths = () => {
                     <Route path="/admin/perfil" element={<PerfilAdmin/>}/>
                     <Route path="/admin/solicitacoes" element={<SolicitacoesAdmin/>}/>
                     <Route path="/admin/usuarios" element={<AdcUsuarioAdmin/>}/>
+                    <Route path="/admin/tabela" element={<TabelaDePontosAdmin/>}/>
                 </Route>
                 <Route path="/" element={<PageLayoutPublic/>}>
                         <Route index element={<Home/>}/>
