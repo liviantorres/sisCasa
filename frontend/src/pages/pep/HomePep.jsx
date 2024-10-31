@@ -64,8 +64,21 @@ const HomePep = () => {
     setModalInscrever(false)
   };
   
-  const handleSave = () =>{
-    setModalInscrever(false)
+  const handleSave = async () =>{
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('id');
+    
+    try {
+      const response = axios.post(`http://localhost:3000/atividade/${atividadeSelecionada.id}/aluno/${userId}`,{
+        headers: {
+         Authorization: `Bearer ${token}`
+        }
+      })
+      console.log("Usuário adicionado a atividade", response.data);
+      setModalInscrever(false);
+    } catch (error) {
+      console.log(error.response);
+    }
   };
 
   return (
