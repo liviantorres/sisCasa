@@ -1,6 +1,8 @@
 import styled from "styled-components";
-import { AiOutlineClose } from "react-icons/ai"; 
-import { darken } from 'polished';
+import { AiOutlineClose } from "react-icons/ai";
+import { darken } from "polished";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const Overlay = styled.div`
   position: fixed;
@@ -18,7 +20,7 @@ const Overlay = styled.div`
 const ContainerAdc = styled.div`
   display: flex;
   flex-direction: column;
-  
+
   background-color: #fff;
   padding: 0px;
   border-radius: 10px;
@@ -28,11 +30,10 @@ const ContainerAdc = styled.div`
   position: relative;
 `;
 
-
 const CloseIcon = styled(AiOutlineClose)`
   font-size: 24px;
   cursor: pointer;
-  color: #ffff; 
+  color: #ffff;
   margin-top: -20px;
   &:hover {
     color: #5a3cae;
@@ -75,7 +76,7 @@ const Button = styled.button`
   text-transform: uppercase;
   letter-spacing: 0.1em;
   padding: 10px 20px;
-  background-color: #04D361;
+  background-color: #04d361;
   color: white;
   border: none;
   border-radius: 5px;
@@ -84,12 +85,12 @@ const Button = styled.button`
   transition: background-color 0.3s;
   margin: 20px;
   &:hover {
-    background-color: ${darken(0.1, '#04D361')};
+    background-color: ${darken(0.1, "#04D361")};
   }
 `;
 
 const P = styled.p`
-  font-family: 'Archivo', sans-serif;
+  font-family: "Archivo", sans-serif;
   color: #000000d5;
   font-size: 15px;
   margin: 4px;
@@ -97,8 +98,8 @@ const P = styled.p`
 
 const HeaderContainer = styled.div`
   display: flex;
-  align-items: center; 
-  padding: 20px; 
+  align-items: center;
+  padding: 20px;
   background-color: #774fd1;
   border-radius: 8px 8px 0 0;
 `;
@@ -109,20 +110,49 @@ const Header = styled.div`
   font-weight: 500;
   letter-spacing: 0.9px;
   font-size: 24px;
-  flex: 1; 
-  text-align: center; 
+  flex: 1;
+  text-align: center;
   color: #ffff;
 `;
 
-const ModalInscrever = ({onClose, atividade}) => {
-    return (
-        <Overlay onClick={onClose}>
-        <ContainerAdc onClick={(e) => e.stopPropagation()}>
-          <HeaderContainer>
-            <Header>Inscrever-se</Header>
-            <CloseIcon onClick={onClose} /> 
-            </HeaderContainer>
-            <ContainerInputsLabels>
+const ModalInscrever = ({ onClose, atividade, onSave}) => {
+  const [professor, setProfessor] = useState(null);
+
+  const fetchProfessor = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/user/${atividade.professorId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setProfessor(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.error("Erro ao buscar professores:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProfessor();
+  }, []);
+
+  const handleSave = () => {
+    onSave();
+  };
+
+
+  return (
+    <Overlay onClick={onClose}>
+      <ContainerAdc onClick={(e) => e.stopPropagation()}>
+        <HeaderContainer>
+          <Header>Inscrever-se</Header>
+          <CloseIcon onClick={onClose} />
+        </HeaderContainer>
+        <ContainerInputsLabels>
           <Div>
             <Label>Título:</Label>
             <P>{atividade.titulo}</P>
@@ -132,8 +162,15 @@ const ModalInscrever = ({onClose, atividade}) => {
           <Div>
             {atividade.categoria !== "edital" && (
               <>
-                <Label>Professor:</Label>
-                <P>{atividade.professorId}</P>
+                {professor ? (
+                  <div>
+                    <Label>Professor:</Label>
+                    <P>{professor.nomeCompleto}</P>
+                  </div>
+                ) : (
+                  <p>Professor não identificado.</p>
+                )}
+
                 <Label>Carga Horária:</Label>
                 <P>{atividade.cargaHoraria}</P>
               </>
@@ -143,11 +180,11 @@ const ModalInscrever = ({onClose, atividade}) => {
           </Div>
         </ContainerInputsLabels>
         <ContainerBotoes>
-            <Button onClick={onClose}>Confirmar</Button>
+          <Button onClick={handleSave}>Confirmar</Button>
         </ContainerBotoes>
-        </ContainerAdc>
-        </Overlay>
-   );
-}
- 
+      </ContainerAdc>
+    </Overlay>
+  );
+};
+
 export default ModalInscrever;

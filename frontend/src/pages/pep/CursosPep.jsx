@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import Header from "../../components/Header";
 import { MdOutlineDone } from "react-icons/md";
 import Atividade from "../../components/Atividade";
+import axios from "axios";
 
 const ContainerConteudo = styled.div`
   margin: 50px;
@@ -85,8 +86,16 @@ const ScrollableAtividades = styled.div`
   width: 100%;
 `;
 
+const SemAtividades = styled.h3`
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  text-align: center;
+  color: #202b3b;
+`;
+
 const CursosPep = () => {
   const [conteudoAtual, setConteudoAtual] = useState("aluno");
+  const [atividadesAluno, setAtividadesAluno] = useState([]);
 
   const botao = [
     {
@@ -94,6 +103,32 @@ const CursosPep = () => {
       cor: "#04D361",
     },
   ];
+
+  const fetchAtividades = async () => {
+    const token = localStorage.getItem("token");
+    const id = localStorage.getItem("id");
+
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/atividade/${id}/atividades`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log(response.data);
+
+      setAtividadesAluno(response.data);
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
+  useEffect(() => {
+    fetchAtividades();
+  }, []);
 
   return (
     <>
@@ -126,26 +161,35 @@ const CursosPep = () => {
         </ContainerHeader>
         <ScrollableAtividades>
           {conteudoAtual === "aluno" ? (
-            <Atividade
-              titulo="Atividade teste"
-              descricao="descricao da atividade teste"
-              cargaHoraria="2"
-              situacao="Aprovado"
-              botoes={botao}
-            />
+            Array.isArray(atividadesAluno) && atividadesAluno.length > 0 ? (
+              atividadesAluno.map((atividade) => (
+                <Atividade
+                  key={atividade.id}
+                  titulo={atividade.titulo}
+                  descricao={atividade.descricao}
+                  cargaHoraria={`${atividade.cargaHoraria}h`}
+                  situacao={atividade.situacao}
+                  botoes={botao}
+                />
+              ))
+            ) : (
+              <SemAtividades>
+                Não há atividades disponíveis no momento.
+              </SemAtividades>
+            )
           ) : (
             <Atividade
               titulo="Atividade de professor"
               descricao="descricao da atividade de professor"
               botoes={[
                 {
-                    texto: "Frequencia",
-                    cor: "#47248F",
+                  texto: "Frequencia",
+                  cor: "#47248F",
                 },
                 {
-                    texto: "Visualizar",
-                    cor: "#47248F",
-                }
+                  texto: "Visualizar",
+                  cor: "#47248F",
+                },
               ]}
             />
           )}

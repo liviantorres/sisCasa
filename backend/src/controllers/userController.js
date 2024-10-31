@@ -15,6 +15,20 @@ exports.getUser = async (req, res) => {
   }
 };
 
+exports.getUserById = async (req, res) => {
+  try {
+    const { id } = req.params;  // Pega o id da URL
+    const user = await User.findByPk(id, {
+      include: { model: Role, through: { attributes: [] } }
+    });
+    if (!user) return res.status(404).json({ message: 'Usuario não existe' });
+
+    return res.status(200).json(user);
+  } catch (error) {
+    return res.status(500).json({ message: 'Erro no servidor' });
+  }
+};
+
 exports.getAllUsers = async (req, res) => {
   console.log("Buscando todos os usuários..."); 
   try {
