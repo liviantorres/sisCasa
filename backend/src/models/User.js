@@ -1,10 +1,14 @@
-const { DataTypes } = require('sequelize');
+const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../config/Connection');
 const Role = require('./Role'); 
 const Pontuacao = require('./Pontuacao');
 const UserPontuacao = require('./UserPontuacao');
+const Atividade = require('./Atividade');
+const UserAtividade = require('./UserAtividade');
 
-const User = sequelize.define('User', {
+class User extends Model {}
+
+User.init({
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
@@ -39,11 +43,42 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-}, { timestamps: true });
+}, { 
+  sequelize, 
+  modelName: 'User', 
+  tableName: 'users', 
+  timestamps: true 
+});
 
 
+// Relacionamentos de Usuario e Atividade
+User.belongsToMany(Atividade, {
+  through: {
+    model: UserAtividade
+  },
+  foreignKey: 'userId',
+  constraint: true
+});
+
+
+Atividade.belongsToMany(User, {
+  through: {
+    model: UserAtividade
+  },
+  foreignKey: 'atividadeId',
+  constraint: true
+})
+
+User.hasMany(UserAtividade, {foreignKey: 'userId'});
+UserAtividade.belongsTo(User, {foreignKey: 'userId'});
+Atividade.hasMany(UserAtividade, {foreignKey: 'atividadeId'});
+UserAtividade.belongsTo(Atividade, {foreignKey: 'atividadeId'});
+
+
+// Relacionamento de perfis do usuário
 User.belongsToMany(Role, { through: 'UserRole', foreignKey: 'userId' });
 Role.belongsToMany(User, { through: 'UserRole', foreignKey: 'roleId' });
+
 
 User.belongsToMany(Pontuacao, { through: UserPontuacao });
 Pontuacao.belongsToMany(User, { through: UserPontuacao });

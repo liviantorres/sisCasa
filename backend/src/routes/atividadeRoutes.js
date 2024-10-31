@@ -9,7 +9,10 @@ const {
   obterFrequenciasPorData,
   atualizarSituacaoAluno,
   atualizarFrequencias,
-  atualizarFrequenciaPorAluno
+  atualizarFrequenciaPorAluno,
+  listarAtividadesPorAluno,
+  atualizarSituacaoAlunoEmAtividade,
+  addAluno
 } = require('../controllers/atividadeController');
 
 const router = express.Router();
@@ -23,7 +26,14 @@ router.get('/buscar/:id', auth, obterAtividadePorId); // Buscar atividade
 router.post('/:id/frequencias', auth, obterFrequenciasPorData); // Obter frequências por data
 router.put('/:id/frequencias', auth, admin, atualizarFrequencias); // Atualizar frequências da atividade
 
-router.put('/:id/alunos/:alunoId/situacao', auth, admin, atualizarSituacaoAluno); // Atualizar situação do aluno
+
 router.put('/:id/frequencias/:data', auth, admin, atualizarFrequenciaPorAluno); // Atualizar frequência de um aluno em uma data específica
+
+router.post('/:atividadeId/aluno/:userId', addAluno); // Adicionar Aluno na Atividade
+
+router.put('/:alunoId/situacao', auth, admin, atualizarSituacaoAlunoEmAtividade); // Atualizar situação do aluno
+router.get('/:alunoId/atividades', listarAtividadesPorAluno);
+
+
 
 module.exports = router;

@@ -1,4 +1,6 @@
 const Atividade = require("../models/Atividade");
+const User = require("../models/User");
+const UserAtividade = require("../models/UserAtividade");
 
 exports.criarAtividade = async (req, res) => {
   try {
@@ -11,7 +13,15 @@ exports.criarAtividade = async (req, res) => {
 
 exports.listarAtividades = async (req, res) => {
   try {
-    const atividades = await Atividade.findAll();
+    const atividades = await Atividade.findAll({
+      include: [
+        {
+          model: User,
+          through: { attributes: ['situacao'] },
+          attributes: ['id', 'nomeCompleto', 'email']
+        }
+      ]
+    });
     return res.status(200).json(atividades);
   } catch (error) {
     return res.status(500).json({ error: error.message });
@@ -61,6 +71,7 @@ exports.deletarAtividade = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+
 exports.obterFrequenciasPorData = async (req, res) => {
   try {
     const { id } = req.params;
@@ -110,30 +121,26 @@ exports.atualizarFrequencias = async (req, res) => {
   }
 };
 
-exports.atualizarSituacaoAluno = async (req, res) => {
+exports.atualizarSituacaoAlunoEmAtividade = async (req, res) => {
   try {
-    const { id, alunoId } = req.params; 
-    const { situacao } = req.body; 
+    const { userId, atividadeId } = req.params;
+    const { situacao } = req.body;
 
-    const atividade = await Atividade.findByPk(id);
-    if (!atividade) {
-      return res.status(404).json({ message: "Atividade não encontrada" });
-    }
+    const userAtividade = await UserAtividade.findOne({
+      where: {
+        atividadeId: atividadeId,
+        userId: userId
+      }
+    });
 
-  
-    const aluno = atividade.alunos.find((a) => a.alunoId === parseInt(alunoId));
-    if (!aluno) {
+    if (!userAtividade) {
       return res.status(404).json({ message: "Aluno não encontrado na atividade" });
     }
 
-    aluno.situacao = situacao;
+    userAtividade.situacao = situacao;
+    await userAtividade.save();
 
-    await atividade.save();
-
-    return res.status(200).json({
-      message: "Situação do aluno atualizada com sucesso",
-      aluno: aluno,
-    });
+    return res.status(200).json({ message: "Situação do aluno atualizada com sucesso" });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -176,3 +183,61 @@ exports.atualizarFrequenciaPorAluno = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+
+
+exports.listarAtividadesPorAluno = async (req, res) => {
+  try {
+    const { alunoId } = req.params;
+
+    const aluno = await User.findByPk(alunoId, {
+      include: [{
+        model: Atividade,
+        through: { attributes: ['situacao'] } 
+      }]
+    });
+
+    if (!aluno) {
+      return res.status(404).json({ message: "Aluno não encontrado" });
+    }
+
+    return res.status(200).json(aluno.Atividades);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+
+exports.addAluno = async (req, res) => {
+  try {
+    const { atividadeId, userId } = req.params;
+    const { situacao } = req.body;
+
+    const atividade = await Atividade.findByPk(atividadeId);
+    const user = await User.findByPk(userId);
+
+    if (!atividade || !user) {
+      return res.status(404).json({ message: "Atividade ou Usuário não encontrado" });
+    }
+
+    const existeAssociacao = await UserAtividade.findOne({
+      where: { atividadeId, userId },
+    });
+
+    if (existeAssociacao) {
+      return res.status(400).json({ message: "Aluno já inscrito na atividade" });
+    }
+
+    await UserAtividade.create({
+      atividadeId: atividade.id,
+      userId: user.id,
+      situacao: situacao || "pendente",
+    });
+
+    return res.status(201).json({ message: "Aluno adicionado à atividade com sucesso" });
+  } catch (error) {
+    console.error("Erro ao adicionar aluno à atividade:", error);
+    return res.status(500).json({ message: "Erro interno ao adicionar aluno à atividade" });
+  }
+};
+
+
