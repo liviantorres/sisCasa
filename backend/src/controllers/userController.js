@@ -69,3 +69,31 @@ exports.editUser = async (req, res) => {
     return res.status(500).json({ message: 'Erro no servidor' });
   }
 };
+
+exports.getUserActivities = async (req, res) => {
+  const userId = req.params.id; 
+
+  try {
+    const user = await User.findByPk(userId, {
+      include: [
+        {
+          model: Atividade,
+          through: {
+            model: UserAtividade,
+            attributes: ['situacao'] 
+          }
+        }
+      ]
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "Usuário não encontrado" });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("Erro ao buscar atividades do usuário:", error);
+    res.status(500).json({ message: "Erro interno do servidor" });
+  }
+};
+

@@ -1,5 +1,5 @@
 const { Model, DataTypes } = require('sequelize');
-const sequelize = require('../config/Connection'); 
+const sequelize = require('../config/Connection');
 
 class Atividade extends Model {}
 
@@ -26,10 +26,6 @@ Atividade.init({
     },
     link: {
         type: DataTypes.STRING,
-        allowNull: true,
-    },
-    alunos: {
-        type: DataTypes.JSON, 
         allowNull: true,
     },
     frequencia: {
