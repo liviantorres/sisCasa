@@ -1,6 +1,8 @@
 
 const User = require('../models/User');
-const Role = require('../models/Role')
+const Role = require('../models/Role');
+const Atividade = require('../models/Atividade');
+const UserAtividade = require('../models/UserAtividade');
 
 exports.getUser = async (req, res) => {
   try {
@@ -37,10 +39,11 @@ exports.getAllUsers = async (req, res) => {
     });
     return res.status(200).json(users);
   } catch (error) {
-    console.error('Erro ao buscar usuários:', error); 
-    return res.status(500).json({ message: 'Erro no servidor' });
+    console.error('Erro ao buscar usuários:', error.message); 
+    return res.status(500).json({ message: 'Erro no servidor', error: error.message });
   }
 };
+
 
 
 exports.editUser = async (req, res) => {
@@ -111,3 +114,32 @@ exports.getUserActivities = async (req, res) => {
   }
 };
 
+
+exports.listarUsuariosPorAtividade = async (req, res) => {
+  try {
+    const { atividadeId } = req.params;
+
+    // Verifica se a atividade existe
+    const atividade = await Atividade.findByPk(atividadeId);
+    if (!atividade) {
+      return res.status(404).json({ message: "Atividade não encontrada" });
+    }
+
+    // Busca os usuários associados à atividade
+    const usuarios = await User.findAll({
+      include: [
+        {
+          model: Atividade,
+          where: { id: atividadeId },
+          through: { attributes: ['situacao'] },
+          attributes: []
+        }
+      ],
+      attributes: ['id', 'nomeCompleto', 'email']
+    });
+
+    return res.status(200).json(usuarios);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};

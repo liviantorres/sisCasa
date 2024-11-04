@@ -37,10 +37,13 @@ const HomePep = () => {
   const [atividadeSelecionada, setAtividadeSelecionada] = useState(null);
   const [modalInscrever, setModalInscrever] = useState(false)
 
+  const token = localStorage.getItem('token');
+  const userId = localStorage.getItem('id');
+
   const fetchAtividades = async () => {
-    const token = localStorage.getItem("token");
+   
     try {
-      const response = await axios.get("http://localhost:3000/atividade/", {
+      const response = await axios.get(`http://localhost:3000/atividade/${userId}/atividades-geral`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -65,17 +68,18 @@ const HomePep = () => {
   };
   
   const handleSave = async () =>{
-    const token = localStorage.getItem('token');
-    const userId = localStorage.getItem('id');
-    
+
     try {
       const response = axios.post(`http://localhost:3000/atividade/${atividadeSelecionada.id}/aluno/${userId}`,{
         headers: {
          Authorization: `Bearer ${token}`
         }
       })
+      
       console.log("Usuário adicionado a atividade", response.data);
       setModalInscrever(false);
+      alert("Inscrito na atividade!");
+      window.location.reload();
     } catch (error) {
       console.log(error.response);
     }
