@@ -225,7 +225,7 @@ const ModalFrequencia = ({ onClose, atividade }) => {
             </div>
           ))
         ) : (
-          <NoFrequencyMessage>Nenhuma frequência registrada.</NoFrequencyMessage>
+          <NoFrequencyMessage>Nenhum aluno registrado.</NoFrequencyMessage>
         )}
       </ContainerAdc>
     </Overlay>

@@ -1,6 +1,7 @@
 const Atividade = require("../models/Atividade");
 const User = require("../models/User");
 const UserAtividade = require("../models/UserAtividade");
+const { Op } = require("sequelize");
 
 exports.criarAtividade = async (req, res) => {
   try {
@@ -240,4 +241,52 @@ exports.addAluno = async (req, res) => {
   }
 };
 
+exports.listarAtividadesNaoInscritasPorAluno = async (req, res) => {
+  try {
+    const { alunoId } = req.params;
+
+    const atividadesInscritas = await UserAtividade.findAll({
+      where: { userId: alunoId },
+      attributes: ['atividadeId'],
+    });
+
+    const inscritasIds = atividadesInscritas.map(item => item.atividadeId);
+
+    const atividadesNaoInscritas = await Atividade.findAll({
+      where: {
+        id: { [Op.notIn]: inscritasIds }
+      }
+    });
+
+    return res.status(200).json(atividadesNaoInscritas);
+  } catch (error) {
+    console.error("Erro ao listar atividades não inscritas:", error);
+    return res.status(500).json({ error: "Erro ao listar atividades não inscritas" });
+  }
+};
+
+exports.listarAtividadesPorProfessor = async (req, res) => {
+  try {
+    const { professorId } = req.params;
+    
+    const atividades = await Atividade.findAll({
+      where: { professorId },
+      include: [
+        {
+          model: User,
+          through: { attributes: ['situacao'] },
+          attributes: ['id', 'nomeCompleto', 'email']
+        }
+      ]
+    });
+    
+    if (atividades.length === 0) {
+      return res.status(404).json({ message: "Nenhuma atividade encontrada para este professor" });
+    }
+    
+    return res.status(200).json(atividades);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
 
