@@ -1,5 +1,7 @@
 import styled from "styled-components";
 import { AiOutlineClose } from "react-icons/ai";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const Overlay = styled.div`
   position: fixed;
@@ -58,12 +60,12 @@ const Button = styled.button`
   font-size: 15px;
   letter-spacing: 0.1em;
   transition: all 0.3s ease;
-margin-bottom: 20px;
+  margin-bottom: 20px;
 
-&:hover {
+  &:hover {
     background-color: #168e4e;
-    transform: translateY(-2px); 
-    box-shadow: 0px 4px 8px rgba(30, 182, 98, 0.3); 
+    transform: translateY(-2px);
+    box-shadow: 0px 4px 8px rgba(30, 182, 98, 0.3);
   }
 `;
 
@@ -88,29 +90,29 @@ const Header = styled.div`
 const Label = styled.label`
   font-family: "Poppins", sans-serif;
   span {
-    color: #ED2C2C;
+    color: #ed2c2c;
   }
 `;
 
 const Div = styled.div`
-    display: flex;
-    flex-direction: column;
-    margin: 40px;
+  display: flex;
+  flex-direction: column;
+  margin: 40px;
 `;
 
 const Input = styled.input`
   font-family: "Archivo", sans-serif;
   font-weight: 100;
-    width: 90%;
-    height: 20px;
-    margin-top: 10px;
-    margin-bottom: 20px;
-    padding: 5px;
-    border: 1px solid #ccc;
-    font-size: 16px;
-    border-radius: 6px;
-    background-color: #F2EEEE;
-    
+  width: 90%;
+  height: 20px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  border-radius: 6px;
+  background-color: #f2eeee;
+
   &:focus {
     border-color: #774fd1;
     outline: none;
@@ -129,7 +131,7 @@ const Textarea = styled.textarea`
   border: 1px solid #ccc;
   font-size: 16px;
   resize: vertical;
-  background-color: #F2EEEE;
+  background-color: #f2eeee;
 
   &::placeholder {
     color: #999;
@@ -145,23 +147,115 @@ const Textarea = styled.textarea`
   }
 `;
 
+const Select = styled.select`
+  font-family: "Archivo", sans-serif;
+  font-weight: 100;
+  color: #000;
+  border: 1px solid #ccc;
+  width: 90%;
+  height: 30px;
+  padding-left: 4px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  background-color: #f2eeee;
+
+  &:focus {
+    border-color: #774fd1;
+    outline: none;
+    box-shadow: 0 0 2px rgba(119, 79, 209, 0.7);
+  }
+`;
+
 const ModalAtividade = ({ onClose }) => {
+  const [atividades, setAtividades] = useState([]);
+  const [cursoId, setCursoId] = useState("");
+  const [descricao, setDescricao] = useState("");
+
+  const token = localStorage.getItem("token");
+  const id = localStorage.getItem("id");
+
+  const fetchAtividades = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/atividade/${id}/atividades`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setAtividades(response.data);
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
+  useEffect(() => {
+    fetchAtividades();
+  }, []);
+
+  const handleSave = async () => {
+    const usuarioId = id;
+
+    try {
+      const novaSolicitacao = {
+        usuarioId: usuarioId,
+        tipoSolicitacao: "Certificado de Curso",
+        cursoId: cursoId,
+        descricao: descricao,
+      };
+
+      console.log('curso'+ cursoId)
+
+      const response = await axios.post(
+        `http://localhost:3000/solicitacao/`,
+        novaSolicitacao,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("Solicitação salva com sucesso:", response.data);
+      alert('Solicitação enviada!');
+      window.location.reload();
+    } catch (error) {
+      console.log("Erro ao salvar solicitação:", error.message);
+    }
+  };
+
   return (
     <Overlay>
       <ContainerAdc onClick={(e) => e.stopPropagation()}>
         <HeaderContainer>
-          <Header>Solicitação de Atividade:</Header>
+          <Header>Solicitação de Conclusão de Atividade:</Header>
           <CloseIcon onClick={onClose} />
         </HeaderContainer>
         <Div>
-        <Label>Indique o nome da atividade <span>*</span></Label>
-        <Input/>
+          <Label>
+            Indique o nome da atividade <span>*</span>
+          </Label>
+          <Select
+            name="nomeCurso"
+            value={cursoId}
+            onChange={(e) => setCursoId(e.target.value)}
+          >
+            <option value="">Selecione uma atividade:</option>
+            {atividades.map((atividade) => (
+              <option key={atividade.id} value={atividade.id}>
+                {atividade.titulo}
+              </option>
+            ))}
+          </Select>
 
-        <Label>Adicione uma breve descrição(opcional)</Label>
-        <Textarea/>
+          <Label>Adicione uma breve descrição (opcional)</Label>
+          <Textarea
+            value={descricao}
+            onChange={(e) => setDescricao(e.target.value)}
+          />
         </Div>
         <ContainerBotoes>
-          <Button>Salvar</Button>
+          <Button onClick={handleSave}>Salvar</Button>
         </ContainerBotoes>
       </ContainerAdc>
     </Overlay>

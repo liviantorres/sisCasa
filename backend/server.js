@@ -1,53 +1,39 @@
 const cors = require('cors');
 const sequelize = require('./src/config/Connection'); 
 const path = require('path');
-const seedRoles = require('./src/config/SeedRoles')
+const seedRoles = require('./src/config/SeedRoles');
+const importCSV = require('./src/config/importCSV'); 
 const authRoutes = require('./src/routes/authRoutes');
-const userRoutes = require('./src/routes/userRoutes')
-const atividadeRoutes = require('./src/routes/atividadeRoutes')
-const solicitacaoRoutes = require('./src/routes/solicitacaoRoutes')
-
-const pontuacaoRoutes = require('./src/routes/pontuacaoRoutes')
-const categoriaRoutes= require('./src/routes/categoriaRoutes');
+const userRoutes = require('./src/routes/userRoutes');
+const atividadeRoutes = require('./src/routes/atividadeRoutes');
+const solicitacaoRoutes = require('./src/routes/solicitacaoRoutes');
+const pontuacaoRoutes = require('./src/routes/pontuacaoRoutes');
+const categoriaRoutes = require('./src/routes/categoriaRoutes');
 
 const express = require('express');
 const app = express();
-
 const dotenv = require('dotenv');
 
 dotenv.config();
-
 
 app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-
-sequelize.authenticate()
-  .then(() => {
-    console.log('Conectado ao banco de dados.');
-  })
-  .catch((error) => {
-    console.error('Erro ao conectar ao banco de dados:', error);
-    process.exit(1);
-  });
-
-
-// Rotas publicas
+// Rotas públicas
 app.use('/auth', authRoutes);
 
-//Rotas Usuários
-app.use('/user', userRoutes)
+// Rotas de Usuários
+app.use('/user', userRoutes);
 
-//Rotas Atividade
-app.use('/atividade', atividadeRoutes)
+// Rotas de Atividades
+app.use('/atividade', atividadeRoutes);
 
-//Rotas Solicitações
+// Rotas de Solicitações
 app.use('/solicitacao', solicitacaoRoutes);
 
-//Tabela de Pontos 
-app.use('/categoria', categoriaRoutes)
-app.use('/pontuacao', pontuacaoRoutes)
+app.use('/categorias', categoriaRoutes);
+
 
 
 sequelize.authenticate()
@@ -62,6 +48,10 @@ sequelize.authenticate()
   })
   .then(() => {
     console.log('Papéis inseridos com sucesso.');
+    return importCSV(); 
+  })
+  .then(() => {
+    console.log('Dados do CSV importados com sucesso.');
   })
   .catch((error) => {
     console.error('Erro durante a configuração do banco de dados:', error);

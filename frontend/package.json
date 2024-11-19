@@ -20,7 +20,8 @@
     "react-router-dom": "^6.24.1",
     "sequelize": "^6.37.3",
     "siscasa": "file:",
-    "styled-components": "^6.1.11"
+    "styled-components": "^6.1.11",
+    "sweetalert2": "^11.14.5"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",

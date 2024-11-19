@@ -1,46 +1,90 @@
-const { Categoria, Pontuacao } = require('../models/AssociacaoTabelaDePontos');
+const Categoria = require('../models/Categoria');
+const Atividade = require('../models/AtividadeTabela')
 
-exports.criarCategoria = async(req, res) => {
-    try {
-      const categoria = await Categoria.create(req.body);
-      res.status(201).json(categoria);
-    } catch (error) {
-      res.status(500).json({ error: 'Erro ao criar categoria', detalhes: error.message });
-    }
-  },
+async function listarCategorias(req, res) {
+  try {
+   
+    const categorias = await Categoria.findAll({
+      include: {
+        model: Atividade,
+        as: 'atividades', 
+        attributes: ['codigo', 'nome', 'metrica', 'teto_autorizado', 'horas_submetidas', 'horas_consideradas'], // Campos que você deseja trazer das atividades
+        required: false,
+      },
+    });
 
-exports.listarCategorias= async (req, res) => {
-    try {
-      const categorias = await Categoria.findAll();
-      res.status(200).json(categorias);
-    } catch (error) {
-      res.status(500).json({ error: 'Erro ao buscar categorias', detalhes: error.message });
-    }
+    res.status(200).json(categorias);
+  } catch (error) {
+    console.error('Erro ao listar categorias:', error);
+    res.status(500).json({ error: 'Erro ao listar categorias' });
   }
-  exports.obterPontuacoesPorCategoria = async (req, res) => {
-    const { categoriaId } = req.params;
-  
-    try {
-      console.log(`Buscando categoria com ID: ${categoriaId}`);
-  
-      const categoria = await Categoria.findByPk(categoriaId, {
-        include: [{
-          model: Pontuacao,
-          as: 'pontuacoes',
-        }],
-      });
-  
-      if (!categoria) {
-        console.log("Categoria não encontrada");
-        return res.status(404).json({ message: "Categoria não encontrada." });
-      }
-  
-      console.log("Categoria encontrada:", categoria);
-      return res.status(200).json(categoria.pontuacoes);
-    } catch (error) {
-      console.error("Erro ao buscar pontuações da categoria:", error);
-      return res.status(500).json({ message: "Erro ao buscar pontuações da categoria.", error });
-    }
-  };
-  
+}
 
+async function criarCategoria(req, res) {
+  const { nome } = req.body;
+
+  if (!nome) {
+    return res.status(400).json({ error: 'O nome da categoria é obrigatório' });
+  }
+
+  try {
+    const categoria = await Categoria.create({ nome });
+    res.status(201).json(categoria);
+  } catch (error) {
+    console.error('Erro ao criar categoria:', error);
+    res.status(500).json({ error: 'Erro ao criar categoria' });
+  }
+}
+
+
+async function atualizarCategoria(req, res) {
+  const { id } = req.params;
+  const { nome } = req.body;
+
+
+  if (!nome) {
+    return res.status(400).json({ error: 'O nome da categoria é obrigatório' });
+  }
+
+  try {
+    const categoria = await Categoria.findByPk(id);
+
+    if (!categoria) {
+      return res.status(404).json({ error: 'Categoria não encontrada' });
+    }
+
+    categoria.nome = nome;
+    await categoria.save();
+
+    res.status(200).json(categoria);
+  } catch (error) {
+    console.error('Erro ao atualizar categoria:', error);
+    res.status(500).json({ error: 'Erro ao atualizar categoria' });
+  }
+}
+
+
+async function deletarCategoria(req, res) {
+  const { id } = req.params;
+
+  try {
+    const categoria = await Categoria.findByPk(id);
+
+    if (!categoria) {
+      return res.status(404).json({ error: 'Categoria não encontrada' });
+    }
+
+    await categoria.destroy();
+    res.status(200).json({ message: 'Categoria deletada com sucesso' });
+  } catch (error) {
+    console.error('Erro ao deletar categoria:', error);
+    res.status(500).json({ error: 'Erro ao deletar categoria' });
+  }
+}
+
+module.exports = {
+  listarCategorias,
+  criarCategoria,
+  atualizarCategoria,
+  deletarCategoria,
+};

@@ -250,7 +250,7 @@ const CursosPep = () => {
           )}
         </ScrollableAtividades>
         {modalFrequencia && <ModalFrequencia atividade={atividadeSelecionada} onClose={handleCloseModalFrequencia}></ModalFrequencia>}
-        {modalVisualizar && <ModalVisualizar alunos={atividadeSelecionada.Users} onClose={handleCloseModalVisualizar}></ModalVisualizar>}
+        {modalVisualizar && <ModalVisualizar atividade={atividadeSelecionada}  alunos={atividadeSelecionada.Users} onClose={handleCloseModalVisualizar}></ModalVisualizar>}
       </ContainerConteudo>
     </>
   );

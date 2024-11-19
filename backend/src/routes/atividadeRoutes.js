@@ -10,11 +10,10 @@ const {
   atualizarFrequencias,
   atualizarFrequenciaPorAluno,
   listarAtividadesPorAluno,
-  atualizarSituacaoAlunoEmAtividade,
+  atualizarSituacaoAluno,
   addAluno,
   listarAtividadesNaoInscritasPorAluno,
   listarAtividadesPorProfessor,
-
 } = require('../controllers/atividadeController');
 
 const router = express.Router();
@@ -33,7 +32,8 @@ router.put('/:id/frequencias/:data', auth, admin, atualizarFrequenciaPorAluno); 
 
 router.post('/:atividadeId/aluno/:userId', addAluno); // Adicionar Aluno na Atividade
 
-router.put('/:alunoId/situacao', auth, admin, atualizarSituacaoAlunoEmAtividade); // Atualizar situação do aluno
+router.put('/:atividadeId/aluno/:userId/situacao', atualizarSituacaoAluno); // Atualizar situação do aluno
+
 router.get('/:alunoId/atividades', listarAtividadesPorAluno);
 
 router.get('/:alunoId/atividades-geral', listarAtividadesNaoInscritasPorAluno);
