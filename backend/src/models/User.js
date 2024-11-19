@@ -1,8 +1,7 @@
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../config/Connection');
 const Role = require('./Role'); 
-const Pontuacao = require('./Pontuacao');
-const UserPontuacao = require('./UserPontuacao');
+const Participacao = require('./Participacao')
 const Atividade = require('./Atividade');
 const UserAtividade = require('./UserAtividade');
 
@@ -79,8 +78,8 @@ UserAtividade.belongsTo(Atividade, {foreignKey: 'atividadeId'});
 User.belongsToMany(Role, { through: 'UserRole', foreignKey: 'userId' });
 Role.belongsToMany(User, { through: 'UserRole', foreignKey: 'roleId' });
 
+User.hasMany(Participacao, { foreignKey: 'docenteId' });
+Participacao.belongsTo(User, { foreignKey: 'docenteId' });
 
-User.belongsToMany(Pontuacao, { through: UserPontuacao });
-Pontuacao.belongsToMany(User, { through: UserPontuacao });
 
 module.exports = User;

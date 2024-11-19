@@ -99,7 +99,7 @@ const adminNavItems = [
     label: "Home",
     icon: (
       <IconWrapper>
-        <IoHomeOutline size={35} color="#fff" />{" "}
+        <IoHomeOutline size={35} color="#fff" />
       </IconWrapper>
     ),
   },
@@ -108,8 +108,8 @@ const adminNavItems = [
     label: "Solicitações",
     icon: (
       <IconWrapper>
-        {" "}
-        <IoChatbubbleEllipsesOutline size={35} color="#fff" />{" "}
+      
+        <IoChatbubbleEllipsesOutline size={35} color="#fff" />
       </IconWrapper>
     ),
   },
@@ -127,8 +127,8 @@ const adminNavItems = [
     label: "Tabela de Pontos",
     icon: (
       <IconWrapper>
-        <LuGraduationCap size={35} color="#fff" />
-      </IconWrapper>
+      <LuLayoutDashboard size={35} color="#fff" />
+    </IconWrapper>
     ),
   },
 ];
@@ -139,7 +139,7 @@ const pepNavItems = [
     label: "Home",
     icon: (
       <IconWrapper>
-        <IoHomeOutline size={35} color="#fff" />{" "}
+        <IoHomeOutline size={35} color="#fff" />
       </IconWrapper>
     ),
   },
@@ -157,8 +157,7 @@ const pepNavItems = [
     label: "Solicitacoes",
     icon: (
       <IconWrapper>
-        {" "}
-        <IoChatbubbleEllipsesOutline size={35} color="#fff" />{" "}
+        <IoChatbubbleEllipsesOutline size={35} color="#fff" />
       </IconWrapper>
     ),
   },
@@ -167,8 +166,7 @@ const pepNavItems = [
     label: "Tabela",
     icon: (
       <IconWrapper>
-        {" "}
-        <LuLayoutDashboard size={35} color="#fff" />{" "}
+        <LuLayoutDashboard size={35} color="#fff" />
       </IconWrapper>
     ),
   },

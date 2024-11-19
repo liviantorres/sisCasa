@@ -1,6 +1,6 @@
 import { styled } from "styled-components";
 import Header from "../../components/Header";
-import Solicitacao from "../../components/AdminSolicitacoes/Solicitacao";
+import Solicitacao from "../../components/PepSolicitacao/Solicitacao";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { IoMdAddCircleOutline } from "react-icons/io";

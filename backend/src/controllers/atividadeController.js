@@ -122,30 +122,35 @@ exports.atualizarFrequencias = async (req, res) => {
   }
 };
 
-exports.atualizarSituacaoAlunoEmAtividade = async (req, res) => {
+exports.atualizarSituacaoAluno = async (req, res) => {
   try {
-    const { userId, atividadeId } = req.params;
+    const { atividadeId, userId } = req.params;
     const { situacao } = req.body;
 
-    const userAtividade = await UserAtividade.findOne({
-      where: {
-        atividadeId: atividadeId,
-        userId: userId
-      }
-    });
+    const atividade = await Atividade.findByPk(atividadeId);
+    const user = await User.findByPk(userId);
 
-    if (!userAtividade) {
-      return res.status(404).json({ message: "Aluno não encontrado na atividade" });
+    if (!atividade || !user) {
+      return res.status(404).json({ message: "Atividade ou Usuário não encontrado" });
     }
 
-    userAtividade.situacao = situacao;
-    await userAtividade.save();
+    const associacao = await UserAtividade.findOne({
+      where: { atividadeId, userId },
+    });
+
+    if (!associacao) {
+      return res.status(400).json({ message: "Aluno não está inscrito na atividade" });
+    }
+
+    await associacao.update({ situacao });
 
     return res.status(200).json({ message: "Situação do aluno atualizada com sucesso" });
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    console.error("Erro ao atualizar situação do aluno:", error);
+    return res.status(500).json({ message: "Erro interno ao atualizar situação do aluno" });
   }
 };
+
 
 exports.atualizarFrequenciaPorAluno = async (req, res) => {
   try {

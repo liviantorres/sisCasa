@@ -26,7 +26,7 @@ Solicitacao.init({
   },
   descricao: {
     type: DataTypes.STRING,
-    allowNull: false 
+    allowNull: true 
   },
   data: {
     type: DataTypes.DATE,

@@ -7,7 +7,8 @@ const {
   updateStatusSolicitacao,
   deleteSolicitacao,
   getComprovante,
-  getSolicitacoesByUsuarioId
+  getSolicitacoesByUsuarioId,
+  updateSolicitacao
 } = require("../controllers/solicitacaoController");
 const upload = require("../middlewares/upload");
 const { auth, admin } = require("../middlewares/authMiddleware");
@@ -27,6 +28,8 @@ router.delete("/:solicitacaoId", auth, admin, deleteSolicitacao);
 router.get("/:solicitacaoId/comprovante", auth, getComprovante);
 
 router.get('/:usuarioId/usuario', auth, getSolicitacoesByUsuarioId);
+
+router.put('/:solicitacaoId', auth, upload.single('certificado'), updateSolicitacao)
 
 
 module.exports = router;

@@ -1,5 +1,7 @@
 import styled from "styled-components";
 import { AiOutlineClose } from "react-icons/ai";
+import { MdOutlineFileDownload } from "react-icons/md";
+import { darken } from "polished";
 
 const Overlay = styled.div`
   position: fixed;
@@ -15,22 +17,24 @@ const Overlay = styled.div`
 `;
 
 const ContainerAdc = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   background-color: #fff;
-  padding: 0px;
+
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 40%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 50%;
   z-index: 1000;
-  position: relative;
 `;
 
 const CloseIcon = styled(AiOutlineClose)`
+  position: absolute;
+  top: 15px;
+  right: 15px;
   font-size: 24px;
   cursor: pointer;
-  color: #ffff;
-  margin-top: -20px;
+  color: #fff;
   &:hover {
     color: #5a3cae;
   }
@@ -38,101 +42,209 @@ const CloseIcon = styled(AiOutlineClose)`
 
 const ContainerInputsLabels = styled.div`
   display: flex;
-  gap: 80px;
-  justify-content: center;
+  flex-direction: column;
+  gap: 20px;
   margin: 20px;
+  background-color: #f5f5f9;
+  border-radius: 8px;
+  padding: 20px;
 `;
 
 const Div = styled.div`
-  width: 40%;
   display: flex;
   flex-direction: column;
-  align-items: start;
 `;
 
-const Label = styled.h3`
-  font-family: "Archivo", sans-serif;
-  font-weight: 400;
-  margin: 10px 0px;
+const Label = styled.label`
+  font-family: "Poppins", sans-serif;
+  font-weight: 550;
+  text-transform: uppercase;
+
+  color: #774fd1;
+  margin: 12px 0px 12px 0px;
 `;
 
-const ContainerBotoes = styled.div`
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
-  align-items: center;
-  justify-content: center;
-`;
 
 const Button = styled.button`
-  font-family: "Archivo", sans-serif;
+  font-family: "Poppins", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+
   font-weight: 600;
-  width: 30%;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  padding: 10px 20px;
-  background-color: #8257e5;
+  width: 30%;
+  padding: 8px 15px;
+
+  background-color: ${({ cor }) => cor || "#1eb662"};
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.3s;
-  margin: 20px;
+  font-size: 15px;
+  letter-spacing: 0.1em;
+  transition: all 0.3s ease;
+  margin-bottom: 20px;
+
   &:hover {
-    background-color: #372263;
+    background-color: ${({ cor }) => (cor ? darken(0.1, cor) : "#1eb662")};
+    transform: translateY(-2px);
+    box-shadow: 0px 4px 8px rgba(30, 182, 98, 0.3);
   }
 `;
 
-const P = styled.p`
-  font-family: "Archivo", sans-serif;
-  color: #000000d5;
-  font-size: 15px;
-  margin: 4px;
-`;
 
-const HeaderContainer = styled.div`
-  display: flex;
-  align-items: center;
-  padding: 20px;
-  background-color: #774fd1;
-  border-radius: 8px 8px 0 0;
-`;
 
 const Header = styled.div`
   font-family: "Poppins", sans-serif;
   font-weight: 500;
-  letter-spacing: 0.9px;
-  font-size: 24px;
-  flex: 1;
+  font-size: 20px;
   text-align: center;
-  color: #ffff;
+  color: #ffffff;
+  background-color: #774fd1;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+`;
+
+const ContainerStatus = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+`;
+
+const StatusDot = styled.div`
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: ${({ status }) => {
+    switch (status) {
+      case "Pendente":
+        return "yellow";
+      case "Rejeitado":
+        return "red";
+      case "Aceito":
+        return "green";
+      default:
+        return "gray";
+    }
+  }};
+`;
+
+const DivTop = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  gap: 100px;
+`;
+
+const P = styled.p`
+  font-family: "Archivo", sans-serif;
+  margin-left: 5px;
+`;
+
+const FileUploadButton = styled.label`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-family: "Poppins", sans-serif;
+  font-weight: 100;
+
+  width: 30%;
+  padding: 8px 0px;
+  background-color: #4b3e65;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  letter-spacing: 0.1em;
+  text-align: center;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: #5a4b7a;
+    box-shadow: 0px 6px 10px rgba(90, 75, 122, 0.4);
+    transform: translateY(-2px);
+  }
+
+  input[type="file"] {
+    display: none;
+  }
 `;
 
 const ModalVisualizarSolicitacao = ({ solicitacao, onClose }) => {
+
+  const formatarData = (dataISO) => {
+    const dataObj = new Date(dataISO);
+    const opcoes = { day: "2-digit", month: "numeric", year: "numeric" };
+    return dataObj.toLocaleDateString("pt-BR", opcoes);
+  };
+
+  const handleOpenCertificado = () => {
+    if (solicitacao.certificado) {
+      const baseURL = "http://localhost:3000/"; 
+      const certificadoURL = `${baseURL}${solicitacao.certificado.replace(/\\/g, '/')}`; 
+      window.open(certificadoURL, "_blank"); 
+    }
+  };
+  
+  
+
   return (
     <Overlay>
       <ContainerAdc>
-        <HeaderContainer>
-          <Header>Visualizar Solicitação</Header>
-          <CloseIcon onClick={onClose}/>
-        </HeaderContainer>
+        <Header>Detalhes da Solicitação</Header>
+        <CloseIcon onClick={onClose} />
         <ContainerInputsLabels>
+          <DivTop>
+            <Div>
+              <Label>Tipo de Solicitação:</Label>
+              <P>{solicitacao.tipoSolicitacao}</P>
+              <Label>Descrição:</Label>
+              <P>{solicitacao.descricao}</P>
+            </Div>
+            <Div>
+              <Label>Curso:</Label>
+              <P>{solicitacao.curso || "Não informado"}</P>
+              <Label>Status:</Label>
+              <ContainerStatus>
+                <StatusDot status={solicitacao.status} />
+                <P>{solicitacao.status}</P>
+              </ContainerStatus>
+            </Div>
+            <Div>
+              <Label>Remetente:</Label>
+              <P>{solicitacao.remetente || "Não informado"}</P>
+              <Label>Data:</Label>
+              <P>{formatarData(solicitacao.data)}</P>
+            </Div>
+          </DivTop>
           <Div>
-            <Label>Título:</Label>
-            <P>{solicitacao.titulo}</P>
-            <Label>Professor:</Label>
-            <P>{solicitacao.professor}</P>
-          </Div>
-          <Div>
-            <Label>Status:</Label>
-            <P>{solicitacao.status}</P>
+            <Label>Motivo (se rejeitado):</Label>
+            <P>{solicitacao.motivo || "N/A"}</P>
+
+            <Label>Certificado em PDF:</Label>
+           
+            {solicitacao.certificado ? (
+              
+              <Button cor="#774fd1" onClick={handleOpenCertificado}>
+                <MdOutlineFileDownload size={25}/> Baixar Certificado
+              </Button>
+             
+            ) : (
+              <P>Nenhum certificado disponível.</P>
+            )}
           </Div>
         </ContainerInputsLabels>
-        <ContainerBotoes></ContainerBotoes>
       </ContainerAdc>
     </Overlay>
   );
 };
 
 export default ModalVisualizarSolicitacao;
+

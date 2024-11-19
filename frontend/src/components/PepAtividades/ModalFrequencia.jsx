@@ -271,6 +271,34 @@ const ModalFrequencia = ({ onClose, atividade }) => {
     }
   };
 
+  const handleOpenModalNovaFrequencia = () => {
+    setShowNovaFrequencia(true);
+  };
+
+  const handleNovaFrequenciaSalva = () => {
+    setShowNovaFrequencia(false);
+    atualizarDadosFrequencia();
+  };
+
+  const handleCloseModalNovaFrequencia = () => {
+      setShowNovaFrequencia(false)
+      onClose()
+  };
+
+    // Função para atualizar dados de frequência
+    const atualizarDadosFrequencia = async (atividadeId) => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(
+          `http://localhost:3000/atividade/${atividadeId}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setFrequenciaAlunos(response.data.frequencia || []);
+      } catch (error) {
+        console.error("Erro ao buscar dados de frequência:", error);
+      }
+    };
+
   return (
     <Overlay onClick={onClose}>
       <ContainerAdc onClick={(e) => e.stopPropagation()}>
@@ -342,7 +370,7 @@ const ModalFrequencia = ({ onClose, atividade }) => {
           </NoFrequencyMessage>
         )}
         <ContainerBotoes>
-          <Button onClick={() => setShowNovaFrequencia(true)}>
+          <Button onClick={handleOpenModalNovaFrequencia}>
             Nova Frequência
           </Button>
           <Button onClick={handleSalvar}>Salvar</Button>
@@ -350,7 +378,8 @@ const ModalFrequencia = ({ onClose, atividade }) => {
         {showNovaFrequencia && (
           <ModalNovaFrequencia
             atividade={atividade}
-            onClose={() => setShowNovaFrequencia(false)}
+            onClose={handleCloseModalNovaFrequencia}
+            onNovaFrequenciaSalva={handleNovaFrequenciaSalva}
           />
         )}
       </ContainerAdc>

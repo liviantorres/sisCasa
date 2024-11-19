@@ -208,7 +208,7 @@ const NoStudentsMessage = styled.p`
   font-weight: 500;
 `;
 
-const ModalNovaFrequencia = ({ onClose, atividade}) => {
+const ModalNovaFrequencia = ({ onClose, atividade, onNovaFrequenciaSalva}) => {
   const [alunos, setAlunos] = useState([]);
   const [selectedAlunos, setSelectedAlunos] = useState({});
   const [selectedDate, setSelectedDate] = useState("");
@@ -281,6 +281,7 @@ const ModalNovaFrequencia = ({ onClose, atividade}) => {
       );
   
       if (response.status === 200) {
+        onNovaFrequenciaSalva(atividade.id);
         alert("Frequência salva com sucesso!");
         onClose();
         window.location.reload();
@@ -291,6 +292,8 @@ const ModalNovaFrequencia = ({ onClose, atividade}) => {
     }
   };
   
+  
+
 
   return (
     <Overlay onClick={onClose}>

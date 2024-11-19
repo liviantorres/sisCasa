@@ -2,7 +2,7 @@ import { styled } from "styled-components";
 import { lighten } from 'polished';
 import { useState } from 'react';
 import { AiOutlineClose } from 'react-icons/ai'; // Adicionando ícone de fechar
-import ModalVisualizar from "./ModalVisualizar";
+import ModalVisualizar from "./ModalVisualizarSolicitacao";
 
 const ContainerWrap = styled.div`
     border-radius: 10px;

@@ -29,6 +29,36 @@ exports.createSolicitacao = async (req, res) => {
   }
 };
 
+exports.updateSolicitacao = async (req, res) => {
+  const { solicitacaoId } = req.params;
+  const { tipoSolicitacao, cursoId, descricao, status, motivo } = req.body;
+
+  try {
+    const solicitacao = await Solicitacao.findByPk(solicitacaoId);
+
+    if (!solicitacao) {
+      return res.status(404).json({ message: 'Solicitação não encontrada' });
+    }
+
+    if (tipoSolicitacao) solicitacao.tipoSolicitacao = tipoSolicitacao;
+    if (cursoId) solicitacao.cursoId = cursoId;
+    if (descricao) solicitacao.descricao = descricao;
+    if (status) solicitacao.status = status;
+    if (motivo) solicitacao.motivo = motivo;
+
+    if (req.file) {
+      solicitacao.comprovante = req.file.path;
+    }
+    await solicitacao.save();
+
+    return res.status(200).json(solicitacao);
+  } catch (error) {
+    console.error('Erro ao atualizar solicitação:', error);
+    return res.status(500).json({ message: 'Erro no servidor' });
+  }
+};
+
+
 
 exports.getAllSolicitacoes = async (req, res) => {
   try {
