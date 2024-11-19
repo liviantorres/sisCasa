@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import Header from "../../components/Header";
+import axios from "axios";
 
-// Estilos com styled-components
 const ContainerConteudo = styled.div`
   margin: 20px;
   display: flex;
@@ -14,7 +14,6 @@ const Titulo = styled.h2`
   font-weight: 300;
   font-size: 30px;
   color: #202b3b;
-  margin-bottom: 40px;
 `;
 
 const ContainerInfoStyled = styled.div`
@@ -23,14 +22,14 @@ const ContainerInfoStyled = styled.div`
   color: white;
   text-align: center;
   padding: 20px;
-  border-radius: 8px; /* Bordas arredondadas */
+  border-radius: 8px;
   margin-bottom: 20px;
 `;
 
 const TitleStyled = styled.h1`
   font-size: 1.5em;
   font-weight: bold;
-  margin: 0 0 10px; /* Espaçamento inferior */
+  margin: 0 0 10px;
 `;
 
 const AlertStyled = styled.p`
@@ -55,13 +54,14 @@ const TableStyled = styled.table`
 `;
 
 const CategoryTitleStyled = styled.th`
- height: 50px;
+  height: 50px;
   width: 15px;
 `;
 
 const LinkStyled = styled.a`
   color: white;  
 `;
+
 const ThStyled = styled.th`
   padding: 10px;
   text-align: left;
@@ -115,133 +115,79 @@ const MenuStyled = styled.div`
   }
 `;
 
-const TabelaDePontosPep = () => {
+const ScrollableAtividades = styled.div`
+  margin-top: 4px;
+  max-height: 355px;
+  overflow-y: auto;
+  padding-right: 20px;
+`;
 
+const TabelaDePontosPep = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [categorias, setCategorias] = useState([]);
+
+  const fetchCategorias = async () => {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await axios.get(`http://localhost:3000/categorias`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setCategorias(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.error("Erro ao buscar atividades:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategorias();
+  }, []);
 
   const handleCategoryChange = (category) => {
     setSelectedCategory(category);
   };
 
   const renderCategoryTitle = () => {
-    switch (selectedCategory) {
-      case "Categoria I":
-        return <CategoryTitleStyled colSpan="6">CATEGORIA I - PALESTRAS, ENCONTROS, SEMINÁRIOS E REUNIÕES DIDÁTICOS - PEDAGÓCICOS ORGANIZADOS PELO CASa </CategoryTitleStyled >;
-      case "Categoria II":
-        return <CategoryTitleStyled  colSpan="6">CATEGORIA II - CURSOS, MINICURSOS, OFICINAS E SEMANAS PEDAGÓGICAS</CategoryTitleStyled >;
-      case "Categoria III":
-        return <CategoryTitleStyled  colSpan="6">CATEGORIA III - PARTICIPAÇÃO EM COMISSÕES E ORIENTAÇÃO DE DISCENTES</CategoryTitleStyled >;
-      case "Categoria IV":
-        return <CategoryTitleStyled  colSpan="6">CATEGORIA IV – PRODUÇÃO CIENTÍFICA, DE INOVAÇÃO, TÉCNICA OU ARTÍSTICA</CategoryTitleStyled >;
-      case "Soma Total de Pontos":
-        return <CategoryTitleStyled  colSpan="6">Soma Total de Pontos</CategoryTitleStyled >;
-      default:
-        return null;
+    const selectedCategoryData = categorias.find(
+      (category) => category.nome === selectedCategory
+    );
+
+    if (selectedCategoryData) {
+      return (
+        <CategoryTitleStyled colSpan="6">
+          {`CATEGORIA ${selectedCategoryData.nome} - ${selectedCategoryData.descricao}`}
+        </CategoryTitleStyled>
+      );
     }
+
+    return <CategoryTitleStyled colSpan="6">Selecione uma categoria</CategoryTitleStyled>;
   };
 
   const renderTableContent = () => {
-    switch (selectedCategory) {
-      case "Categoria I":
-        return (
-          <>  
-            <tr>
-              <ThStyled>Item 1</ThStyled>
-              <ThStyled>Atividade 1</ThStyled>
-              <ThStyled>Métrica 1</ThStyled>
-              <ThStyled>Teto 1</ThStyled>
-              <ThStyled>Horas Submetidas</ThStyled>
-              <ThStyled>Horas Consideradas</ThStyled>
-            </tr>
-            <tr>
-              <ThStyled>Item 2</ThStyled>
-              <ThStyled>Atividade 2</ThStyled>
-              <ThStyled>Métrica 2</ThStyled>
-              <ThStyled>Teto 2</ThStyled>
-              <ThStyled>Horas Submetidas</ThStyled>
-              <ThStyled>Horas Consideradas</ThStyled>
-            </tr>
-          </>
-        );
-      case "Categoria II":
-        return (
-          <>
-          
-            <tr>
-              <ThStyled>Item A</ThStyled>
-              <ThStyled>Atividade A</ThStyled>
-              <ThStyled>Métrica A</ThStyled>
-              <ThStyled>Teto A</ThStyled>
-              <ThStyled>Horas Submetidas</ThStyled>
-              <ThStyled>Horas Consideradas</ThStyled>
-            </tr>
-            <tr>
-              <ThStyled>Item B</ThStyled>
-              <ThStyled>Atividade B</ThStyled>
-              <ThStyled>Métrica B</ThStyled>
-              <ThStyled>Teto B</ThStyled>
-              <ThStyled>Horas Submetidas</ThStyled>
-              <ThStyled>Horas Consideradas</ThStyled>
-            </tr>
-          </>
-        );
-        case "Categoria III":
-        return (
-          <>
-            <tr>
-              <ThStyled>Item B</ThStyled>
-              <ThStyled>Atividade B</ThStyled>
-              <ThStyled>Métrica A</ThStyled>
-              <ThStyled>Teto B</ThStyled>
-              <ThStyled>Horas Submetidas</ThStyled>
-              <ThStyled>Horas Consideradas</ThStyled>
-            </tr>
-            <tr>
-              <ThStyled>Item B</ThStyled>
-              <ThStyled>Atividade B</ThStyled>
-              <ThStyled>Métrica B</ThStyled>
-              <ThStyled>Teto B</ThStyled>
-              <ThStyled>Horas Submetidas</ThStyled>
-              <ThStyled>Horas Consideradas</ThStyled>
-            </tr>
-          </>
-        );
-        case "Categoria IV":
-        return (
-          <>
-            <tr>
-              <ThStyled>Item A</ThStyled>
-              <ThStyled>Atividade A</ThStyled>
-              <ThStyled>Métrica A</ThStyled>
-              <ThStyled>Teto A</ThStyled>
-              <ThStyled>Horas Submetidas</ThStyled>
-              <ThStyled>Horas Consideradas</ThStyled>
-            </tr>
-            <tr>
-              <ThStyled>Item B</ThStyled>
-              <ThStyled>Atividade B</ThStyled>
-              <ThStyled>Métrica B</ThStyled>
-              <ThStyled>Teto B</ThStyled>
-              <ThStyled>Horas Submetidas</ThStyled>
-              <ThStyled>Horas Consideradas</ThStyled>
-            </tr>
-          </>
-        );
-        case "Soma Total de Pontos":
-          return (
-            <>
-              <tr>
-                <ThStyled colSpan="6" style={{ textAlign: "center" }}>
-                  SOMA TOTAL DE HORAS CONSIDERADAS PARA CUMPRIMENTO DO EXIGIDO PELO
-                  PROGRAMA DE FORMAÇÃO DOENTE: 900
-                </ThStyled>
-              </tr>
-            </>
-          );
-      // Adicione mais casos conforme necessário
-      default:
-        return <tr><td colSpan="6">Selecione uma categoria para ver a tabela.</td></tr>;
+    if (!categorias.length) {
+      return <tr><td colSpan="6">Carregando categorias...</td></tr>;
     }
+
+    const selectedCategoryData = categorias.find(
+      (category) => category.nome === selectedCategory
+    );
+
+    if (!selectedCategoryData) {
+      return <tr><td colSpan="6">Categoria não encontrada.</td></tr>;
+    }
+
+    return selectedCategoryData.atividades.map((atividade, index) => (
+      <tr key={atividade.codigo}>
+        <ThStyled>{atividade.codigo}</ThStyled>
+        <ThStyled>{atividade.nome}</ThStyled>
+        <ThStyled>{atividade.metrica}</ThStyled>
+        <ThStyled>{atividade.teto_autorizado}</ThStyled>
+        <ThStyled>{atividade.horas_submetidas || 'N/A'}</ThStyled>
+        <ThStyled>{atividade.horas_consideradas || 'N/A'}</ThStyled>
+      </tr>
+    ));
   };
 
   return (
@@ -270,35 +216,29 @@ const TabelaDePontosPep = () => {
       <MenuStyled>
         <div className="dropdown">
           <button className="dropbtn">
-            Selecione uma Opção
+            Selecione uma Categoria
             <span className="material-symbols-outlined">
               keyboard_arrow_down
             </span>
           </button>
           <div className="dropdown-content">
-            <a href="#" onClick={() => handleCategoryChange("Categoria I")}>
-              Categoria I
-            </a>
-            <a href="#" onClick={() => handleCategoryChange("Categoria II")}>
-              Categoria II
-            </a>
-            <a href="#" onClick={() => handleCategoryChange("Categoria III")}>
-              Categoria III
-            </a>
-            <a href="#" onClick={() => handleCategoryChange("Categoria IV")}>
-              Categoria IV
-            </a>
-            <a href="#" onClick={() => handleCategoryChange("Soma Total de Pontos")}>
-              Soma Total de Pontos
-            </a>
+            {categorias.map((categoria) => (
+              <a
+                key={categoria.id}
+                href="#"
+                onClick={() => handleCategoryChange(categoria.nome)}
+              >
+                {`Categoria ${categoria.nome}`}
+              </a>
+            ))}
           </div>
         </div>
       </MenuStyled>
+      <ScrollableAtividades>
+
       <TableStyled>
         <thead>
-        <tr>
-            {renderCategoryTitle()}
-          </tr>
+          <tr>{renderCategoryTitle()}</tr>
           <tr>
             <ThStyled>Itens de cada categoria</ThStyled>
             <ThStyled>
@@ -307,7 +247,7 @@ const TabelaDePontosPep = () => {
                 PDF
               </LinkStyled>
               )
-              </ThStyled>
+            </ThStyled>
             <ThStyled>Métrica</ThStyled>
             <ThStyled>
               Teto autorizado para cada atividade/ação docente (h)
@@ -318,6 +258,7 @@ const TabelaDePontosPep = () => {
         </thead>
         <tbody>{renderTableContent()}</tbody>
       </TableStyled>
+      </ScrollableAtividades>
     </>
   );
 };
