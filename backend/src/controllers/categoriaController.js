@@ -1,15 +1,20 @@
 const Categoria = require('../models/Categoria');
-const Atividade = require('../models/AtividadeTabela')
+const Atividade = require('../models/AtividadeTabela');
+const Participacao = require('../models/Participacao')
 
 async function listarCategorias(req, res) {
   try {
-   
     const categorias = await Categoria.findAll({
       include: {
         model: Atividade,
-        as: 'atividades', 
-        attributes: ['codigo', 'nome', 'metrica', 'teto_autorizado', 'horas_submetidas', 'horas_consideradas'], // Campos que você deseja trazer das atividades
+        as: 'atividades',
+        attributes: ['id','codigo', 'nome', 'metrica', 'teto_autorizado', 'horas_submetidas', 'horas_consideradas'], // Campos específicos de Atividade
         required: false,
+        include: {
+          model: Participacao,
+          attributes: ['id', 'userId', 'horasSubmetidas', 'horasConsideradas'], // Campos específicos de Participacao
+          required: false,
+        },
       },
     });
 
@@ -19,6 +24,7 @@ async function listarCategorias(req, res) {
     res.status(500).json({ error: 'Erro ao listar categorias' });
   }
 }
+
 
 async function criarCategoria(req, res) {
   const { nome } = req.body;

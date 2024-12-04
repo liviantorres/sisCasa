@@ -1,9 +1,12 @@
+
 import styled from "styled-components";
+
 import { AiOutlineClose } from "react-icons/ai";
-import { MdOutlineFileDownload } from "react-icons/md";
 import { darken } from "polished";
-import { useEffect, useState } from "react";
-import axios from "axios";
+
+import "./style.css";
+
+import { MdOutlineFileUpload } from "react-icons/md";
 
 const Overlay = styled.div`
   position: fixed;
@@ -66,17 +69,29 @@ const Label = styled.label`
   margin: 12px 0px 12px 0px;
 `;
 
+const TextArea = styled.textarea`
+  font-family: "Archivo", sans-serif;
+  font-weight: 400;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 8px;
+  resize: vertical;
+  min-height: 80px;
+
+  &:focus {
+    border-color: #774fd1;
+    outline: none;
+    box-shadow: 0 0 4px rgba(119, 79, 209, 0.7);
+  }
+`;
+
 const Button = styled.button`
   font-family: "Poppins", sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-
   font-weight: 600;
   text-transform: uppercase;
-  width: 30%;
-  padding: 8px 15px;
+  width: 25%;
+  padding: 8px 0px;
 
   background-color: ${({ cor }) => cor || "#1eb662"};
   color: white;
@@ -93,6 +108,13 @@ const Button = styled.button`
     transform: translateY(-2px);
     box-shadow: 0px 4px 8px rgba(30, 182, 98, 0.3);
   }
+`;
+
+const ContainerBotoes = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
 `;
 
 const Header = styled.div`
@@ -176,101 +198,69 @@ const FileUploadButton = styled.label`
   }
 `;
 
-const ModalVisualizarSolicitacao = ({ solicitacao, onClose }) => {
-  const [remetente, setRemetente] = useState([]);
+const ModalConclusaoHoras = ({solicitacao, onClose}) => {
 
-  const formatarData = (dataISO) => {
-    const dataObj = new Date(dataISO);
-    const opcoes = { day: "2-digit", month: "numeric", year: "numeric" };
-    return dataObj.toLocaleDateString("pt-BR", opcoes);
-  };
+    const formatarData = (dataISO) => {
+        const dataObj = new Date(dataISO);
+        const opcoes = { day: "2-digit", month: "numeric", year: "numeric" };
+        return dataObj.toLocaleDateString("pt-BR", opcoes);
+      };
 
-  const handleOpenCertificado = () => {
-    if (solicitacao.certificado) {
-      const baseURL = "http://localhost:3000/";
-      const certificadoURL = `${baseURL}${solicitacao.certificado.replace(
-        /\\/g,
-        "/"
-      )}`;
-      window.open(certificadoURL, "_blank");
-    }
-  };
-
-  const fetchRemetente = async () => {
-    const id = localStorage.getItem("id");
-    const token = localStorage.getItem("token");
-    try {
-      const response = await axios.get(`http://localhost:3000/user/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setRemetente(response.data);
-      console.log(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchRemetente();
-  }, []);
-
-  return (
-    <Overlay>
+    return (
+        <Overlay>
       <ContainerAdc>
         <Header>Detalhes da Solicitação</Header>
         <CloseIcon onClick={onClose} />
         <ContainerInputsLabels>
           <DivTop>
             <Div>
-              {solicitacao.tipoSolicitacao === "Certificado de Horas" && (
-                <>
-                  <Label>Tipo de Solicitação:</Label>
-                  <P>Certificado de conclusão de horas</P>
-                </>
-              )}
+              <Label>Tipo de Solicitação:</Label>
+           
               <Label>Descrição:</Label>
-              <P>{solicitacao.descricao || "Não informado"}</P>
+            
             </Div>
             <Div>
-              {solicitacao.tipoSolicitacao === "Certificado de Curso" && (
-                <>
-                  <Label>Curso:</Label>
-                  <P>{solicitacao.curso || "Não informado"}</P>
-                </>
-              )}
+              <Label>Curso:</Label>
+              <P></P>
               <Label>Status:</Label>
               <ContainerStatus>
-                <StatusDot status={solicitacao.status} />
-                <P>{solicitacao.status}</P>
+               
               </ContainerStatus>
             </Div>
             <Div>
               <Label>Remetente:</Label>
-              <P>{remetente.nomeCompleto || "Não informado"}</P>
+              <P></P>
               <Label>Data:</Label>
-              <P>{formatarData(solicitacao.data)}</P>
+            
             </Div>
           </DivTop>
           <Div>
             <Label>Motivo (se rejeitado):</Label>
-            <P>{solicitacao.motivo || "N/A"}</P>
-
+            <TextArea
+              placeholder="Explique o motivo da rejeição (opcional)"
+            
+              
+            />
             <Label>Certificado em PDF:</Label>
 
-            {solicitacao.certificado ? (
-              <Button cor="#774fd1" onClick={handleOpenCertificado}>
-                <MdOutlineFileDownload size={25} /> Baixar Certificado
-              </Button>
-            ) : (
-              <P>Nenhum certificado disponível.</P>
-            )}
+            <FileUploadButton>
+              <MdOutlineFileUpload size={25} />
+              Escolher Arquivo
+              <input type="file" />
+            </FileUploadButton>
           </Div>
         </ContainerInputsLabels>
+        <ContainerBotoes>
+          <Button cor="#4caf50" >
+            Aceitar
+          </Button>
+          <Button cor="#C02929">
+            Rejeitar
+          </Button>
+        </ContainerBotoes>
       </ContainerAdc>
     </Overlay>
-  );
-};
-
-export default ModalVisualizarSolicitacao;
+      );
+}
+ 
+export default ModalConclusaoHoras;

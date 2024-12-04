@@ -1,8 +1,11 @@
 import { styled } from "styled-components";
 import { lighten } from 'polished';
 import { useState } from 'react';
-import { AiOutlineClose } from 'react-icons/ai'; // Adicionando ícone de fechar
-import ModalVisualizar from "./ModalVisualizar";
+import { AiOutlineClose } from 'react-icons/ai'; 
+
+import ModalCertificadoCurso from "./ModalCertificadoCurso";
+import ModalCertificadoHoras from "./ModalCertificadoHoras";
+import ModalConclusaoHoras from "./ModalConclusaoHoras";
 
 const ContainerWrap = styled.div`
     border-radius: 10px;
@@ -199,6 +202,7 @@ const Solicitacao = ({ solicitacao }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalDetalhesSolicitacao, setModalDetalhesSolicitacao] = useState(false);
 
+
     const openModalDetalhesSolicitacao = () => {
         setModalDetalhesSolicitacao(true);
     }
@@ -235,6 +239,21 @@ const Solicitacao = ({ solicitacao }) => {
         }
     };
 
+
+    const renderModal = () => {
+        switch (solicitacao.tipoSolicitacao) {
+            case "Certificado de Horas":
+                return <ModalConclusaoHoras solicitacao={solicitacao} onClose={closeModalDetalhesSolicitacao} />;
+            case "Certificado de Curso":
+                return <ModalCertificadoCurso solicitacao={solicitacao} onClose={closeModalDetalhesSolicitacao} />;
+            case "Contabilizar Horas":
+                return <ModalCertificadoHoras solicitacao={solicitacao} onClose={closeModalDetalhesSolicitacao} />;
+            default:
+                console.warn("Tipo de solicitação desconhecido:", solicitacao.tipoSolicitacao);
+                return null;
+        }
+    };
+
     return (
         <>
             <ContainerWrap>
@@ -257,8 +276,7 @@ const Solicitacao = ({ solicitacao }) => {
                 </ContainerInformacoesCurso>
             </ContainerWrap>
 
-        {modalDetalhesSolicitacao && <ModalVisualizar solicitacao={solicitacao} onClose={closeModalDetalhesSolicitacao}/>}
-
+            {modalDetalhesSolicitacao && renderModal()}
             
         </>
     );

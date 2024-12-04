@@ -1,12 +1,10 @@
 import styled from "styled-components";
-import { useEffect, useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 import { darken } from "polished";
-import axios from "axios";
 import Swal from "sweetalert2";
 import "./style.css";
-
-import { MdOutlineFileUpload } from "react-icons/md";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const Overlay = styled.div`
   position: fixed;
@@ -166,95 +164,23 @@ const P = styled.p`
   margin-left: 5px;
 `;
 
-const FileUploadButton = styled.label`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  font-family: "Poppins", sans-serif;
-  font-weight: 100;
 
-  width: 30%;
-  padding: 8px 0px;
-  background-color: #4b3e65;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 15px;
-  letter-spacing: 0.1em;
-  text-align: center;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background-color: #5a4b7a;
-    box-shadow: 0px 6px 10px rgba(90, 75, 122, 0.4);
-    transform: translateY(-2px);
-  }
-
-  input[type="file"] {
-    display: none;
-  }
-`;
-
-const ModalVisualizar = ({ onClose, solicitacao }) => {
-  const [nomeDoCurso, setNomeDoCurso] = useState([]);
-  const [nomeDoProfessor, setNomeDoProfessor] = useState([]);
+const ModalCertificadoHoras = ({ solicitacao, onClose }) => {
+  const [categorias, setCategorias] = useState([]);
+  const [nomeRemetente, setNomeRemetente] = useState("");
+  const [remetenteId, setIdRemetente] = useState("");
   const [motivo, setMotivo] = useState("");
-  const [certificado, setCertificado] = useState(null);
+  const [horas, setHoras] = useState();
+  const [horasConsideradas, setHorasConsideradas] = useState();
 
-  const fetchBuscarCurso = async () => {
-    const token = localStorage.getItem("token");
-
-    try {
-      const response = await axios.get(
-        `http://localhost:3000/atividade/buscar/${solicitacao.cursoId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setNomeDoCurso(response.data.titulo);
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-
-  const fetchBuscarProfessor = async () => {
-    const token = localStorage.getItem("token");
-
-    try {
-      const response = await axios.get(
-        `http://localhost:3000/user/${solicitacao.usuarioId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setNomeDoProfessor(response.data.nomeCompleto);
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-
-  useEffect(() => {
-    fetchBuscarCurso();
-    fetchBuscarProfessor();
-  }, []);
-
-  const handleFileChange = (e) => {
-    setCertificado(e.target.files[0]);
-  };
+  const token = localStorage.getItem("token");
 
   const handleAccept = async () => {
-    if (!certificado) {
+    if (!horas || !horasConsideradas) {
       Swal.fire({
         icon: "warning",
-        title: "Anexar Certificado",
-        text: "Para aceitar, é necessário anexar um certificado em PDF.",
+        title: "Horas a contabilizar",
+        text: "Para aceitar, é necessário preencher a quantidade de horas.",
         confirmButtonColor: "#774fd1",
         customClass: {
           popup: "custom-swal-font",
@@ -263,10 +189,10 @@ const ModalVisualizar = ({ onClose, solicitacao }) => {
       return;
     }
 
-    const token = localStorage.getItem("token");
     const formData = new FormData();
-    formData.append("certificado", certificado);
     formData.append("status", "Aceito");
+    formData.append("horasSubmetidas", horas);
+    formData.append("horasConsideradas", horasConsideradas); 
 
     try {
       await axios.put(
@@ -280,20 +206,37 @@ const ModalVisualizar = ({ onClose, solicitacao }) => {
         }
       );
 
+      const horasData = {
+        userId: solicitacao.usuarioId,
+        codigo: String(solicitacao.atividadeTabela),
+        horasSubmetidas: horas,
+        horasConsideradas: horasConsideradas,
+      };
+
+      await axios.put(
+        `http://localhost:3000/pontuacao/`, 
+        horasData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
       Swal.fire({
         icon: "success",
         title: "Solicitação Aceita",
-        text: "A solicitação foi aceita e o certificado foi enviado.",
+        text: "A solicitação foi aceita e as horas contabilizadas.",
         confirmButtonColor: "#774fd1",
         customClass: {
           popup: "custom-swal-font",
         },
       }).then(() => {
-        onClose(); 
-        window.location.reload()
+        onClose();
+        window.location.reload();
       });
     } catch (error) {
-      console.error(error.message);
+      console.error("Erro no PUT:", error.response?.data || error.message);
       Swal.fire({
         icon: "error",
         title: "Erro ao Aceitar",
@@ -305,12 +248,26 @@ const ModalVisualizar = ({ onClose, solicitacao }) => {
       });
     }
   };
-  
+
   const handleReject = async () => {
     const token = localStorage.getItem("token");
     const formData = new FormData();
-    formData.append("status", "Rejeitado"); 
-  
+    if (!motivo.trim()) {
+      Swal.fire({
+        icon: "warning",
+        title: "Motivo obrigatório",
+        text: "Por favor, forneça um motivo para rejeitar a solicitação.",
+        confirmButtonColor: "#774fd1",
+        customClass: {
+          popup: "custom-swal-font",
+        },
+      });
+      return;
+    }
+
+    formData.append("status", "Rejeitado");
+    formData.append("motivo", motivo);
+
     try {
       const response = await axios.put(
         `http://localhost:3000/solicitacao/${solicitacao.id}/status`,
@@ -318,11 +275,11 @@ const ModalVisualizar = ({ onClose, solicitacao }) => {
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data"
-          }
+            "Content-Type": "multipart/form-data",
+          },
         }
       );
-  
+
       if (response.status === 200) {
         Swal.fire({
           icon: "success",
@@ -330,11 +287,11 @@ const ModalVisualizar = ({ onClose, solicitacao }) => {
           text: "A solicitação foi rejeitada.",
           confirmButtonColor: "#774fd1",
           customClass: {
-            popup: "custom-swal-font"
-          }
+            popup: "custom-swal-font",
+          },
         }).then(() => {
           onClose();
-          window.location.reload()
+          window.location.reload();
         });
       } else {
         throw new Error("Erro ao rejeitar a solicitação.");
@@ -347,12 +304,49 @@ const ModalVisualizar = ({ onClose, solicitacao }) => {
         text: "Ocorreu um erro ao rejeitar a solicitação.",
         confirmButtonColor: "#774fd1",
         customClass: {
-          popup: "custom-swal-font"
-        }
+          popup: "custom-swal-font",
+        },
       });
     }
   };
-  
+
+  const fetchAtividadesDaTabela = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/categorias", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (Array.isArray(response.data)) {
+        setCategorias(response.data);
+      } else {
+        console.error("Formato inesperado:", response.data);
+      }
+    } catch (error) {
+      console.log("Erro ao buscar categorias:", error.message);
+    }
+  };
+
+  const fetchBuscarRemetente = async () => {
+
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/user/${solicitacao.usuarioId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setIdRemetente(response.data.id);
+      setNomeRemetente(response.data.nomeCompleto);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchBuscarRemetente();
+    fetchAtividadesDaTabela();
+  }, []);
 
   const formatarData = (dataISO) => {
     const dataObj = new Date(dataISO);
@@ -370,12 +364,17 @@ const ModalVisualizar = ({ onClose, solicitacao }) => {
             <Div>
               <Label>Tipo de Solicitação:</Label>
               <P>{solicitacao.tipoSolicitacao}</P>
+
               <Label>Descrição:</Label>
-              <P>{solicitacao.descricao}</P>
+              {solicitacao.descricao ? (
+                <>
+                  <P>{solicitacao.descricao}</P>
+                </>
+              ) : (
+                <P>Descrição não fornecida</P>
+              )}
             </Div>
             <Div>
-              <Label>Curso:</Label>
-              <P>{nomeDoCurso}</P>
               <Label>Status:</Label>
               <ContainerStatus>
                 <StatusDot status={solicitacao.status} />
@@ -384,11 +383,33 @@ const ModalVisualizar = ({ onClose, solicitacao }) => {
             </Div>
             <Div>
               <Label>Remetente:</Label>
-              <P>{nomeDoProfessor}</P>
+              <P>{nomeRemetente}</P>
               <Label>Data:</Label>
               <P>{formatarData(solicitacao.data)}</P>
             </Div>
           </DivTop>
+          <Div>
+            <Label>Comprovante:</Label>
+            {solicitacao.comprovante ? (
+              <a
+                href={solicitacao.comprovante}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  color: "#000000ab",
+                  textDecoration: "underline",
+                  cursor: "pointer",
+                  fontFamily: "Poppins, sans-serif",
+                  fontWeight: "500",
+                }}
+              >
+                Visualizar Comprovante
+              </a>
+            ) : (
+              <P>Nenhum comprovante disponível</P>
+            )}
+          </Div>
+
           <Div>
             <Label>Motivo (se rejeitado):</Label>
             <TextArea
@@ -396,13 +417,23 @@ const ModalVisualizar = ({ onClose, solicitacao }) => {
               value={motivo}
               onChange={(e) => setMotivo(e.target.value)}
             />
-            <Label>Certificado em PDF:</Label>
-
-            <FileUploadButton>
-              <MdOutlineFileUpload size={25} />
-              Escolher Arquivo
-              <input type="file" onChange={handleFileChange} />
-            </FileUploadButton>
+            <Label>Categoria da tabela de pontos:</Label>
+            <P>{solicitacao.atividadeTabela}</P>
+            <div>
+              {" "}
+              <Label>Quantas horas foram submetidas?</Label>
+              <input
+                value={horas}
+                onChange={(e) => setHoras(e.target.value)}
+                type="number"
+              />
+              <Label>Quantas horas devem ser consideradas?</Label>
+              <input
+                value={horasConsideradas}
+                onChange={(e) => setHorasConsideradas(e.target.value)}
+                type="number"
+              />
+            </div>
           </Div>
         </ContainerInputsLabels>
         <ContainerBotoes>
@@ -418,4 +449,4 @@ const ModalVisualizar = ({ onClose, solicitacao }) => {
   );
 };
 
-export default ModalVisualizar;
+export default ModalCertificadoHoras;

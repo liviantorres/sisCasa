@@ -19,7 +19,7 @@ exports.getUser = async (req, res) => {
 
 exports.getUserById = async (req, res) => {
   try {
-    const { id } = req.params;  // Pega o id da URL
+    const { id } = req.params;
     const user = await User.findByPk(id, {
       include: { model: Role, through: { attributes: [] } }
     });
@@ -62,6 +62,7 @@ exports.editUser = async (req, res) => {
       dataDeNascimento,
       whatsapp,
       email,
+      horasConcluidas
     };
 
     if (password) {
@@ -119,13 +120,11 @@ exports.listarUsuariosPorAtividade = async (req, res) => {
   try {
     const { atividadeId } = req.params;
 
-    // Verifica se a atividade existe
     const atividade = await Atividade.findByPk(atividadeId);
     if (!atividade) {
       return res.status(404).json({ message: "Atividade não encontrada" });
     }
 
-    // Busca os usuários associados à atividade
     const usuarios = await User.findAll({
       include: [
         {
@@ -141,5 +140,28 @@ exports.listarUsuariosPorAtividade = async (req, res) => {
     return res.status(200).json(usuarios);
   } catch (error) {
     return res.status(500).json({ error: error.message });
+  }
+};
+
+exports.getUsersByAtividade = async (req, res) => {
+  const { atividadeId } = req.params; // ID da atividade passado pela URL
+  console.log(`Buscando usuários para a atividade ID ${atividadeId}...`);
+  try {
+    const atividade = await Atividade.findByPk(atividadeId, {
+      include: {
+        model: User,
+        through: { attributes: [] }, // Exclui os campos da tabela intermediária
+        attributes: ['id', 'nomeCompleto', 'email'], // Escolha os campos que deseja retornar
+      },
+    });
+
+    if (!atividade) {
+      return res.status(404).json({ message: 'Atividade não encontrada' });
+    }
+
+    return res.status(200).json(atividade.Users); // Retorna apenas os usuários associados
+  } catch (error) {
+    console.error('Erro ao buscar usuários para a atividade:', error.message);
+    return res.status(500).json({ message: 'Erro no servidor', error: error.message });
   }
 };

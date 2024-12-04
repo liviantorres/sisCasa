@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { AiOutlineClose } from "react-icons/ai";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const Overlay = styled.div`
   position: fixed;
@@ -98,26 +99,6 @@ const Div = styled.div`
   display: flex;
   flex-direction: column;
   margin: 40px;
-`;
-
-const Input = styled.input`
-  font-family: "Archivo", sans-serif;
-  font-weight: 100;
-  width: 90%;
-  height: 20px;
-  margin-top: 10px;
-  margin-bottom: 20px;
-  padding: 5px;
-  border: 1px solid #ccc;
-  font-size: 16px;
-  border-radius: 6px;
-  background-color: #f2eeee;
-
-  &:focus {
-    border-color: #774fd1;
-    outline: none;
-    box-shadow: 0 0 2px rgba(119, 79, 209, 0.7);
-  }
 `;
 
 const Textarea = styled.textarea`
@@ -217,10 +198,30 @@ const ModalAtividade = ({ onClose }) => {
         }
       );
       console.log("Solicitação salva com sucesso:", response.data);
-      alert('Solicitação enviada!');
-      window.location.reload();
+      Swal.fire({
+        icon: "success",
+        title: "Solicitação Enviada",
+        text: "A solicitação foi enviada, aguarde a resposta.",
+        confirmButtonColor: "#774fd1",
+        customClass: {
+          popup: "custom-swal-font",
+        },
+      }).then(() => {
+        onClose(); 
+        window.location.reload()
+      });
+    
     } catch (error) {
       console.log("Erro ao salvar solicitação:", error.message);
+      Swal.fire({
+        icon: "error",
+        title: "Erro ao Enviar",
+        text: "Ocorreu um erro ao enviar a solicitação.",
+        confirmButtonColor: "#774fd1",
+        customClass: {
+          popup: "custom-swal-font",
+        },
+      });
     }
   };
 

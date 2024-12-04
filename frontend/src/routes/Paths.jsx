@@ -17,6 +17,9 @@ import SolicitacoesAdmin from "../pages/admin/SolicitacoesAdmin";
 import AdcUsuarioAdmin from "../pages/admin/AdcUsuarioAdmin";
 import PerfilPep from "../pages/pep/PerfilPep";
 import TabelaDePontosAdmin from "../pages/admin/TabelaDePontosAdmin";
+import HomeServidor from "../pages/servidor/HomeServidor";
+import PerfilServidor from "../pages/servidor/PerfilServidor";
+import CursosServidor from "../pages/servidor/CursosServidor";
 
 const Paths = () => {
     return ( 
@@ -41,6 +44,12 @@ const Paths = () => {
                         <Route index element={<Home/>}/>
                         <Route path="/login" element={<Login/>}/>
                         <Route path="/register" element={<Register/>}/>
+                </Route>
+                <Route path="/servidor" element={<PageLayout userType = 'servidor' />}>
+                    <Route index element={<HomeServidor/>}/>
+                    <Route path="/servidor/perfil" element={<PerfilServidor/>}/>
+                    <Route path="/servidor/cursos" element={<CursosServidor/>}/>
+              
                 </Route>
 
                 <Route path="*" element={<NotFound/>}/>

@@ -16,6 +16,10 @@ Solicitacao.init({
     type: DataTypes.INTEGER,
     allowNull: true 
   },
+  atividadeTabela:{
+    type: DataTypes.FLOAT,
+    allowNull: true
+  },
   comprovante: {
     type: DataTypes.STRING,
     allowNull: true 

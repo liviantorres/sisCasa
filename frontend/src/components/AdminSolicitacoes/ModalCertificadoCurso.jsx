@@ -198,7 +198,7 @@ const FileUploadButton = styled.label`
   }
 `;
 
-const ModalVisualizar = ({ onClose, solicitacao }) => {
+const ModalCertificadoCurso = ({ onClose, solicitacao }) => {
   const [nomeDoCurso, setNomeDoCurso] = useState([]);
   const [nomeDoProfessor, setNomeDoProfessor] = useState([]);
   const [motivo, setMotivo] = useState("");
@@ -305,7 +305,6 @@ const ModalVisualizar = ({ onClose, solicitacao }) => {
       });
     }
   };
-  
   const handleReject = async () => {
     const token = localStorage.getItem("token");
     const formData = new FormData();
@@ -418,4 +417,4 @@ const ModalVisualizar = ({ onClose, solicitacao }) => {
   );
 };
 
-export default ModalVisualizar;
+export default ModalCertificadoCurso;

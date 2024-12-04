@@ -1,5 +1,6 @@
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../config/Connection');
+const Frequencia = require('./Frequencia')
 
 class Atividade extends Model {}
 
@@ -28,15 +29,13 @@ Atividade.init({
         type: DataTypes.STRING,
         allowNull: true,
     },
-    frequencia: {
-        type: DataTypes.JSON,
-        allowNull: true, 
-    },
 }, {
     sequelize,
     modelName: 'Atividade',
     tableName: 'atividades',
     timestamps: true,
 });
+
+
 
 module.exports = Atividade;

@@ -72,13 +72,6 @@ const SolicitacoesAdmin = () => {
            
             />
           ))}
-          <Solicitacao
-            solicitacao={{
-              status: "pendente",
-              tipoSolicitacao: "Contabilizar Horas",
-              descricao: "Teste de Solicitacao",
-            }}
-          />
         </ScrollableAtividades>
       </ContainerConteudo>
     </>

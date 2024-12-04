@@ -32,7 +32,7 @@ const SemAtividades = styled.h3`
   color: #202b3b;
 `;
 
-const HomePep = () => {
+const HomeServidor = () => {
   const [atividades, setAtividades] = useState([]);
   const [atividadeSelecionada, setAtividadeSelecionada] = useState(null);
   const [modalInscrever, setModalInscrever] = useState(false)
@@ -126,4 +126,4 @@ const HomePep = () => {
   );
 };
 
-export default HomePep;
+export default HomeServidor;

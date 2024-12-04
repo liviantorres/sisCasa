@@ -95,9 +95,9 @@ const ModalAdcSolicitacao = ({onClose, modalAtividade, modalContabilizar, modalC
         </HeaderContainer>
 
         <ContainerBotoes>
-          <Button onClick={modalAtividade}>Atividade</Button>
-          <Button onClick={modalContabilizar}>Contabilizar Hora</Button>
-          <Button onClick={modalConclusao}>Conclusão</Button>
+          <Button onClick={modalAtividade}>Curso CASa</Button>
+          <Button onClick={modalContabilizar}>Curso externo</Button>
+          <Button onClick={modalConclusao}>Consolidação das atividades</Button>
         </ContainerBotoes>
       </ContainerAdc>
     </Overlay>

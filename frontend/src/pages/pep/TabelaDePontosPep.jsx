@@ -125,9 +125,12 @@ const ScrollableAtividades = styled.div`
 const TabelaDePontosPep = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [categorias, setCategorias] = useState([]);
+  const [participacao, setParticipacao] = useState([])
+
+  const token = localStorage.getItem('token');
+  const id = localStorage.getItem('id')
 
   const fetchCategorias = async () => {
-    const token = localStorage.getItem('token');
     try {
       const response = await axios.get(`http://localhost:3000/categorias`, {
         headers: {
@@ -141,8 +144,24 @@ const TabelaDePontosPep = () => {
     }
   };
 
+  const fetchParticipacoes = async () =>{
+    console.log(id);
+    try {
+      const response = await axios.get(`http://localhost:3000/pontuacao/${id}`,{
+        headers:{
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setParticipacao(response.data);
+      console.log(participacao)
+    } catch (error) {
+      console.log("Erro ao buscar participacoes: ", error)
+    }
+  }
+
   useEffect(() => {
     fetchCategorias();
+    fetchParticipacoes();
   }, []);
 
   const handleCategoryChange = (category) => {
@@ -167,28 +186,66 @@ const TabelaDePontosPep = () => {
 
   const renderTableContent = () => {
     if (!categorias.length) {
-      return <tr><td colSpan="6">Carregando categorias...</td></tr>;
+      return (
+        <tr>
+          <td colSpan="6">Carregando categorias...</td>
+        </tr>
+      );
     }
-
+  
     const selectedCategoryData = categorias.find(
       (category) => category.nome === selectedCategory
     );
-
+  
     if (!selectedCategoryData) {
-      return <tr><td colSpan="6">Categoria não encontrada.</td></tr>;
+      return (
+        <tr>
+          <td colSpan="6">Categoria não encontrada.</td>
+        </tr>
+      );
     }
+  
+    return selectedCategoryData.atividades.map((atividade, index) => {
+    console.log("atividadeId " + atividade.id);
+    console.log("Atividades:", selectedCategoryData.atividades);
 
-    return selectedCategoryData.atividades.map((atividade, index) => (
-      <tr key={atividade.codigo}>
-        <ThStyled>{atividade.codigo}</ThStyled>
-        <ThStyled>{atividade.nome}</ThStyled>
-        <ThStyled>{atividade.metrica}</ThStyled>
-        <ThStyled>{atividade.teto_autorizado}</ThStyled>
-        <ThStyled>{atividade.horas_submetidas || 'N/A'}</ThStyled>
-        <ThStyled>{atividade.horas_consideradas || 'N/A'}</ThStyled>
-      </tr>
-    ));
+  
+      const participacaoUsuario = participacao.find(
+        (p) => p.atividadeTabelaId === atividade.id
+      );
+  
+      return (
+        <tr key={atividade.id}>
+          <ThStyled>{atividade.codigo}</ThStyled>
+          <ThStyled>{atividade.nome}</ThStyled>
+          <ThStyled>{atividade.metrica}</ThStyled>
+          <ThStyled>{atividade.teto_autorizado}</ThStyled>
+          <ThStyled>
+            {participacaoUsuario ? participacaoUsuario.horasSubmetidas : "N/A"}
+          </ThStyled>
+          <ThStyled>
+            {participacaoUsuario ? participacaoUsuario.horasConsideradas : "N/A"}
+          </ThStyled>
+        </tr>
+      );
+    });
   };
+
+  const renderTableFooter = () => {
+    const totalHorasConsideradas = participacao.reduce((total, item) => {
+      return total + (item.horasConsideradas || 0);
+    }, 0);
+  
+    return (
+      <tr>
+        <ThStyled colSpan="5" style={{ textAlign: "right", fontWeight: "bold" }}>
+          Total de Horas Consideradas:
+        </ThStyled>
+        <ThStyled style={{ fontWeight: "bold" }}>{totalHorasConsideradas}</ThStyled>
+      </tr>
+    );
+  };
+  
 
   return (
     <>
@@ -257,6 +314,7 @@ const TabelaDePontosPep = () => {
           </tr>
         </thead>
         <tbody>{renderTableContent()}</tbody>
+        <tfoot>{renderTableFooter()}</tfoot>
       </TableStyled>
       </ScrollableAtividades>
     </>
