@@ -1,6 +1,6 @@
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../config/Connection');
-
+const Participacao = require('./Participacao');
 
 class AtividadeTabela extends Model {}
 
@@ -10,12 +10,11 @@ AtividadeTabela.init({
     allowNull: false,
   },
   nome: {
-    type: DataTypes.STRING(500), 
+    type: DataTypes.STRING(500),
     allowNull: false,
   },
-  
   metrica: {
-    type: DataTypes.STRING(500), 
+    type: DataTypes.STRING(500),
     allowNull: true,
   },
   teto_autorizado: {
@@ -33,6 +32,13 @@ AtividadeTabela.init({
 }, {
   sequelize,
   modelName: 'AtividadeTabela',
+  timestamps: true,
 });
+
+// Relacionamento entre AtividadeTabela e Participacao
+AtividadeTabela.hasMany(Participacao, { foreignKey: 'atividadeTabelaId' });
+Participacao.belongsTo(AtividadeTabela, { foreignKey: 'atividadeTabelaId' });
+
+
 
 module.exports = AtividadeTabela;

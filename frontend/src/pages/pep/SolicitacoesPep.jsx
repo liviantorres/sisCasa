@@ -93,12 +93,10 @@ const SolicitacoesPep = () => {
     fetchSolicitacoes();
   }, []);
 
-  // Função para abrir o modal com a solicitação selecionada
   const openModal = () => {
     setModalSolicitacao(true);
   };
 
-  // Função para fechar o modal
   const closeModal = () => {
     setModalSolicitacao(false);
   };
@@ -158,13 +156,6 @@ const SolicitacoesPep = () => {
               onDetalhes={() => openModal(solicitacao)}
             />
           ))}
-          <Solicitacao
-            solicitacao={{
-              status: "pendente",
-              tipoSolicitacao: "Contabilizar Horas",
-              descricao: "Teste de Solicitacao",
-            }}
-          />
         </ScrollableAtividades>
 
         {modalAdcSolicitacao && (

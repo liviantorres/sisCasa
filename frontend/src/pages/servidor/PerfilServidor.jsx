@@ -128,15 +128,14 @@ const CursoInfo = styled.div`
   }
 `;
 
-const PerfilPep = () => {
+const PerfilServidor = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [userData, setUserData] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [roles, setRoles] = useState([]); 
   const [horasConcluidas, setHorasConcluidas] = useState(null)
 
- 
-  const cursosFeitos =  50;
+
   const percentage = (horasConcluidas / 128) * 100;
 
   const availableRoles = [
@@ -215,12 +214,7 @@ const PerfilPep = () => {
             </div>
             <EditIcon onClick={() => setIsModalOpen(true)} />
           </ContainerTop>
-          <div>
-            <Progresso>Progresso: <h4>{horasConcluidas} / 128 horas</h4></Progresso>
-            <ProgressBar>
-              <Progress percentage={percentage} />
-            </ProgressBar>
-          </div>
+         
           <ContainerBottom>
             <div>
               <InfoAdicional>CPF: {userData.cpf}</InfoAdicional>
@@ -250,4 +244,4 @@ const PerfilPep = () => {
   );
 };
 
-export default PerfilPep;
+export default PerfilServidor;

@@ -2,7 +2,7 @@ const Solicitacao = require('../models/Solicitacao');
 
 
 exports.createSolicitacao = async (req, res) => {
-  const { usuarioId, tipoSolicitacao, cursoId, descricao } = req.body;
+  const { usuarioId, tipoSolicitacao, cursoId, descricao, atividadeTabela } = req.body;
 
   try {
     let comprovante = null;
@@ -19,7 +19,8 @@ exports.createSolicitacao = async (req, res) => {
       cursoId: tipoSolicitacao === 'Certificado de Curso' ? cursoId : null, 
       comprovante,
       descricao,
-      status: 'Pendente'
+      status: 'Pendente',
+      atividadeTabela:  tipoSolicitacao === 'Contabilizar Horas' ? atividadeTabela : null 
     });
 
     return res.status(201).json(novaSolicitacao); 

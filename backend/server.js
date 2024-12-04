@@ -9,6 +9,7 @@ const atividadeRoutes = require('./src/routes/atividadeRoutes');
 const solicitacaoRoutes = require('./src/routes/solicitacaoRoutes');
 const pontuacaoRoutes = require('./src/routes/pontuacaoRoutes');
 const categoriaRoutes = require('./src/routes/categoriaRoutes');
+const frequenciaRoutes = require('./src/routes/frequenciaRoutes');
 
 const express = require('express');
 const app = express();
@@ -33,6 +34,11 @@ app.use('/atividade', atividadeRoutes);
 app.use('/solicitacao', solicitacaoRoutes);
 
 app.use('/categorias', categoriaRoutes);
+
+app.use('/pontuacao', pontuacaoRoutes);
+
+app.use('/frequencia', frequenciaRoutes);
+
 
 
 

@@ -3,8 +3,6 @@ import { IoIosClose } from "react-icons/io";
 import { useState, useEffect } from "react";
 import { darken } from "polished";
 import axios from "axios";
-import ModalNovaFrequencia from "./ModalNovaFrequencia";
-import ModalAtualizarFrequencia from "./ModalAtualizarFrequencia";
 
 const Overlay = styled.div`
   position: fixed;
@@ -29,17 +27,12 @@ const ContainerAdc = styled.div`
   z-index: 1000;
 `;
 
-const ContainerInputsLabels = styled.div`
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  margin: 20px;
-`;
 
 const Label = styled.label`
   font-family: "Archivo", sans-serif;
-  font-weight: 600;
+  font-weight: 400;
   color: #333;
+margin: 10px;
 `;
 
 const Table = styled.table`
@@ -103,23 +96,6 @@ const NoFrequencyMessage = styled.p`
   font-weight: 500;
 `;
 
-const Select = styled.select`
-  font-family: "Archivo", sans-serif;
-  font-weight: 400;
-  color: #000;
-  border: 1px solid #ccc;
-  width: 30%;
-  height: 30px;
-  border-radius: 6px;
-  padding: 0 10px;
-
-  &:focus {
-    border-color: #774fd1;
-    outline: none;
-    box-shadow: 0 0 5px rgba(119, 79, 209, 0.7);
-  }
-`;
-
 const ContainerBotoes = styled.div`
   display: flex;
   flex-direction: row;
@@ -154,15 +130,52 @@ const Button = styled.button`
   }
 `;
 
-const ModalFrequencia = ({ onClose, atividade }) => {
-  const [selectedDate, setSelectedDate] = useState("");
+
+const ModalAtualizarFrequencia = ({ atividade, data, onClose }) => {
   const [frequenciaAlunos, setFrequenciaAlunos] = useState([]);
-  const [showNovaFrequencia, setShowNovaFrequencia] = useState(false);
-  const [showAtualizarFrequencia, setShowAtualizarFrequencia] = useState(false);
+
+  const handleAtualizar = async () => {
+    if (!data) {
+      alert("Por favor, selecione uma data.");
+      return;
+    }
+  
+    try {
+      const token = localStorage.getItem("token");
+  
+      for (const frequencia of frequenciaAlunos) {
+        const { id, situacao } = frequencia;
+  
+        if (!situacao) continue;
+  
+        const frequenciaAtualizada = {
+          data: frequencia.data,
+          situacao,
+          atividadeId: atividade.id,
+        };
+  
+        await axios.put(
+          `http://localhost:3000/frequencia/${id}`,
+          frequenciaAtualizada,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      }
+  
+      alert("Frequências atualizadas com sucesso!");
+      onClose();
+    } catch (error) {
+      console.error("Erro ao atualizar as frequências:", error);
+      alert("Ocorreu um erro ao atualizar as frequências.");
+    }
+  };
 
   useEffect(() => {
     fetchFrequencias();
-  }, [selectedDate]);
+  }, [data]);
 
   const fetchFrequencias = async () => {
     const token = localStorage.getItem("token");
@@ -176,90 +189,59 @@ const ModalFrequencia = ({ onClose, atividade }) => {
         }
       );
 
-      setFrequenciaAlunos(response.data);
+      const alunosDaData = response.data.filter(frequencia => {
+        const frequenciaData = new Date(frequencia.data).toISOString().split("T")[0];
+        return frequenciaData === data; 
+      });
+
+      setFrequenciaAlunos(alunosDaData);
     } catch (error) {
       console.log(error.message);
     }
   };
 
-  const frequenciasFiltradas = frequenciaAlunos.filter((frequencia) => {
-    const dataFrequencia = new Date(frequencia.data)
-      .toISOString()
-      .split("T")[0];
-    return dataFrequencia === selectedDate;
-  });
-
-  const handleDateChange = (event) => {
-    setSelectedDate(event.target.value);
-  };
-
-  const handleOpenModalNovaFrequencia = () => {
-    setShowNovaFrequencia(true);
-  };
-
-  const handleNovaFrequenciaSalva = () => {
-    setShowNovaFrequencia(false);
-    fetchFrequencias();
-  };
-
-  const handleCloseModalNovaFrequencia = () => {
-    setShowNovaFrequencia(false);
-    onClose();
-  };
-
-  const handleOpenModalAtualizarFrequencia = () => {
-    if (!selectedDate) {
-      alert("Por favor, selecione uma data antes de atualizar a frequência.");
-      return;
-    }
-    setShowAtualizarFrequencia(true);
-  };
-
-  const handleCloseModalAtualizarFrequencia = () => {
-    setShowAtualizarFrequencia(false);
+  const handleSituacaoChange = (frequenciaId, novaSituacao) => {
+    setFrequenciaAlunos((prevState) =>
+      prevState.map((frequencia) =>
+        frequencia.id === frequenciaId
+          ? { ...frequencia, situacao: novaSituacao } 
+          : frequencia
+      )
+    );
   };
 
   return (
     <Overlay onClick={onClose}>
       <ContainerAdc onClick={(e) => e.stopPropagation()}>
         <Header>
-          <CloseIcon onClick={onClose} /> FREQUÊNCIA
+          <CloseIcon onClick={onClose} /> ATUALIZAR FREQUÊNCIA
         </Header>
 
-        <ContainerInputsLabels>
-          <Label>SELECIONE A DATA:</Label>
-          <Select value={selectedDate} onChange={handleDateChange}>
-            <option value="">Selecione uma data</option>
-            {Array.from(
-              new Set(
-                frequenciaAlunos.map((frequencia) => {
-                  const data = new Date(frequencia.data);
-                  return data.toISOString().split("T")[0];
-                })
-              )
-            ).map((dataFormatada, index) => (
-              <option key={index} value={dataFormatada}>
-                {dataFormatada}
-              </option>
-            ))}
-          </Select>
-        </ContainerInputsLabels>
+        <Label>DATA SELECIONADA: {data}</Label>
 
-        {frequenciasFiltradas.length > 0 ? (
+        {frequenciaAlunos.length > 0 ? (
           <div>
             <Table>
               <thead>
                 <tr>
                   <TableHeader>Aluno</TableHeader>
-                  <TableHeader>Situação?</TableHeader>
+                  <TableHeader>Situação</TableHeader>
                 </tr>
               </thead>
               <tbody>
-                {frequenciasFiltradas.map((frequencia) => (
+                {frequenciaAlunos.map((frequencia) => (
                   <tr key={frequencia.id}>
                     <TableCell>{frequencia.User.nomeCompleto}</TableCell>
-                    <TableCell situacao={frequencia.situacao}>
-                      <p>{frequencia.situacao}</p>
+                    <TableCell>
+                      <select
+                        value={frequencia.situacao}
+                        onChange={(e) =>
+                          handleSituacaoChange(frequencia.id, e.target.value)
+                        }
+                      >
+                        <option value="Presente">Presente</option>
+                        <option value="Ausente">Ausente</option>
+                      </select>
                     </TableCell>
                   </tr>
                 ))}
@@ -273,32 +255,11 @@ const ModalFrequencia = ({ onClose, atividade }) => {
         )}
 
         <ContainerBotoes>
-          <Button onClick={handleOpenModalNovaFrequencia}>
-            Nova Frequência
-          </Button>
-          <Button onClick={handleOpenModalAtualizarFrequencia}>
-            Atualizar Frequência
-          </Button>
+          <Button onClick={handleAtualizar}>Salvar</Button>
         </ContainerBotoes>
-
-        {showNovaFrequencia && (
-          <ModalNovaFrequencia
-            atividade={atividade}
-            onClose={handleCloseModalNovaFrequencia}
-            onNovaFrequenciaSalva={handleNovaFrequenciaSalva}
-          />
-        )}
-
-        {showAtualizarFrequencia && (
-          <ModalAtualizarFrequencia
-            atividade={atividade}
-            data={selectedDate}
-            onClose={handleCloseModalAtualizarFrequencia}
-          />
-        )}
       </ContainerAdc>
     </Overlay>
   );
 };
 
-export default ModalFrequencia;
+export default ModalAtualizarFrequencia;

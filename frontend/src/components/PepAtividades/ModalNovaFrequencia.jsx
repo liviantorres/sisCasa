@@ -136,32 +136,6 @@ const CustomRadio = styled.label`
   }
 `;
 
-const NoFrequencyMessage = styled.p`
-  font-family: "Archivo", sans-serif;
-  font-size: 18px;
-  color: #202b3b; 
-  text-align: center; 
-  margin-top: 20px;
-  margin-bottom: 20px;
-  font-weight: 500; 
-`;
-
-const Select = styled.select`
-  font-family: "Archivo", sans-serif;
-  font-weight: 400;
-  color: #000;
-  border: 1px solid #ccc;
-  width: 30%;
-  height: 30px;
-  border-radius: 6px;
-  padding: 0 10px;
-
-  &:focus {
-    border-color: #774fd1;
-    outline: none;
-    box-shadow: 0 0 5px rgba(119, 79, 209, 0.7);
-  }
-`;
 
 const ContainerBotoes = styled.div`
   display: flex;
@@ -212,7 +186,9 @@ const ModalNovaFrequencia = ({ onClose, atividade, onNovaFrequenciaSalva}) => {
   const [alunos, setAlunos] = useState([]);
   const [selectedAlunos, setSelectedAlunos] = useState({});
   const [selectedDate, setSelectedDate] = useState("");
+  
 
+  
   const fetchAlunos = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -230,7 +206,6 @@ const ModalNovaFrequencia = ({ onClose, atividade, onNovaFrequenciaSalva}) => {
   };
 
   useEffect(() => {
-  
     fetchAlunos();
   }, []);
 
@@ -250,29 +225,17 @@ const ModalNovaFrequencia = ({ onClose, atividade, onNovaFrequenciaSalva}) => {
     const novaFrequencia = {
       data: selectedDate,
       alunos: Object.keys(selectedAlunos).map((alunoId) => ({
-        alunoId: parseInt(alunoId),
-        nomeCompleto: alunos.find((aluno) => aluno.id === parseInt(alunoId)).nomeCompleto,
+        userId: parseInt(alunoId),
         situacao: selectedAlunos[alunoId],
       })),
+      atividadeId: atividade.id,
     };
-  
-    const frequenciasAnteriores = atividade.frequencia || [];
-    const frequenciaAtualizada = [...frequenciasAnteriores, novaFrequencia];
-    
-    const frequenciaData = {
-      frequencia: frequenciaAtualizada
-    };
-  
-    if (frequenciaData.frequencia[0].alunos.length === 0) {
-      alert("Por favor, selecione a presença dos alunos.");
-      return;
-    }
   
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.put(
-        `http://localhost:3000/atividade/${atividade.id}/frequencias`,
-        frequenciaData,
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        `http://localhost:3000/frequencia/`,
+        novaFrequencia,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -280,12 +243,9 @@ const ModalNovaFrequencia = ({ onClose, atividade, onNovaFrequenciaSalva}) => {
         }
       );
   
-      if (response.status === 200) {
-        onNovaFrequenciaSalva(atividade.id);
-        alert("Frequência salva com sucesso!");
-        onClose();
-        window.location.reload();
-      }
+      console.log("Resposta da API:", response);
+  
+      onClose();
     } catch (error) {
       console.error("Erro ao salvar a frequência:", error);
       alert("Ocorreu um erro ao salvar a frequência.");
@@ -293,7 +253,7 @@ const ModalNovaFrequencia = ({ onClose, atividade, onNovaFrequenciaSalva}) => {
   };
   
   
-
+  
 
   return (
     <Overlay onClick={onClose}>

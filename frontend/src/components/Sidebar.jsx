@@ -172,6 +172,29 @@ const pepNavItems = [
   },
 ];
 
+
+const servidorNavItems = [
+  {
+    path: "/servidor",
+    label: "Home",
+    icon: (
+      <IconWrapper>
+        <IoHomeOutline size={35} color="#fff" />
+      </IconWrapper>
+    ),
+  },
+  {
+    path: "/servidor/cursos",
+    label: "Cursos",
+    icon: (
+      <IconWrapper>
+        <ImFileText2 size={35} color="#fff" />
+      </IconWrapper>
+    ),
+  },
+  
+];
+
 const Sidebar = ({ type }) => {
   let navItems;
 
@@ -179,6 +202,8 @@ const Sidebar = ({ type }) => {
     navItems = adminNavItems;
   } else if (type === "pep") {
     navItems = pepNavItems;
+  }else if (type === "servidor") {
+    navItems = servidorNavItems;
   } else {
     navItems = [];
   }

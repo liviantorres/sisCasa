@@ -4,6 +4,7 @@ const Role = require('./Role');
 const Participacao = require('./Participacao')
 const Atividade = require('./Atividade');
 const UserAtividade = require('./UserAtividade');
+const Frequencia = require('./Frequencia')
 
 class User extends Model {}
 
@@ -42,6 +43,11 @@ User.init({
     type: DataTypes.STRING,
     allowNull: false,
   },
+  horasConcluidas: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    defaultValue: 0, 
+  },
 }, { 
   sequelize, 
   modelName: 'User', 
@@ -50,7 +56,7 @@ User.init({
 });
 
 
-// Relacionamentos de Usuario e Atividade
+
 User.belongsToMany(Atividade, {
   through: {
     model: UserAtividade
@@ -68,6 +74,25 @@ Atividade.belongsToMany(User, {
   constraint: true
 })
 
+User.hasMany(Frequencia, {
+  foreignKey: 'userId',
+});
+
+Frequencia.belongsTo(Atividade, {
+  foreignKey: 'atividadeId',
+  onDelete: 'CASCADE',
+});
+Frequencia.belongsTo(User, {
+  foreignKey: 'userId',
+  onDelete: 'CASCADE',
+});
+
+Atividade.hasMany(Frequencia, {
+  foreignKey: 'atividadeId',
+});
+
+
+
 User.hasMany(UserAtividade, {foreignKey: 'userId'});
 UserAtividade.belongsTo(User, {foreignKey: 'userId'});
 Atividade.hasMany(UserAtividade, {foreignKey: 'atividadeId'});
@@ -78,8 +103,9 @@ UserAtividade.belongsTo(Atividade, {foreignKey: 'atividadeId'});
 User.belongsToMany(Role, { through: 'UserRole', foreignKey: 'userId' });
 Role.belongsToMany(User, { through: 'UserRole', foreignKey: 'roleId' });
 
-User.hasMany(Participacao, { foreignKey: 'docenteId' });
-Participacao.belongsTo(User, { foreignKey: 'docenteId' });
+User.hasMany(Participacao, { foreignKey: 'userId' });
+Participacao.belongsTo(User, { foreignKey: 'userId' });
+
 
 
 module.exports = User;

@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import { AiOutlineClose } from "react-icons/ai";
-import { MdOutlineFileUpload } from "react-icons/md";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import Swal from "sweetalert2";
 
 const Overlay = styled.div`
   position: fixed;
@@ -66,6 +68,11 @@ const Button = styled.button`
     transform: translateY(-2px);
     box-shadow: 0px 4px 8px rgba(30, 182, 98, 0.3);
   }
+
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
 `;
 
 const HeaderContainer = styled.div`
@@ -86,73 +93,102 @@ const Header = styled.div`
   text-align: center;
 `;
 
-const Label = styled.label`
-  font-family: "Poppins", sans-serif;
-  span {
-    color: #ed2c2c;
-  }
-`;
-
 const Div = styled.div`
   display: flex;
   flex-direction: column;
   margin: 40px;
 `;
 
-const Input = styled.input`
-  font-family: "Archivo", sans-serif;
-  font-weight: 100;
-  width: 90%;
-  height: 20px;
+const Alert = styled.div`
+  color: #ed2c2c;
+  font-size: 14px;
+  font-weight: bold;
   margin-top: 10px;
-  margin-bottom: 20px;
-  padding: 5px;
-  border: 1px solid #ccc;
-  font-size: 16px;
-  border-radius: 6px;
-  background-color: #f2eeee;
-
-  &:focus {
-    border-color: #774fd1;
-    outline: none;
-    box-shadow: 0 0 2px rgba(119, 79, 209, 0.7);
-  }
-`;
-
-const FileUploadButton = styled.label`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  font-family: "Poppins", sans-serif;
-  font-weight: 100;
-
-  width: 30%;
-  padding: 8px 0px;
-  background-color: #4b3e65;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 15px;
-  letter-spacing: 0.1em;
-  text-align: center;
-  margin-top: 10px;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background-color: #5a4b7a;
-    box-shadow: 0px 6px 10px rgba(90, 75, 122, 0.4);
-    transform: translateY(-2px);
-  }
-
-  input[type="file"] {
-    display: none;
-  }
 `;
 
 const ModalConclusao = ({ onClose }) => {
+  const [user, setUser] = useState();
+  const [isDisabled, setIsDisabled] = useState(true); // To disable the "Enviar" button initially
+  const [showAlert, setShowAlert] = useState(false); // To show alert when hours are less than 128
+
+  const token = localStorage.getItem("token");
+  const id = localStorage.getItem("id");
+
+  const fetchUsuario = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3000/user/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setUser(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsuario();
+  }, []);
+
+  useEffect(() => {
+    if (user && user.horasConcluidas >= 128) {
+      setIsDisabled(false); 
+      setShowAlert(false); 
+    }
+  }, [user]);
+
+  const handleSubmit = async () => {
+    if (user.horasConcluidas < 128) {
+      setShowAlert(true);
+    } else {
+      try {
+        const usuarioId = localStorage.getItem("id");
+
+        const novaSolicitacao = {
+          usuarioId: usuarioId,
+          tipoSolicitacao: "Certificado de Horas",
+        };
+        
+        const response = await axios.post(
+          `http://localhost:3000/solicitacao/`,
+          novaSolicitacao,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        console.log("Solicitação salva com sucesso:", response.data);
+        Swal.fire({
+          icon: "success",
+          title: "Solicitação Enviada",
+          text: "A solicitação foi enviada, aguarde a resposta.",
+          confirmButtonColor: "#774fd1",
+          customClass: {
+            popup: "custom-swal-font",
+          },
+        }).then(() => {
+          onClose(); 
+          window.location.reload()
+        });
+      } catch (error) {
+        console.log("Erro ao salvar solicitação:", error.message);
+        Swal.fire({
+          icon: "error",
+          title: "Erro ao Enviar",
+          text: "Ocorreu um erro ao enviar a solicitação.",
+          confirmButtonColor: "#774fd1",
+          customClass: {
+            popup: "custom-swal-font",
+          },
+        });
+      }
+    }
+  };
+
   return (
     <Overlay>
       <ContainerAdc onClick={(e) => e.stopPropagation()}>
@@ -160,7 +196,17 @@ const ModalConclusao = ({ onClose }) => {
           <Header>Solicitação de Conclusão:</Header>
           <CloseIcon onClick={onClose} />
         </HeaderContainer>
-        <Div></Div>
+        <Div>
+          <p>Horas Concluídas: {user ? user.horasConcluidas : 0} / 128</p>
+          {showAlert && (
+            <Alert>Você precisa concluir pelo menos 128 horas para enviar a solicitação.</Alert>
+          )}
+        </Div>
+        <ContainerBotoes>
+          <Button onClick={handleSubmit} disabled={isDisabled}>
+            Enviar
+          </Button>
+        </ContainerBotoes>
       </ContainerAdc>
     </Overlay>
   );
