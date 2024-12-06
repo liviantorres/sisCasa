@@ -1,5 +1,7 @@
 import styled from "styled-components";
 import { AiOutlineClose } from "react-icons/ai"; 
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const Overlay = styled.div`
   position: fixed;
@@ -110,10 +112,40 @@ const Header = styled.div`
   color: #ffff;
 `;
 
-const ModalVisualizar = ({ onClose, modalFrequencia, atividade }) => {
-  const handleOpenModal = () => {
+const ModalVisualizar = ({ onClose, modalFrequencia, modalAprovacao, atividade }) => {
+  const [professor, setProfessor] = useState({})
+
+  const handleOpenModalFrequencia = () => {
     modalFrequencia(atividade);
   };
+
+  const handleOpenModal = () =>{
+    modalAprovacao(atividade);
+  };
+
+  const fetchProfessor = async () =>{
+try {
+  const token = localStorage.getItem("token");
+  const response = await axios.get(`http://localhost:3000/user/${atividade.professorId}`,
+    {
+      headers:{
+        Authorization: `Bearer ${token}`
+      }
+    }
+  )
+  console.log("prof", response.data)
+  setProfessor(response.data);
+} catch (error) {
+  console.log(error)
+}
+  }
+
+  useEffect(() => {
+    if (atividade && atividade.professorId) {
+      fetchProfessor();
+    }
+  }, [atividade]);
+  
   
   return (
     <Overlay onClick={onClose}>
@@ -132,21 +164,23 @@ const ModalVisualizar = ({ onClose, modalFrequencia, atividade }) => {
           <Div>
             {atividade.categoria !== "edital" && (
               <>
-                <Label>Professor:</Label>
-                <P>{atividade.professorId}</P>
+               <Label>Professor:</Label>
+                <P>{professor?.nomeCompleto || "Carregando..."}</P>
                 <Label>Carga Horária:</Label>
-                <P>{atividade.cargaHoraria}</P>
+                <P>{atividade.cargaHoraria}h</P>
               </>
             )}
             <Label>Link:</Label>
             <P>{atividade.link}</P>
           </Div>
         </ContainerInputsLabels>
-        <ContainerBotoes>
           {atividade.categoria === "curso" && (
-            <Button onClick={handleOpenModal}>Frequência</Button>
+            <ContainerBotoes>
+            <Button onClick={handleOpenModalFrequencia}>Frequência</Button>
+            <Button onClick={handleOpenModal} >Aprovação</Button>
+            </ContainerBotoes>
           )}
-        </ContainerBotoes>
+        
       </ContainerAdc>
     </Overlay>
   );

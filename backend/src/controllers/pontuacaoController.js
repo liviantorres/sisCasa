@@ -50,14 +50,21 @@ const atualizarHorasAtividades = async (req, res) => {
   try {
     const { codigo, userId, horasSubmetidas, horasConsideradas } = req.body;
 
-    // Encontra a atividade pelo código
     const atividade = await AtividadeTabela.findOne({ where: { codigo } });
 
     if (!atividade) {
       return res.status(404).json({ message: 'Atividade não encontrada' });
     }
 
-    // Encontra a participação do usuário na atividade
+    const tetoAutorizado = atividade.teto_autorizado;
+
+    let horasSubmetidasFinal = Number(horasSubmetidas) || 0;
+    let horasConsideradasFinal = Number(horasConsideradas) || 0;
+
+    if (horasConsideradasFinal > tetoAutorizado) {
+      horasConsideradasFinal = tetoAutorizado;
+    }
+
     let participacao = await Participacao.findOne({
       where: {
         atividadeTabelaId: atividade.id,
@@ -66,18 +73,16 @@ const atualizarHorasAtividades = async (req, res) => {
     });
 
     if (!participacao) {
-      // Cria uma nova participação se não existir
       participacao = await Participacao.create({
         atividadeTabelaId: atividade.id,
         userId: userId,
-        horasSubmetidas: horasSubmetidas || 0,
-        horasConsideradas: horasConsideradas || 0
+        horasSubmetidas: horasSubmetidasFinal,
+        horasConsideradas: horasConsideradasFinal
       });
 
       participacao.atividadeId = atividade.id;
       await participacao.save();
 
-      // Atualiza as horas concluídas do usuário
       await atualizarHorasConcluidas(userId);
 
       return res.status(201).json({
@@ -86,12 +91,16 @@ const atualizarHorasAtividades = async (req, res) => {
       });
     }
 
-    // Atualiza as horas da participação existente
-    participacao.horasSubmetidas = horasSubmetidas;
-    participacao.horasConsideradas = horasConsideradas;
+    participacao.horasSubmetidas += horasSubmetidasFinal;
+    participacao.horasConsideradas += horasConsideradasFinal;
+
+  
+    if (participacao.horasConsideradas > tetoAutorizado) {
+      participacao.horasConsideradas = tetoAutorizado;
+    }
+
     await participacao.save();
 
-    // Atualiza as horas concluídas do usuário
     await atualizarHorasConcluidas(userId);
 
     return res.status(200).json({ message: 'Horas atualizadas com sucesso!', participacao });
@@ -100,6 +109,7 @@ const atualizarHorasAtividades = async (req, res) => {
     return res.status(500).json({ message: 'Erro ao atualizar as horas', error: error.message });
   }
 };
+
 
 const atualizarHorasConcluidas = async (userId) => {
   try {

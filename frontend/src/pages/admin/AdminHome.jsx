@@ -10,6 +10,7 @@ import ModalRemover from "../../components/AdminAtividades/ModalRemover";
 import ModalVisualizar from "../../components/AdminAtividades/ModalVisualizar";
 import ModalFrequencia from "../../components/AdminAtividades/ModalFrequencia";
 import ModalSelecionarTipo from "../../components/AdminAtividades/ModalSelecionarTipo";
+import ModalAprovacao from "../../components/AdminAtividades/ModalAprovacao";
 
 const ContainerConteudo = styled.div`
   margin: 50px;
@@ -78,6 +79,7 @@ const AdminHome = () => {
   const [modalRemover, setModalRemover] = useState(false);
   const [modalVisualizar, setModalVisualizar] = useState(false);
   const [modalFrequencia, setModalFrequenecia] = useState(false);
+  const [modalAprovacao, setModalAprovacao] = useState(false);
   const [professores, setProfessores] = useState([]);
   const [atividadeSelecionada, setAtividadeSelecionada] = useState(null);
   
@@ -145,6 +147,18 @@ const AdminHome = () => {
     setModalFrequenecia(true);
     setModalVisualizar(false);
   };
+
+  const handleCloseModalAprovacao = () => {
+    setModalAprovacao(false);
+  };
+
+  const handleOpenModalAprovacao = (atividade) => {
+    setAtividadeSelecionada(atividade);
+    console.log("Atividade:" + atividade)
+    setModalAprovacao(true);
+    setModalVisualizar(false);
+  };
+
 
   const fetchProfessores = async () => {
     const token = localStorage.getItem('token'); 
@@ -310,9 +324,10 @@ const AdminHome = () => {
         {modalEditar && <ModalEditar professores={professores} atividade={atividadeSelecionada} onClose={handleCloseModalEditar} onSave={handleUpdate} />}
         {modalRemover && <ModalRemover atividade={atividadeSelecionada} onConfirm={handleRemove} onClose={handleCloseModalRemover} />}
         {modalVisualizar && (
-          <ModalVisualizar atividade={atividadeSelecionada} onClose={handleCloseModalVisualizar} modalFrequencia={handleOpenModalFrequencia} />
+          <ModalVisualizar atividade={atividadeSelecionada} onClose={handleCloseModalVisualizar} modalFrequencia={handleOpenModalFrequencia} modalAprovacao={handleOpenModalAprovacao} />
         )}
         {modalFrequencia && <ModalFrequencia atividade={atividadeSelecionada} onClose={handleCloseModalFrequencia} />}
+        {modalAprovacao && <ModalAprovacao atividade={atividadeSelecionada} onClose={handleCloseModalAprovacao} />}
       </ContainerConteudo>
     </>
   );

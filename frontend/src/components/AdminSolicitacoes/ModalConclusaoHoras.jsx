@@ -1,12 +1,11 @@
-
 import styled from "styled-components";
-
 import { AiOutlineClose } from "react-icons/ai";
 import { darken } from "polished";
-
+import Swal from "sweetalert2";
 import "./style.css";
-
 import { MdOutlineFileUpload } from "react-icons/md";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 const Overlay = styled.div`
   position: fixed;
@@ -130,30 +129,6 @@ const Header = styled.div`
   text-transform: uppercase;
 `;
 
-const ContainerStatus = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 6px;
-`;
-
-const StatusDot = styled.div`
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background-color: ${({ status }) => {
-    switch (status) {
-      case "Pendente":
-        return "yellow";
-      case "Rejeitado":
-        return "red";
-      case "Aceito":
-        return "green";
-      default:
-        return "gray";
-    }
-  }};
-`;
-
 const DivTop = styled.div`
   display: flex;
   flex-direction: row;
@@ -198,16 +173,140 @@ const FileUploadButton = styled.label`
   }
 `;
 
-const ModalConclusaoHoras = ({solicitacao, onClose}) => {
+const ModalConclusaoHoras = ({ solicitacao, onClose }) => {
+  const [nomeRemetente, setNomeRemetente] = useState("");
+  const [certificado, setCertificado] = useState(null);
+  const token = localStorage.getItem("token");
 
-    const formatarData = (dataISO) => {
-        const dataObj = new Date(dataISO);
-        const opcoes = { day: "2-digit", month: "numeric", year: "numeric" };
-        return dataObj.toLocaleDateString("pt-BR", opcoes);
-      };
+  const handleAccept = async () => {
+    if (!certificado) {
+      Swal.fire({
+        icon: "warning",
+        title: "Anexar Certificado",
+        text: "Para aceitar, é necessário anexar um certificado em PDF.",
+        confirmButtonColor: "#774fd1",
+        customClass: {
+          popup: "custom-swal-font",
+        },
+      });
+      return;
+    }
 
-    return (
-        <Overlay>
+    const formData = new FormData();
+    formData.append("certificado", certificado);
+    formData.append("status", "Aceito");
+
+    try {
+      await axios.put(
+        `http://localhost:3000/solicitacao/${solicitacao.id}/status`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      Swal.fire({
+        icon: "success",
+        title: "Solicitação Aceita",
+        text: "A solicitação foi aceita e o certificado foi enviado.",
+        confirmButtonColor: "#774fd1",
+        customClass: {
+          popup: "custom-swal-font",
+        },
+      }).then(() => {
+        onClose();
+        window.location.reload();
+      });
+    } catch (error) {
+      console.error(error.message);
+      Swal.fire({
+        icon: "error",
+        title: "Erro ao Aceitar",
+        text: "Ocorreu um erro ao aceitar a solicitação.",
+        confirmButtonColor: "#774fd1",
+        customClass: {
+          popup: "custom-swal-font",
+        },
+      });
+    }
+  };
+  const handleReject = async () => {
+    const token = localStorage.getItem("token");
+    const formData = new FormData();
+    formData.append("status", "Rejeitado");
+
+    try {
+      const response = await axios.put(
+        `http://localhost:3000/solicitacao/${solicitacao.id}/status`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        Swal.fire({
+          icon: "success",
+          title: "Solicitação Rejeitada",
+          text: "A solicitação foi rejeitada.",
+          confirmButtonColor: "#774fd1",
+          customClass: {
+            popup: "custom-swal-font",
+          },
+        }).then(() => {
+          onClose();
+          window.location.reload();
+        });
+      } else {
+        throw new Error("Erro ao rejeitar a solicitação.");
+      }
+    } catch (error) {
+      console.error(error.message);
+      Swal.fire({
+        icon: "error",
+        title: "Erro ao Rejeitar",
+        text: "Ocorreu um erro ao rejeitar a solicitação.",
+        confirmButtonColor: "#774fd1",
+        customClass: {
+          popup: "custom-swal-font",
+        },
+      });
+    }
+  };
+
+  const fetchBuscarRemetente = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/user/${solicitacao.usuarioId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setNomeRemetente(response.data.nomeCompleto);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const handleFileChange = (e) => {
+    setCertificado(e.target.files[0]);
+  };
+
+  useEffect(() => {
+    fetchBuscarRemetente();
+  }, []);
+
+  return (
+    <Overlay>
       <ContainerAdc>
         <Header>Detalhes da Solicitação</Header>
         <CloseIcon onClick={onClose} />
@@ -215,52 +314,62 @@ const ModalConclusaoHoras = ({solicitacao, onClose}) => {
           <DivTop>
             <Div>
               <Label>Tipo de Solicitação:</Label>
-           
+              {solicitacao.tipoSolicitacao === "Certificado de Horas" ? (
+                <P>Certificado de conclusão de horas</P>
+              ) : null}{" "}
               <Label>Descrição:</Label>
-            
+              <P>{solicitacao.descricao || "Não informado."}</P>
             </Div>
-            <Div>
-              <Label>Curso:</Label>
-              <P></P>
-              <Label>Status:</Label>
-              <ContainerStatus>
-               
-              </ContainerStatus>
-            </Div>
+
             <Div>
               <Label>Remetente:</Label>
-              <P></P>
-              <Label>Data:</Label>
-            
+              <P>{nomeRemetente}</P>
             </Div>
           </DivTop>
+
           <Div>
             <Label>Motivo (se rejeitado):</Label>
-            <TextArea
-              placeholder="Explique o motivo da rejeição (opcional)"
-            
-              
-            />
+            <TextArea placeholder="Explique o motivo da rejeição (opcional)" />
             <Label>Certificado em PDF:</Label>
 
             <FileUploadButton>
-              <MdOutlineFileUpload size={25} />
-              Escolher Arquivo
-              <input type="file" />
+              {certificado ? (
+                <>
+                  <MdOutlineFileUpload size={25} />
+                  <span
+                    style={{
+                      marginLeft: "10px",
+                      fontFamily: "Poppins",
+                      fontSize: "14px",
+                    }}
+                  >
+                    {certificado.name.length > 25
+                      ? `${certificado.name.substring(0, 25)}...`
+                      : certificado.name}
+                  </span>
+                  <input type="file" onChange={handleFileChange} />
+                </>
+              ) : (
+                <>
+                  <MdOutlineFileUpload size={25} />
+                  Escolher Arquivo
+                  <input type="file" onChange={handleFileChange} />
+                </>
+              )}
             </FileUploadButton>
           </Div>
         </ContainerInputsLabels>
         <ContainerBotoes>
-          <Button cor="#4caf50" >
+          <Button onClick={handleAccept} cor="#4caf50">
             Aceitar
           </Button>
-          <Button cor="#C02929">
+          <Button onClick={handleReject} cor="#C02929">
             Rejeitar
           </Button>
         </ContainerBotoes>
       </ContainerAdc>
     </Overlay>
-      );
-}
- 
+  );
+};
+
 export default ModalConclusaoHoras;

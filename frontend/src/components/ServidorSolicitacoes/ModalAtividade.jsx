@@ -153,15 +153,9 @@ const ModalAtividade = ({ onClose }) => {
   const [descricao, setDescricao] = useState("");
   const [categorias, setCategorias] = useState([]);
 
-  const [selectedAtividadeId, setSelectedAtividadeId] = useState("");
   const token = localStorage.getItem("token");
   const id = localStorage.getItem("id");
 
-  const handleSelectChange = (e) => {
-    const valorConvertido = parseFloat(e.target.value);
-  setSelectedAtividadeId(valorConvertido);
-  console.log("Atividade selecionada (float):", valorConvertido);
-  };
   
 
   const fetchAtividades = async () => {
@@ -209,7 +203,6 @@ const ModalAtividade = ({ onClose }) => {
         tipoSolicitacao: "Certificado de Curso",
         cursoId: cursoId,
         descricao: descricao,
-        atividadeTabela: selectedAtividadeId
       };
 
       console.log("Payload enviado:", novaSolicitacao);
@@ -274,24 +267,6 @@ const ModalAtividade = ({ onClose }) => {
               </option>
             ))}
           </Select>
-          <Label>
-            Indique a atividade correspondente da tabela <span>*</span>
-          </Label>
-          <select
-            style={{ width: "90%", marginTop: "10px", marginBottom: "20px" }}
-            onChange={handleSelectChange}
-          >
-            {categorias?.map((categoria) => (
-              <optgroup key={categoria.categoria} label={categoria.categoria}>
-                {categoria.atividades?.map((atividade) => (
-                  <option key={atividade.id} value={atividade.codigo}>
-                    {atividade.codigo} - {atividade.nome}
-                  </option>
-                ))}
-              </optgroup>
-            ))}
-          </select>
-
 
           <Label>Adicione uma breve descrição (opcional)</Label>
           <Textarea

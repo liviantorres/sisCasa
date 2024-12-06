@@ -154,6 +154,14 @@ const Button = styled.button`
   }
 `;
 
+const ScrollableAtividades = styled.div`
+  max-height: 400px; 
+  overflow-y: auto; 
+  overflow-x: hidden; 
+  padding: 10px; 
+`;
+
+
 const ModalFrequencia = ({ onClose, atividade }) => {
   const [selectedDate, setSelectedDate] = useState("");
   const [frequenciaAlunos, setFrequenciaAlunos] = useState([]);
@@ -244,7 +252,7 @@ const ModalFrequencia = ({ onClose, atividade }) => {
             ))}
           </Select>
         </ContainerInputsLabels>
-
+<ScrollableAtividades>
         {frequenciasFiltradas.length > 0 ? (
           <div>
             <Table>
@@ -271,7 +279,7 @@ const ModalFrequencia = ({ onClose, atividade }) => {
             Nenhuma frequência registrada para a data selecionada.
           </NoFrequencyMessage>
         )}
-
+</ScrollableAtividades>
         <ContainerBotoes>
           <Button onClick={handleOpenModalNovaFrequencia}>
             Nova Frequência

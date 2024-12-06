@@ -203,6 +203,9 @@ const ModalCertificadoCurso = ({ onClose, solicitacao }) => {
   const [nomeDoProfessor, setNomeDoProfessor] = useState([]);
   const [motivo, setMotivo] = useState("");
   const [certificado, setCertificado] = useState(null);
+  const [remetente, setRemetente] = useState(null);
+  const [pontuacao, setPontuacao] = useState(null);
+  const token = localStorage.getItem("token");
 
   const fetchBuscarCurso = async () => {
     const token = localStorage.getItem("token");
@@ -216,7 +219,7 @@ const ModalCertificadoCurso = ({ onClose, solicitacao }) => {
           },
         }
       );
-      setNomeDoCurso(response.data.titulo);
+      setNomeDoCurso(response.data);
     } catch (error) {
       console.log(error.message);
     }
@@ -234,11 +237,13 @@ const ModalCertificadoCurso = ({ onClose, solicitacao }) => {
           },
         }
       );
+      setRemetente(response.data);
       setNomeDoProfessor(response.data.nomeCompleto);
     } catch (error) {
       console.log(error.message);
     }
   };
+
 
   useEffect(() => {
     fetchBuscarCurso();
@@ -263,7 +268,20 @@ const ModalCertificadoCurso = ({ onClose, solicitacao }) => {
       return;
     }
 
-    const token = localStorage.getItem("token");
+   
+    const horasData = {
+      userId: solicitacao.usuarioId,
+      codigo: String(solicitacao.atividadeTabela),
+      horasSubmetidas: nomeDoCurso.cargaHoraria,
+      horasConsideradas: nomeDoCurso.cargaHoraria,
+    };
+
+    await axios.put(`http://localhost:3000/pontuacao/`, horasData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
     const formData = new FormData();
     formData.append("certificado", certificado);
     formData.append("status", "Aceito");
@@ -289,8 +307,8 @@ const ModalCertificadoCurso = ({ onClose, solicitacao }) => {
           popup: "custom-swal-font",
         },
       }).then(() => {
-        onClose(); 
-        window.location.reload()
+        onClose();
+        window.location.reload();
       });
     } catch (error) {
       console.error(error.message);
@@ -308,8 +326,8 @@ const ModalCertificadoCurso = ({ onClose, solicitacao }) => {
   const handleReject = async () => {
     const token = localStorage.getItem("token");
     const formData = new FormData();
-    formData.append("status", "Rejeitado"); 
-  
+    formData.append("status", "Rejeitado");
+
     try {
       const response = await axios.put(
         `http://localhost:3000/solicitacao/${solicitacao.id}/status`,
@@ -317,11 +335,11 @@ const ModalCertificadoCurso = ({ onClose, solicitacao }) => {
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data"
-          }
+            "Content-Type": "multipart/form-data",
+          },
         }
       );
-  
+
       if (response.status === 200) {
         Swal.fire({
           icon: "success",
@@ -329,11 +347,11 @@ const ModalCertificadoCurso = ({ onClose, solicitacao }) => {
           text: "A solicitação foi rejeitada.",
           confirmButtonColor: "#774fd1",
           customClass: {
-            popup: "custom-swal-font"
-          }
+            popup: "custom-swal-font",
+          },
         }).then(() => {
           onClose();
-          window.location.reload()
+          window.location.reload();
         });
       } else {
         throw new Error("Erro ao rejeitar a solicitação.");
@@ -346,12 +364,11 @@ const ModalCertificadoCurso = ({ onClose, solicitacao }) => {
         text: "Ocorreu um erro ao rejeitar a solicitação.",
         confirmButtonColor: "#774fd1",
         customClass: {
-          popup: "custom-swal-font"
-        }
+          popup: "custom-swal-font",
+        },
       });
     }
   };
-  
 
   const formatarData = (dataISO) => {
     const dataObj = new Date(dataISO);
@@ -374,16 +391,25 @@ const ModalCertificadoCurso = ({ onClose, solicitacao }) => {
             </Div>
             <Div>
               <Label>Curso:</Label>
-              <P>{nomeDoCurso}</P>
+              <P>
+                {nomeDoCurso.titulo} - {nomeDoCurso.cargaHoraria}h
+              </P>
               <Label>Status:</Label>
               <ContainerStatus>
                 <StatusDot status={solicitacao.status} />
                 <P>{solicitacao.status}</P>
               </ContainerStatus>
+              <Label>Tabela de pontos:</Label>
+              <P>{solicitacao.atividadeTabela}</P>
             </Div>
             <Div>
               <Label>Remetente:</Label>
-              <P>{nomeDoProfessor}</P>
+              <P>
+                {nomeDoProfessor || "Remetente não encontrado"} -
+                {remetente?.id === nomeDoCurso?.professorId
+                  ? " (Professor)"
+                  : " (Aluno)"}
+              </P>
               <Label>Data:</Label>
               <P>{formatarData(solicitacao.data)}</P>
             </Div>
@@ -398,9 +424,29 @@ const ModalCertificadoCurso = ({ onClose, solicitacao }) => {
             <Label>Certificado em PDF:</Label>
 
             <FileUploadButton>
-              <MdOutlineFileUpload size={25} />
-              Escolher Arquivo
-              <input type="file" onChange={handleFileChange} />
+              {certificado ? (
+                <>
+                  <MdOutlineFileUpload size={25} />
+                  <span
+                    style={{
+                      marginLeft: "10px",
+                      fontFamily: "Poppins",
+                      fontSize: "14px",
+                    }}
+                  >
+                    {certificado.name.length > 25
+                      ? `${certificado.name.substring(0, 25)}...`
+                      : certificado.name}
+                  </span>
+                  <input type="file" onChange={handleFileChange} />
+                </>
+              ) : (
+                <>
+                  <MdOutlineFileUpload size={25} />
+                  Escolher Arquivo
+                  <input type="file" onChange={handleFileChange} />
+                </>
+              )}
             </FileUploadButton>
           </Div>
         </ContainerInputsLabels>

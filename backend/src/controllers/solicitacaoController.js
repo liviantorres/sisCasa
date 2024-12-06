@@ -20,7 +20,7 @@ exports.createSolicitacao = async (req, res) => {
       comprovante,
       descricao,
       status: 'Pendente',
-      atividadeTabela:  tipoSolicitacao === 'Contabilizar Horas' ? atividadeTabela : null 
+      atividadeTabela: atividadeTabela
     });
 
     return res.status(201).json(novaSolicitacao); 

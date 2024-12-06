@@ -172,11 +172,12 @@ const ModalCertificadoHoras = ({ solicitacao, onClose }) => {
   const [motivo, setMotivo] = useState("");
   const [horas, setHoras] = useState();
   const [horasConsideradas, setHorasConsideradas] = useState();
+  const [pontuacao, setPontuacao] = useState();
 
   const token = localStorage.getItem("token");
 
   const handleAccept = async () => {
-    if (!horas || !horasConsideradas) {
+    if (!horasConsideradas) {
       Swal.fire({
         icon: "warning",
         title: "Horas a contabilizar",
@@ -189,10 +190,27 @@ const ModalCertificadoHoras = ({ solicitacao, onClose }) => {
       return;
     }
 
+
+    const horasData = {
+      userId: solicitacao.usuarioId,
+      codigo: String(solicitacao.atividadeTabela),
+      horasSubmetidas: horasConsideradas,
+      horasConsideradas: horasConsideradas,
+    };
+
+    await axios.put(
+      `http://localhost:3000/pontuacao/`, 
+      horasData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    
+
     const formData = new FormData();
     formData.append("status", "Aceito");
-    formData.append("horasSubmetidas", horas);
-    formData.append("horasConsideradas", horasConsideradas); 
 
     try {
       await axios.put(
@@ -206,22 +224,7 @@ const ModalCertificadoHoras = ({ solicitacao, onClose }) => {
         }
       );
 
-      const horasData = {
-        userId: solicitacao.usuarioId,
-        codigo: String(solicitacao.atividadeTabela),
-        horasSubmetidas: horas,
-        horasConsideradas: horasConsideradas,
-      };
-
-      await axios.put(
-        `http://localhost:3000/pontuacao/`, 
-        horasData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+    
 
       Swal.fire({
         icon: "success",
@@ -342,6 +345,8 @@ const ModalCertificadoHoras = ({ solicitacao, onClose }) => {
       console.log(error.message);
     }
   };
+  
+  
 
   useEffect(() => {
     fetchBuscarRemetente();
@@ -373,23 +378,8 @@ const ModalCertificadoHoras = ({ solicitacao, onClose }) => {
               ) : (
                 <P>Descrição não fornecida</P>
               )}
-            </Div>
-            <Div>
-              <Label>Status:</Label>
-              <ContainerStatus>
-                <StatusDot status={solicitacao.status} />
-                <P>{solicitacao.status}</P>
-              </ContainerStatus>
-            </Div>
-            <Div>
-              <Label>Remetente:</Label>
-              <P>{nomeRemetente}</P>
-              <Label>Data:</Label>
-              <P>{formatarData(solicitacao.data)}</P>
-            </Div>
-          </DivTop>
-          <Div>
-            <Label>Comprovante:</Label>
+
+<Label>Comprovante:</Label>
             {solicitacao.comprovante ? (
               <a
                 href={solicitacao.comprovante}
@@ -408,7 +398,32 @@ const ModalCertificadoHoras = ({ solicitacao, onClose }) => {
             ) : (
               <P>Nenhum comprovante disponível</P>
             )}
-          </Div>
+             
+            </Div>
+            <Div>
+              <Label>Status:</Label>
+              <ContainerStatus>
+                <StatusDot status={solicitacao.status} />
+                <P>{solicitacao.status}</P>
+              </ContainerStatus>
+              <Label>tabela de pontos:</Label>
+             <P>{solicitacao.atividadeTabela}</P>
+
+             <Label>Horas consideradas:</Label>
+              <input
+                value={horasConsideradas}
+                onChange={(e) => setHorasConsideradas(e.target.value)}
+                type="number"
+              />
+            </Div>
+            <Div>
+              <Label>Remetente:</Label>
+              <P>{nomeRemetente}</P>
+              <Label>Data:</Label>
+              <P>{formatarData(solicitacao.data)}</P>
+            </Div>
+          </DivTop>
+          
 
           <Div>
             <Label>Motivo (se rejeitado):</Label>
@@ -417,23 +432,7 @@ const ModalCertificadoHoras = ({ solicitacao, onClose }) => {
               value={motivo}
               onChange={(e) => setMotivo(e.target.value)}
             />
-            <Label>Categoria da tabela de pontos:</Label>
-            <P>{solicitacao.atividadeTabela}</P>
-            <div>
-              {" "}
-              <Label>Quantas horas foram submetidas?</Label>
-              <input
-                value={horas}
-                onChange={(e) => setHoras(e.target.value)}
-                type="number"
-              />
-              <Label>Quantas horas devem ser consideradas?</Label>
-              <input
-                value={horasConsideradas}
-                onChange={(e) => setHorasConsideradas(e.target.value)}
-                type="number"
-              />
-            </div>
+           
           </Div>
         </ContainerInputsLabels>
         <ContainerBotoes>

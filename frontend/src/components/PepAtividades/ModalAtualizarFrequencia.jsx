@@ -130,6 +130,14 @@ const Button = styled.button`
   }
 `;
 
+const ScrollableAtividades = styled.div`
+  max-height: 400px; 
+  overflow-y: auto; 
+  overflow-x: hidden; 
+  padding: 10px; 
+`;
+
+
 
 const ModalAtualizarFrequencia = ({ atividade, data, onClose }) => {
   const [frequenciaAlunos, setFrequenciaAlunos] = useState([]);
@@ -218,7 +226,7 @@ const ModalAtualizarFrequencia = ({ atividade, data, onClose }) => {
         </Header>
 
         <Label>DATA SELECIONADA: {data}</Label>
-
+<ScrollableAtividades>
         {frequenciaAlunos.length > 0 ? (
           <div>
             <Table>
@@ -253,7 +261,7 @@ const ModalAtualizarFrequencia = ({ atividade, data, onClose }) => {
             Nenhuma frequência registrada para a data selecionada.
           </NoFrequencyMessage>
         )}
-
+</ScrollableAtividades>
         <ContainerBotoes>
           <Button onClick={handleAtualizar}>Salvar</Button>
         </ContainerBotoes>
