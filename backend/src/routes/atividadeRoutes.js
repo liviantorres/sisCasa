@@ -14,6 +14,7 @@ const {
   addAluno,
   listarAtividadesNaoInscritasPorAluno,
   listarAtividadesPorProfessor,
+  buscarAtividadePorCodigo
 } = require('../controllers/atividadeController');
 
 const router = express.Router();
@@ -38,6 +39,8 @@ router.get('/:alunoId/atividades', listarAtividadesPorAluno);
 
 router.get('/:alunoId/atividades-geral', listarAtividadesNaoInscritasPorAluno);
 router.get('/:professorId/atividades-professor', listarAtividadesPorProfessor);
+
+router.get('/codigo/:codigo', buscarAtividadePorCodigo)
 
 
 

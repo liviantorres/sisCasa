@@ -1,8 +1,7 @@
 import styled from "styled-components";
 import { IoIosClose } from "react-icons/io";
-import { darken } from "polished";
 import { useState, useEffect } from "react";
-import axios from "axios";
+
 
 const Overlay = styled.div`
   position: fixed;
@@ -105,38 +104,6 @@ const CloseIcon = styled(IoIosClose)`
   }
 `;
 
-const Button = styled.button`
-  font-family: "Archivo", sans-serif;
-  text-transform: uppercase;
-  font-weight: 600;
-  width: 30%;
-  padding: 12px 0px;
-  margin: 20px;
-  background-color: #774fd1;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.3s;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-
-  &:hover {
-    background-color: ${darken(0.1, "#774fd1")};
-  }
-
-  &:active {
-    background-color: ${darken(0.2, "#774fd1")};
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
-  }
-`;
-const ContainerBotoes = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-`;
-
 const ScrollableAtividades = styled.div`
   max-height: 400px; 
   overflow-y: auto; 
@@ -145,10 +112,14 @@ const ScrollableAtividades = styled.div`
 `;
 
 
-const ModalVisualizar = ({ alunos, onClose, atividade }) => {
+const ModalAprovacao = ({ onClose, atividade }) => {
   const [situacoes, setSituacoes] = useState({});
 
+const [alunos, setAlunos] = useState([]);
+
   useEffect(() => {
+    console.log("atividade " + atividade)
+    setAlunos(atividade.Users);
     const situacaoInicial = {};
     alunos.forEach((aluno) => {
       situacaoInicial[aluno.id] = aluno.UserAtividade.situacao;
@@ -163,31 +134,10 @@ const ModalVisualizar = ({ alunos, onClose, atividade }) => {
     }));
   };
 
-  const handleSave = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const requests = alunos.map((aluno) => {
-        return axios.put(
-          `http://localhost:3000/atividade/${atividade.id}/aluno/${aluno.id}/situacao`,
-          { situacao: situacoes[aluno.id] },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-      });
-  
-      await Promise.all(requests); 
-      console.log("Situações atualizadas com sucesso!");
-      alert("Situações atualizadas com sucesso!");
-      onClose(); 
-      window.location.reload();
-    } catch (error) {
-      console.error("Erro ao salvar situação do aluno:", error.message);
-    }
-  };
-  
-
   return (
     <Overlay onClick={onClose}>
       <ContainerAdc onClick={(e) => e.stopPropagation()}>
+     
         <Header>
           <CloseIcon size={35} onClick={onClose} /> ALUNOS
         </Header>
@@ -199,6 +149,7 @@ const ModalVisualizar = ({ alunos, onClose, atividade }) => {
               <TableHeader>Situação?</TableHeader>
             </tr>
           </thead>
+          
           <tbody>
             {alunos.map((aluno) => (
               <tr key={aluno.id}>
@@ -211,6 +162,7 @@ const ModalVisualizar = ({ alunos, onClose, atividade }) => {
                         name={`situacao-${aluno.id}`}
                         value="aprovado"
                         onChange={() => handleSituacaoChange(aluno.id, "aprovado")}
+                        disabled
                       />
                       Aprovado
                     </CustomRadio>
@@ -220,6 +172,7 @@ const ModalVisualizar = ({ alunos, onClose, atividade }) => {
                         name={`situacao-${aluno.id}`}
                         value="reprovado"
                         onChange={() => handleSituacaoChange(aluno.id, "reprovado")}
+                        disabled
                       />
                       Reprovado
                     </CustomRadio>
@@ -228,14 +181,13 @@ const ModalVisualizar = ({ alunos, onClose, atividade }) => {
               </tr>
             ))}
           </tbody>
+          
         </Table>
         </ScrollableAtividades>
-        <ContainerBotoes>
-          <Button onClick={handleSave}>Salvar</Button>
-        </ContainerBotoes>
       </ContainerAdc>
+      
     </Overlay>
   );
 };
 
-export default ModalVisualizar;
+export default ModalAprovacao;

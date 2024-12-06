@@ -135,8 +135,6 @@ const PerfilPep = () => {
   const [roles, setRoles] = useState([]); 
   const [horasConcluidas, setHorasConcluidas] = useState(null)
 
- 
-  const cursosFeitos =  50;
   const percentage = (horasConcluidas / 128) * 100;
 
   const availableRoles = [
@@ -144,6 +142,10 @@ const PerfilPep = () => {
     { id: 2, name: 'Servidor' },
     { id: 3, name: 'Professor' }
   ];
+
+  const filteredRoles = availableRoles.filter(
+    (role) => role.name !== 'Admin' || roles.some((r) => r.roleName === 'Admin')
+  );
 
   const fetchUserData = async () => {
     const token = localStorage.getItem('token');
@@ -242,7 +244,7 @@ const PerfilPep = () => {
         userData={userData}
         onSave={handleSave}
         roles={roles}
-        availableRoles = {availableRoles}
+        availableRoles = {filteredRoles}
       />
 
       {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}

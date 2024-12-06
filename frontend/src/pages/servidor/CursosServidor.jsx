@@ -6,6 +6,7 @@ import Atividade from "../../components/Atividade";
 import axios from "axios";
 import ModalFrequencia from "../../components/PepAtividades/ModalFrequencia";
 import ModalVisualizar from "../../components/PepAtividades/ModalVisualizar";
+import ModalVisualizarAtividade from "../../components/AdminAtividades/ModalVisualizar";
 
 const ContainerConteudo = styled.div`
   margin: 50px;
@@ -102,14 +103,16 @@ const CursosServidor = () => {
   const [modalFrequencia, setModalFrequencia] = useState(null);
   const [modalVisualizar, setModalVisualizar] = useState(null);
   const [atividadeSelecionada, setAtividadeSelecionada] = useState(null);
+  const [modalVisualizarAtividade, setModalVisualizarAtividade] = useState();
 
   const token = localStorage.getItem("token");
   const id = localStorage.getItem("id");
 
   const botao = [
     {
-      texto: "Anexar Comprovante",
+      texto: "Visualizar",
       cor: "#04D361",
+      onClick: () => handleOpenModalFrequencia(atividade)
     },
   ];
 
@@ -172,6 +175,15 @@ const CursosServidor = () => {
     setModalVisualizar(false)
   };
 
+  
+  const handleOpenModalVisualizarAtividade = (atividade) => {
+    setAtividadeSelecionada(atividade);
+    setModalVisualizarAtividade(true);
+  };
+
+  const handleCloseModalVisualizarAtividade = () => {
+    setModalVisualizarAtividade(false)
+  };
 
   return (
     <>
@@ -212,7 +224,13 @@ const CursosServidor = () => {
                   descricao={atividade.descricao}
                   cargaHoraria={`${atividade.cargaHoraria}h`}
                   situacao={atividade.situacao}
-                  botoes={botao}
+                  botoes={[
+                    {
+                      texto: "Visualizar",
+                      cor: "#04D361",
+                      onClick: () => handleOpenModalVisualizarAtividade(atividade)
+                    },
+                  ]}
                 />
               ))
             ) : (
@@ -251,6 +269,7 @@ const CursosServidor = () => {
         </ScrollableAtividades>
         {modalFrequencia && <ModalFrequencia atividade={atividadeSelecionada} onClose={handleCloseModalFrequencia}></ModalFrequencia>}
         {modalVisualizar && <ModalVisualizar atividade={atividadeSelecionada}  alunos={atividadeSelecionada.Users} onClose={handleCloseModalVisualizar}></ModalVisualizar>}
+        {modalVisualizarAtividade && <ModalVisualizarAtividade atividade={atividadeSelecionada}  alunos={atividadeSelecionada.Users} onClose={handleCloseModalVisualizarAtividade}></ModalVisualizarAtividade>}
       </ContainerConteudo>
     </>
   );

@@ -384,7 +384,10 @@ const ModalVisualizar = ({ onClose, solicitacao }) => {
             </Div>
             <Div>
               <Label>Remetente:</Label>
-              <P>{nomeDoProfessor}</P>
+              <P>
+              {nomeDoProfessor?.nomeCompleto || "Remetente não encontrado"} - 
+              {nomeDoProfessor?.id === nomeDoCurso?.professorId ? " (Professor)" : " (Aluno)"}
+            </P>
               <Label>Data:</Label>
               <P>{formatarData(solicitacao.data)}</P>
             </Div>

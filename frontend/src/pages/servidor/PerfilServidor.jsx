@@ -132,21 +132,23 @@ const PerfilServidor = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [userData, setUserData] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
-  const [roles, setRoles] = useState([]); 
-  const [horasConcluidas, setHorasConcluidas] = useState(null)
+  const [roles, setRoles] = useState([]);
+  const [horasConcluidas, setHorasConcluidas] = useState(null);
 
-
-  const percentage = (horasConcluidas / 128) * 100;
 
   const availableRoles = [
     { id: 1, name: 'Admin' },
     { id: 2, name: 'Servidor' },
-    { id: 3, name: 'Professor' }
+    { id: 3, name: 'Professor' },
   ];
+
+  const filteredRoles = availableRoles.filter(
+    (role) => role.name !== 'Admin' || roles.some((r) => r.roleName === 'Admin')
+  );
 
   const fetchUserData = async () => {
     const token = localStorage.getItem('token');
-  
+
     try {
       const response = await axios.get('http://localhost:3000/user/usuario', {
         headers: {
@@ -156,9 +158,6 @@ const PerfilServidor = () => {
       setUserData(response.data);
       setRoles(response.data.Roles);
       setHorasConcluidas(response.data.horasConcluidas);
-      console.log(horasConcluidas)
-      console.log("roles " + roles)
-      console.log(userData)
     } catch (error) {
       if (error.response) {
         setErrorMessage(error.response.data.message || 'Falha ao buscar dados do usuário');
@@ -174,21 +173,24 @@ const PerfilServidor = () => {
   }, []);
 
   const handleSave = async (userId, updatedData) => {
-    const token = localStorage.getItem('token'); 
-   
-  
+    const token = localStorage.getItem('token');
+
     try {
-      const response = await axios.put(`http://localhost:3000/user/editar/${userId}`, updatedData, {
-        headers: {
-          Authorization: `Bearer ${token}` 
+      const response = await axios.put(
+        `http://localhost:3000/user/editar/${userId}`,
+        updatedData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      });
-      
-      setUserData(prevUserData => ({
+      );
+
+      setUserData((prevUserData) => ({
         ...prevUserData,
         ...response.data,
       }));
-      setRoles(response.data.Roles || []); 
+      setRoles(response.data.Roles || []);
     } catch (error) {
       console.error('Erro ao editar usuário:', error);
     }
@@ -197,7 +199,6 @@ const PerfilServidor = () => {
   if (!userData) {
     return <p>Carregando dados do usuário...</p>;
   }
- 
 
   return (
     <>
@@ -214,17 +215,20 @@ const PerfilServidor = () => {
             </div>
             <EditIcon onClick={() => setIsModalOpen(true)} />
           </ContainerTop>
-         
+
           <ContainerBottom>
             <div>
               <InfoAdicional>CPF: {userData.cpf}</InfoAdicional>
-              <InfoAdicional>Função: {roles.length > 0 ? roles.map(role => role.roleName).join(", ") : "Nenhum papel atribuído"}</InfoAdicional>
-
+              <InfoAdicional>
+                Função:{' '}
+                {roles.length > 0
+                  ? roles.map((role) => role.roleName).join(', ')
+                  : 'Nenhum papel atribuído'}
+              </InfoAdicional>
             </div>
             <div>
               <InfoAdicional>Data de Nascimento: {userData.dataDeNascimento}</InfoAdicional>
               <InfoAdicional>WhatsApp: {userData.whatsapp}</InfoAdicional>
-              
             </div>
           </ContainerBottom>
         </InfoPerfil>
@@ -236,7 +240,7 @@ const PerfilServidor = () => {
         userData={userData}
         onSave={handleSave}
         roles={roles}
-        availableRoles = {availableRoles}
+        availableRoles={filteredRoles} 
       />
 
       {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
@@ -245,3 +249,4 @@ const PerfilServidor = () => {
 };
 
 export default PerfilServidor;
+

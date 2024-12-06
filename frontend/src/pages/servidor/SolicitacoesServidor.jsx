@@ -4,11 +4,7 @@ import Solicitacao from "../../components/PepSolicitacao/Solicitacao";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { IoMdAddCircleOutline } from "react-icons/io";
-import ModalAdcSolicitacao from "../../components/PepSolicitacao/ModalAdcSolicitacao";
-import ModalVisualizarSolicitacao from "../../components/PepSolicitacao/ModalVisualizarSolicitacao";
-import ModalAtividade from "../../components/PepSolicitacao/ModalAtividade";
-import ModalContabilizarHoras from "../../components/PepSolicitacao/ModalContabilizarHoras";
-import ModalConclusao from "../../components/PepSolicitacao/ModalConclusao";
+import ModalAtividade from "../../components/ServidorSolicitacoes/ModalAtividade";
 
 const ContainerConteudo = styled.div`
   margin: 50px;
@@ -72,13 +68,11 @@ const MensagemNenhumaSolicitacao = styled.div`
   padding: 10px;
 `;
 
-const SolicitacoesPep = () => {
+const SolicitacoesServidor = () => {
   const [solicitacoes, setSolicitacoes] = useState([]);
   const [modalSolicitacao, setModalSolicitacao] = useState(null);
   const [modalAdcSolicitacao, setModalAdcSolicitacao] = useState(null);
   const [modalAtividade, setModalAtividade] = useState(null);
-  const [modalContabilizar, setModalContabilizar] = useState(null);
-  const [modalConclusao, setModalConclusao] = useState(null);
 
   const fetchSolicitacoes = async () => {
     const token = localStorage.getItem("token");
@@ -106,19 +100,6 @@ const SolicitacoesPep = () => {
     setModalSolicitacao(true);
   };
 
-  const closeModal = () => {
-    setModalSolicitacao(false);
-  };
-
-  const openModalAdcSolicitacao = () => {
-    setModalAtividade(false);
-    setModalAdcSolicitacao(true);
-  };
-
-  const closeModalAdcSolicitacao = () => {
-    setModalAdcSolicitacao(false);
-  };
-
   const openModalAtividade = () => {
     setModalAdcSolicitacao(false);
     setModalAtividade(true);
@@ -128,23 +109,6 @@ const SolicitacoesPep = () => {
     setModalAtividade(false);
   };
 
-  const openModalContabilizar = () => {
-    setModalAdcSolicitacao(false);
-    setModalContabilizar(true);
-  };
-
-  const closeModalContabilizar = () => {
-    setModalContabilizar(false);
-  };
-
-  const openModalConclusao = () => {
-    setModalAdcSolicitacao(false);
-    setModalConclusao(true);
-  };
-
-  const closeModalConclusao = () => {
-    setModalConclusao(false);
-  };
 
   return (
     <>
@@ -152,7 +116,7 @@ const SolicitacoesPep = () => {
       <ContainerConteudo>
         <Div>
           <Titulo>Suas Solicitações</Titulo>
-          <Botao onClick={openModalAdcSolicitacao}>
+          <Botao onClick={openModalAtividade}>
             <IoMdAddCircleOutline size={18} /> Adicionar Solicitação
           </Botao>
         </Div>
@@ -173,28 +137,12 @@ const SolicitacoesPep = () => {
           )}
         </ScrollableAtividades>
 
-        {modalAdcSolicitacao && (
-          <ModalAdcSolicitacao
-            onClose={closeModalAdcSolicitacao}
-            modalAtividade={openModalAtividade}
-            modalContabilizar={openModalContabilizar}
-            modalConclusao={openModalConclusao}
-          />
-        )}
+        
         {modalAtividade && <ModalAtividade onClose={closeModalAtividade} />}
-        {modalContabilizar && (
-          <ModalContabilizarHoras onClose={closeModalContabilizar} />
-        )}
-        {modalConclusao && <ModalConclusao onClose={closeModalConclusao} />}
-        {modalSolicitacao && (
-          <ModalVisualizarSolicitacao
-            onClose={closeModal}
-            solicitacao={solicitacoes}
-          />
-        )}
+        
       </ContainerConteudo>
     </>
   );
 };
 
-export default SolicitacoesPep;
+export default SolicitacoesServidor;

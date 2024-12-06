@@ -2,6 +2,7 @@ const Atividade = require("../models/Atividade");
 const User = require("../models/User");
 const UserAtividade = require("../models/UserAtividade");
 const { Op } = require("sequelize");
+const AtividadeTabela = require("../models/AtividadeTabela")
 
 exports.criarAtividade = async (req, res) => {
   try {
@@ -291,6 +292,65 @@ exports.listarAtividadesPorProfessor = async (req, res) => {
     
     return res.status(200).json(atividades);
   } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+
+exports.buscarAtividadePorCodigo = async (req, res) => {
+  try {
+    const { codigo } = req.params;
+
+    // Busca a atividade pelo código
+    const atividade = await AtividadeTabela.findOne({
+      where: { codigo },
+      include: [
+        {
+          model: User,
+          through: { attributes: ['situacao'] },
+          required: false, // 'required: false' garante que, mesmo sem associação, a atividade seja retornada
+          attributes: ['id', 'nomeCompleto', 'email'],
+        },
+      ],
+    });
+
+    // Verifica se a atividade foi encontrada
+    if (!atividade) {
+      return res.status(404).json({ message: "Atividade não encontrada" });
+    }
+
+    // Se não houver usuários associados
+    if (atividade.Users.length === 0) {
+      return res.status(200).json({
+        atividade: {
+          id: atividade.id,
+          nome: atividade.nome,
+          codigo: atividade.codigo,
+        },
+        usuarios: 0, // Retorna 0 se não houver usuários associados
+      });
+    }
+
+    // Processa os usuários associados para verificar a situação
+    const usuariosComSituacao = atividade.Users.map((user) => ({
+      id: user.id,
+      nomeCompleto: user.nomeCompleto,
+      email: user.email,
+      situacao: user.UserAtividade?.situacao || 0, // Retorna 0 se não houver associação
+    }));
+
+    // Retorna os dados da atividade e a lista processada de usuários
+    return res.status(200).json({
+      atividade: {
+        id: atividade.id,
+        nome: atividade.nome,
+        codigo: atividade.codigo,
+        ...atividade.dataValues,
+      },
+      usuarios: usuariosComSituacao,
+    });
+  } catch (error) {
+    console.error("Erro ao buscar atividade pelo código:", error);
     return res.status(500).json({ error: error.message });
   }
 };

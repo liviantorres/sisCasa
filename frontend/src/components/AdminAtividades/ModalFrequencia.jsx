@@ -1,5 +1,8 @@
 import styled from "styled-components";
 import { IoIosClose } from "react-icons/io";
+import { useState, useEffect } from "react";
+import { darken } from "polished";
+import axios from "axios";
 
 const Overlay = styled.div`
   position: fixed;
@@ -37,27 +40,6 @@ const Label = styled.label`
   color: #333;
 `;
 
-const Input = styled.input`
-  font-family: "Archivo", sans-serif;
-  font-weight: 400;
-  color: #000;
-  border: 1px solid #ccc;
-  width: 30%;
-  height: 30px;
-  border-radius: 6px;
-  padding: 0 10px;
-
-  &::placeholder {
-    color: #999;
-  }
-
-  &:focus {
-    border-color: #774fd1;
-    outline: none;
-    box-shadow: 0 0 5px rgba(119, 79, 209, 0.7);
-  }
-`;
-
 const Table = styled.table`
   border-collapse: collapse;
   width: 100%;
@@ -79,13 +61,11 @@ const TableCell = styled.td`
   font-family: "Archivo", sans-serif;
   background-color: #f4f4f4;
   text-align: center;
-`;
 
-const RadioContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
-  justify-content: center;
+  & p {
+    color: ${(props) => (props.situacao === "Presente" ? "green" : "red")};
+    font-weight: 500;
+  }
 `;
 
 const Header = styled.div`
@@ -111,62 +91,87 @@ const CloseIcon = styled(IoIosClose)`
   color: #000000c6;
 `;
 
-const CustomRadio = styled.label`
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  margin-right: 10px;
- 
-
-  input {
-    display: none; 
-  }
-
-  &::before {
-    content: "";
-    display: inline-block;
-    width: 12px; 
-    height: 12px; 
-    border: 2px solid #774fd1;
-    border-radius: 50%; 
-    margin-right: 6px; 
-    background-color: ${(props) => (props.checked ? '#774fd1' : '#ffff')}; 
-    transition: background-color 0.3s; 
-  }
-
-
-  input:checked + &::before {
-    background-color: #774fd1; 
-  }
-
-
-  input:checked + &::after {
-    content: "";
-    display: block;
-    width: 8px; 
-    height: 8px; 
-    border-radius: 50%; 
-    background-color: white; 
-    position: absolute; 
-    top: 2px; 
-    left: 2px; 
-  }
-`;
-
-
 const NoFrequencyMessage = styled.p`
   font-family: "Archivo", sans-serif;
   font-size: 18px;
-  color: #202b3b; 
-  text-align: center; 
+  color: #202b3b;
+  text-align: center;
   margin-top: 20px;
   margin-bottom: 20px;
-  font-weight: 500; 
+  font-weight: 500;
 `;
 
+const Select = styled.select`
+  font-family: "Archivo", sans-serif;
+  font-weight: 400;
+  color: #000;
+  border: 1px solid #ccc;
+  width: 30%;
+  height: 30px;
+  border-radius: 6px;
+  padding: 0 10px;
+
+  &:focus {
+    border-color: #774fd1;
+    outline: none;
+    box-shadow: 0 0 5px rgba(119, 79, 209, 0.7);
+  }
+`;
+
+const ContainerBotoes = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+`;
+
+const ScrollableAtividades = styled.div`
+  max-height: 400px; 
+  overflow-y: auto; 
+  overflow-x: hidden; 
+  padding: 10px; 
+`;
+
+
+
 const ModalFrequencia = ({ onClose, atividade }) => {
-  console.log("Atividade:", atividade);
-  console.log("Frequências:", atividade?.frequencias); 
+  const [selectedDate, setSelectedDate] = useState("");
+  const [frequenciaAlunos, setFrequenciaAlunos] = useState([]);
+
+  useEffect(() => {
+    fetchFrequencias();
+  }, [selectedDate]);
+
+  const fetchFrequencias = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/frequencia/atividade/${atividade.id}/`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setFrequenciaAlunos(response.data);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const frequenciasFiltradas = frequenciaAlunos.filter((frequencia) => {
+    const dataFrequencia = new Date(frequencia.data)
+      .toISOString()
+      .split("T")[0];
+    return dataFrequencia === selectedDate;
+  });
+
+  const handleDateChange = (event) => {
+    setSelectedDate(event.target.value);
+  };
+
 
   return (
     <Overlay onClick={onClose}>
@@ -175,58 +180,59 @@ const ModalFrequencia = ({ onClose, atividade }) => {
           <CloseIcon onClick={onClose} /> FREQUÊNCIA
         </Header>
 
-        {atividade?.frequencias?.length > 0 ? (
-          atividade.frequencias.map((frequencia, index) => (
-            <div key={index}>
-              <ContainerInputsLabels>
-                <Label>DATA:</Label>
-                <Input type="date" value={frequencia.data} disabled />
-              </ContainerInputsLabels>
-
-              <Table>
-                <thead>
-                  <tr>
-                    <TableHeader>Aluno</TableHeader>
-                    <TableHeader>Presente?</TableHeader>
+        <ContainerInputsLabels>
+          <Label>SELECIONE A DATA:</Label>
+          <Select value={selectedDate} onChange={handleDateChange}>
+            <option value="">Selecione uma data</option>
+            {Array.from(
+              new Set(
+                frequenciaAlunos.map((frequencia) => {
+                  const data = new Date(frequencia.data);
+                  return data.toISOString().split("T")[0];
+                })
+              )
+            ).map((dataFormatada, index) => (
+              <option key={index} value={dataFormatada}>
+                {dataFormatada}
+              </option>
+            ))}
+          </Select>
+        </ContainerInputsLabels>
+<ScrollableAtividades>
+        {frequenciasFiltradas.length > 0 ? (
+          <div>
+            <Table>
+              <thead>
+                <tr>
+                  <TableHeader>Aluno</TableHeader>
+                  <TableHeader>Situação?</TableHeader>
+                </tr>
+              </thead>
+              <tbody>
+                {frequenciasFiltradas.map((frequencia) => (
+                  <tr key={frequencia.id}>
+                    <TableCell>{frequencia.User.nomeCompleto}</TableCell>
+                    <TableCell situacao={frequencia.situacao}>
+                      <p>{frequencia.situacao}</p>
+                    </TableCell>
                   </tr>
-                </thead>
-                <tbody>
-                  {frequencia.alunos.map((aluno) => (
-                    <tr key={aluno.idAluno}>
-                      <TableCell>{aluno.nome}</TableCell>
-                      <TableCell>
-                        <RadioContainer>
-                        <CustomRadio checked={aluno.presente}>
-                            <input 
-                              type="radio" 
-                              name={`presenca-${aluno.idAluno}`} 
-                              value="sim" 
-                              checked={aluno.presente} 
-                              readOnly 
-                            />
-                            Sim
-                          </CustomRadio>
-                          <CustomRadio checked={!aluno.presente}>
-                            <input 
-                              type="radio" 
-                              name={`presenca-${aluno.idAluno}`} 
-                              value="nao" 
-                              checked={!aluno.presente} 
-                              readOnly 
-                            />
-                            Não
-                          </CustomRadio>
-                        </RadioContainer>
-                      </TableCell>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-            </div>
-          ))
+                ))}
+              </tbody>
+            </Table>
+           
+          </div>
+           
         ) : (
-          <NoFrequencyMessage>Nenhum aluno registrado.</NoFrequencyMessage>
+          <NoFrequencyMessage>
+            Nenhuma frequência registrada para a data selecionada.
+          </NoFrequencyMessage>
         )}
+</ScrollableAtividades>
+        <ContainerBotoes>
+         
+        </ContainerBotoes>
+
+        
       </ContainerAdc>
     </Overlay>
   );

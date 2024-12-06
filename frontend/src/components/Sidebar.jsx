@@ -1,4 +1,4 @@
-import { Link, NavLink } from "react-router-dom";
+import {useNavigate, Link, NavLink } from "react-router-dom";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import { IoHomeOutline } from "react-icons/io5";
@@ -7,6 +7,7 @@ import { IoPersonAddOutline } from "react-icons/io5";
 import { IoLogOutOutline } from "react-icons/io5";
 import { ImFileText2 } from "react-icons/im";
 import { LuLayoutDashboard, LuGraduationCap } from "react-icons/lu";
+
 
 
 const SidebarContainer = styled.div`
@@ -192,10 +193,26 @@ const servidorNavItems = [
       </IconWrapper>
     ),
   },
+  {
+    path: "/servidor/solicitacoes",
+    label: "Solicitações",
+    icon: (
+      <IconWrapper>
+      
+        <IoChatbubbleEllipsesOutline size={35} color="#fff" />
+      </IconWrapper>
+    ),
+  },
   
 ];
 
 const Sidebar = ({ type }) => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('token'); 
+    navigate("/login");
+  };
   let navItems;
 
   if (type === "admin") {
@@ -224,7 +241,7 @@ const Sidebar = ({ type }) => {
           ))}
         </ul>
       </nav>
-      <Link className="icon-sair" to={"/sair"}>
+      <Link className="icon-sair" to={"/sair"}  onClick={handleLogout}>
         <IconLogoutWrapper>
           {" "}
           <IoLogOutOutline size={25} />{" "}

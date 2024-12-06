@@ -20,6 +20,7 @@ import TabelaDePontosAdmin from "../pages/admin/TabelaDePontosAdmin";
 import HomeServidor from "../pages/servidor/HomeServidor";
 import PerfilServidor from "../pages/servidor/PerfilServidor";
 import CursosServidor from "../pages/servidor/CursosServidor";
+import SolicitacoesServidor from "../pages/servidor/SolicitacoesServidor";
 
 const Paths = () => {
     return ( 
@@ -49,6 +50,7 @@ const Paths = () => {
                     <Route index element={<HomeServidor/>}/>
                     <Route path="/servidor/perfil" element={<PerfilServidor/>}/>
                     <Route path="/servidor/cursos" element={<CursosServidor/>}/>
+                    <Route path="/servidor/solicitacoes" element={<SolicitacoesServidor/>}/>
               
                 </Route>
 

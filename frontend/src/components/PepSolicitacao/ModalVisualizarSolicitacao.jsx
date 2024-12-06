@@ -144,40 +144,9 @@ const P = styled.p`
   margin-left: 5px;
 `;
 
-const FileUploadButton = styled.label`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  font-family: "Poppins", sans-serif;
-  font-weight: 100;
-
-  width: 30%;
-  padding: 8px 0px;
-  background-color: #4b3e65;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 15px;
-  letter-spacing: 0.1em;
-  text-align: center;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background-color: #5a4b7a;
-    box-shadow: 0px 6px 10px rgba(90, 75, 122, 0.4);
-    transform: translateY(-2px);
-  }
-
-  input[type="file"] {
-    display: none;
-  }
-`;
-
 const ModalVisualizarSolicitacao = ({ solicitacao, onClose }) => {
   const [remetente, setRemetente] = useState([]);
+  const [curso, setCurso] = useState([]);
 
   const formatarData = (dataISO) => {
     const dataObj = new Date(dataISO);
@@ -195,6 +164,22 @@ const ModalVisualizarSolicitacao = ({ solicitacao, onClose }) => {
       window.open(certificadoURL, "_blank");
     }
   };
+  
+  const fetchCurso = async () =>{
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await axios.get(`http://localhost:3000/atividade/buscar/${solicitacao.cursoId}`,{
+        headers:{
+          Authorization: `Bearer ${token}`
+        }})
+        console.log(response.data);
+        setCurso(response.data);
+
+    } catch (error) {
+      console.log(error.message)
+    }
+  }
 
   const fetchRemetente = async () => {
     const id = localStorage.getItem("id");
@@ -214,6 +199,7 @@ const ModalVisualizarSolicitacao = ({ solicitacao, onClose }) => {
 
   useEffect(() => {
     fetchRemetente();
+    fetchCurso();
   }, []);
 
   return (
@@ -224,12 +210,10 @@ const ModalVisualizarSolicitacao = ({ solicitacao, onClose }) => {
         <ContainerInputsLabels>
           <DivTop>
             <Div>
-              {solicitacao.tipoSolicitacao === "Certificado de Horas" && (
-                <>
-                  <Label>Tipo de Solicitação:</Label>
-                  <P>Certificado de conclusão de horas</P>
-                </>
-              )}
+
+            <Label>Tipo de Solicitação:</Label>
+            <P>{solicitacao.tipoSolicitacao}</P>
+              
               <Label>Descrição:</Label>
               <P>{solicitacao.descricao || "Não informado"}</P>
             </Div>
@@ -237,7 +221,7 @@ const ModalVisualizarSolicitacao = ({ solicitacao, onClose }) => {
               {solicitacao.tipoSolicitacao === "Certificado de Curso" && (
                 <>
                   <Label>Curso:</Label>
-                  <P>{solicitacao.curso || "Não informado"}</P>
+                  <P>{curso.titulo} - {curso.cargaHoraria}h</P>
                 </>
               )}
               <Label>Status:</Label>
@@ -245,10 +229,16 @@ const ModalVisualizarSolicitacao = ({ solicitacao, onClose }) => {
                 <StatusDot status={solicitacao.status} />
                 <P>{solicitacao.status}</P>
               </ContainerStatus>
+
+              <Label>Tabela de pontos:</Label>
+              <P>{solicitacao.atividadeTabela}</P>
             </Div>
             <Div>
               <Label>Remetente:</Label>
-              <P>{remetente.nomeCompleto || "Não informado"}</P>
+              <P>
+              {remetente?.nomeCompleto || "Remetente não encontrado"} - 
+              {remetente?.id === curso?.professorId ? " (Professor)" : " (Aluno)"}
+            </P>
               <Label>Data:</Label>
               <P>{formatarData(solicitacao.data)}</P>
             </Div>

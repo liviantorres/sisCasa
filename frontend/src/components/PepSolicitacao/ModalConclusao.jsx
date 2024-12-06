@@ -106,10 +106,79 @@ const Alert = styled.div`
   margin-top: 10px;
 `;
 
+const P = styled.p`
+  font-family: "Archivo", sans-serif;
+  margin-left: 5px;
+`;
+
+// Barra de Progresso
+const ProgressBar = styled.div`
+  width: 90%;
+  background-color: #ddd;
+  border-radius: 20px;
+  margin: 20px 0;
+  height: 20px;
+  overflow: hidden;
+  margin-top: 5px;
+`;
+
+const Progresso = styled.h3`
+  font-family: "Archivo", sans-serif;
+  margin-bottom: 20px;
+  & h4 {
+    margin-top: 10px;
+    color: #774fd1;
+  }
+`;
+
+const Progress = styled.div`
+  width: ${({ percentage }) => percentage}%;
+  background-color: #774fd1;
+  height: 100%;
+  transition: width 0.3s ease;
+`;
+
+const Label = styled.label`
+  font-family: "Poppins", sans-serif;
+  span {
+    color: #ed2c2c;
+  }
+`;
+
+
+
+const Textarea = styled.textarea`
+  font-family: "Archivo", sans-serif;
+  font-weight: 100;
+  font-size: 12px;
+  width: 90%;
+  height: 80px;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  resize: vertical;
+  background-color: #f2eeee;
+
+  &::placeholder {
+    color: #999;
+    font-family: "Archivo", sans-serif;
+    font-weight: 100;
+    font-size: 13px;
+  }
+
+  &:focus {
+    border-color: #774fd1;
+    outline: none;
+    box-shadow: 0 0 2px rgba(119, 79, 209, 0.7);
+  }
+`;
+
+
 const ModalConclusao = ({ onClose }) => {
   const [user, setUser] = useState();
-  const [isDisabled, setIsDisabled] = useState(true); // To disable the "Enviar" button initially
-  const [showAlert, setShowAlert] = useState(false); // To show alert when hours are less than 128
+  const [isDisabled, setIsDisabled] = useState(true);
+  const [descricao, setDescricao] = useState();
 
   const token = localStorage.getItem("token");
   const id = localStorage.getItem("id");
@@ -130,27 +199,23 @@ const ModalConclusao = ({ onClose }) => {
 
   useEffect(() => {
     fetchUsuario();
-  }, []);
-
-  useEffect(() => {
     if (user && user.horasConcluidas >= 128) {
-      setIsDisabled(false); 
-      setShowAlert(false); 
+      setIsDisabled(false);
+      
     }
   }, [user]);
 
   const handleSubmit = async () => {
-    if (user.horasConcluidas < 128) {
-      setShowAlert(true);
-    } else {
+   
       try {
         const usuarioId = localStorage.getItem("id");
 
         const novaSolicitacao = {
           usuarioId: usuarioId,
           tipoSolicitacao: "Certificado de Horas",
+          descricao: descricao
         };
-        
+
         const response = await axios.post(
           `http://localhost:3000/solicitacao/`,
           novaSolicitacao,
@@ -171,8 +236,8 @@ const ModalConclusao = ({ onClose }) => {
             popup: "custom-swal-font",
           },
         }).then(() => {
-          onClose(); 
-          window.location.reload()
+          onClose();
+          window.location.reload();
         });
       } catch (error) {
         console.log("Erro ao salvar solicitação:", error.message);
@@ -186,7 +251,7 @@ const ModalConclusao = ({ onClose }) => {
           },
         });
       }
-    }
+    
   };
 
   return (
@@ -197,10 +262,20 @@ const ModalConclusao = ({ onClose }) => {
           <CloseIcon onClick={onClose} />
         </HeaderContainer>
         <Div>
-          <p>Horas Concluídas: {user ? user.horasConcluidas : 0} / 128</p>
-          {showAlert && (
-            <Alert>Você precisa concluir pelo menos 128 horas para enviar a solicitação.</Alert>
-          )}
+          <Progresso>
+            Horas Concluídas: <h4>{user?.horasConcluidas || 0} / 128 horas</h4>
+          </Progresso>
+          <ProgressBar>
+            <Progress
+              percentage={user ? (user.horasConcluidas / 128) * 100 : 0}
+            />
+          </ProgressBar>
+
+          <Label>Adicione uma breve descrição (opcional)</Label>
+          <Textarea
+            value={descricao}
+            onChange={(e) => setDescricao(e.target.value)}
+          />
         </Div>
         <ContainerBotoes>
           <Button onClick={handleSubmit} disabled={isDisabled}>
