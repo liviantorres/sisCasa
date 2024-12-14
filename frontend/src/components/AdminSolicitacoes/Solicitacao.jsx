@@ -1,7 +1,6 @@
 import { styled } from "styled-components";
 import { lighten } from 'polished';
 import { useState } from 'react';
-import { AiOutlineClose } from 'react-icons/ai'; 
 
 import ModalCertificadoCurso from "./ModalCertificadoCurso";
 import ModalCertificadoHoras from "./ModalCertificadoHoras";
@@ -125,56 +124,6 @@ const DataStyled = styled.h3`
     margin: 0; 
 `;
 
-const ModalOverlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const ModalContent = styled.div`
-  background-color: white;
-  border-radius: 10px;
-  width: 400px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  position: relative;
-`;
-
-const ContentIntern = styled.div`
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    margin: 20px;
-
-`;
-
-const CloseButton = styled.button`
-  background: none;
-  border: none;
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  cursor: pointer;
-  color: #ffff;
-  font-size: 20px;
-
-  &:hover {
-    color: ${lighten(0.1, '#774FD1')};
-  }
-`;
-
-const Label = styled.h3`
-  font-family: "Archivo", sans-serif;
-  font-weight: 400;
-  margin: 10px 0px;
-`;
-
 
 const P = styled.p`
     font-family: 'Archivo', sans-serif;
@@ -183,32 +132,20 @@ const P = styled.p`
     margin: 4px;
 `;
 
-const Header = styled.div`
-  font-family: "Poppins", sans-serif;
-  font-weight: 500;
-  letter-spacing: 0.5px;
-  font-size: 24px;
-  display: flex;
-  justify-content: center;
-  padding: 25px;
-  color: #ffff;
-  background-color: #774fd1;
-  border-radius: 8px;
-  text-transform: uppercase;
-`;
+
 
 const Solicitacao = ({ solicitacao }) => {
-    const { id, data, status, tipoSolicitacao, descricao, motivo, certificado, comprovante } = solicitacao; 
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const { id, data, tipoSolicitacao, descricao, status } = solicitacao;
     const [modalDetalhesSolicitacao, setModalDetalhesSolicitacao] = useState(false);
-
+    const [solicitacaoStatus, setSolicitacaoStatus] = useState(status);  // Estado para o status da solicitação
 
     const openModalDetalhesSolicitacao = () => {
         setModalDetalhesSolicitacao(true);
-    }
+    };
+    
     const closeModalDetalhesSolicitacao = () => {
-        setModalDetalhesSolicitacao(false)
-    }
+        setModalDetalhesSolicitacao(false);
+    };
 
     const formatarData = (dataISO) => {
         const dataObj = new Date(dataISO);
@@ -216,42 +153,23 @@ const Solicitacao = ({ solicitacao }) => {
         return dataObj.toLocaleDateString('pt-BR', opcoes); 
     };
 
-    const visualizarComprovante = async (solicitacaoId) => {
-        const token = localStorage.getItem('token'); 
-
-        try {
-            const response = await fetch(`http://localhost:3000/solicitacao/${solicitacaoId}/comprovante`, {
-                method: 'GET',
-                headers: {
-                    Authorization: `Bearer ${token}`, 
-                },
-            });
-
-            if (response.ok) {
-                const data = await response.json(); 
-                const comprovanteUrl = data.comprovanteUrl; 
-                window.open(comprovanteUrl); 
-            } else {
-                console.error('Erro ao visualizar o comprovante');
-            }
-        } catch (error) {
-            console.error('Erro ao buscar o comprovante', error);
-        }
-    };
-
-
     const renderModal = () => {
         switch (solicitacao.tipoSolicitacao) {
             case "Certificado de Horas":
-                return <ModalConclusaoHoras solicitacao={solicitacao} onClose={closeModalDetalhesSolicitacao} />;
+                return <ModalConclusaoHoras solicitacao={solicitacao} onClose={closeModalDetalhesSolicitacao} onStatusChange={handleStatusChange} />;
             case "Certificado de Curso":
-                return <ModalCertificadoCurso solicitacao={solicitacao} onClose={closeModalDetalhesSolicitacao} />;
+                return <ModalCertificadoCurso solicitacao={solicitacao} onClose={closeModalDetalhesSolicitacao} onStatusChange={handleStatusChange} />;
             case "Contabilizar Horas":
-                return <ModalCertificadoHoras solicitacao={solicitacao} onClose={closeModalDetalhesSolicitacao} />;
+                return <ModalCertificadoHoras solicitacao={solicitacao} onClose={closeModalDetalhesSolicitacao} onStatusChange={handleStatusChange} />;
             default:
                 console.warn("Tipo de solicitação desconhecido:", solicitacao.tipoSolicitacao);
                 return null;
         }
+    };
+
+    const handleStatusChange = (newStatus) => {
+        // Atualize o status local da solicitação para refletir as mudanças
+        setSolicitacaoStatus(newStatus);
     };
 
     return (
@@ -269,17 +187,18 @@ const Solicitacao = ({ solicitacao }) => {
                     </div>
                     <div>
                         <H3>Status:</H3>
-                        <StatusDot status={status} />
-                        <P>{status}</P>
+                        <StatusDot status={solicitacaoStatus} /> {/* Usando o status local */}
+                        <P>{solicitacaoStatus}</P>
                     </div>
                     <Botao onClick={openModalDetalhesSolicitacao}>Detalhes</Botao>
                 </ContainerInformacoesCurso>
             </ContainerWrap>
 
             {modalDetalhesSolicitacao && renderModal()}
-            
         </>
     );
-}
+};
+
+
 
 export default Solicitacao;

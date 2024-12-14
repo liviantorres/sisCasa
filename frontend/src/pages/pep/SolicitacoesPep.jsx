@@ -80,6 +80,10 @@ const SolicitacoesPep = () => {
   const [modalContabilizar, setModalContabilizar] = useState(null);
   const [modalConclusao, setModalConclusao] = useState(null);
 
+  const addSolicitacao = (novaSolicitacao) => {
+    setSolicitacoes((prevSolicitacoes) => [novaSolicitacao, ...prevSolicitacoes]);
+  };
+
   const fetchSolicitacoes = async () => {
     const token = localStorage.getItem("token");
     const userId = localStorage.getItem("id");
@@ -181,11 +185,11 @@ const SolicitacoesPep = () => {
             modalConclusao={openModalConclusao}
           />
         )}
-        {modalAtividade && <ModalAtividade onClose={closeModalAtividade} />}
+        {modalAtividade && <ModalAtividade onClose={closeModalAtividade} onAddSolicitacao={addSolicitacao} />}
         {modalContabilizar && (
-          <ModalContabilizarHoras onClose={closeModalContabilizar} />
+          <ModalContabilizarHoras onClose={closeModalContabilizar} onAddSolicitacao={addSolicitacao} />
         )}
-        {modalConclusao && <ModalConclusao onClose={closeModalConclusao} />}
+        {modalConclusao && <ModalConclusao onClose={closeModalConclusao} onAddSolicitacao={addSolicitacao} />}
         {modalSolicitacao && (
           <ModalVisualizarSolicitacao
             onClose={closeModal}

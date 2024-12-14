@@ -183,7 +183,7 @@ const Textarea = styled.textarea`
   }
 `;
 
-const ModalContabilizarHoras = ({ onClose }) => {
+const ModalContabilizarHoras = ({ onClose, onAddSolicitacao }) => {
   const [categorias, setCategorias] = useState([]);
   const [descricao, setDescricao] = useState("");
   const [comprovante, setComprovante] = useState(null);
@@ -260,8 +260,8 @@ const ModalContabilizarHoras = ({ onClose }) => {
           popup: "custom-swal-font",
         },
       }).then(() => {
+        onAddSolicitacao(response.data);
         onClose(); 
-        window.location.reload()
       });
     } catch (error) {
       console.log("Erro ao salvar solicitação:", error.message);

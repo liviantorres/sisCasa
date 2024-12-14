@@ -175,7 +175,7 @@ const Textarea = styled.textarea`
 `;
 
 
-const ModalConclusao = ({ onClose }) => {
+const ModalConclusao = ({ onClose, onAddSolicitacao }) => {
   const [user, setUser] = useState();
   const [isDisabled, setIsDisabled] = useState(true);
   const [descricao, setDescricao] = useState();
@@ -236,8 +236,8 @@ const ModalConclusao = ({ onClose }) => {
             popup: "custom-swal-font",
           },
         }).then(() => {
+          onAddSolicitacao(response.data);
           onClose();
-          window.location.reload();
         });
       } catch (error) {
         console.log("Erro ao salvar solicitação:", error.message);

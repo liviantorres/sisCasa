@@ -1,14 +1,11 @@
-import {useNavigate, Link, NavLink } from "react-router-dom";
+import { useNavigate, Link, NavLink } from "react-router-dom";
 import styled from "styled-components";
 import PropTypes from "prop-types";
-import { IoHomeOutline } from "react-icons/io5";
-import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
-import { IoPersonAddOutline } from "react-icons/io5";
-import { IoLogOutOutline } from "react-icons/io5";
+import { IoHomeOutline, IoChatbubbleEllipsesOutline, IoPersonAddOutline, IoLogOutOutline } from "react-icons/io5";
 import { ImFileText2 } from "react-icons/im";
-import { LuLayoutDashboard, LuGraduationCap } from "react-icons/lu";
-
-
+import { LuLayoutDashboard } from "react-icons/lu";
+import LogoutModal from "../pages/Sair"; 
+import { useState } from "react";
 
 const SidebarContainer = styled.div`
   width: 70px;
@@ -28,18 +25,6 @@ const SidebarContainer = styled.div`
       width: 50px;
       height: auto;
       padding: 10px;
-    }
-  }
-
-  & .icon-sair {
-    padding-bottom: 15px;
-    & img {
-      width: 25px;
-      transition: filter 0.3s ease;
-    }
-    &:hover img {
-      filter: brightness(0) saturate(100%) invert(44%) sepia(76%) saturate(800%)
-        hue-rotate(-4deg);
     }
   }
 
@@ -66,7 +51,7 @@ const SidebarContainer = styled.div`
   }
 `;
 
-const IconLogoutWrapper = styled(Link)`
+const IconLogoutWrapper = styled.div`
   svg {
     width: 35px;
     height: 35px;
@@ -80,147 +65,46 @@ const IconLogoutWrapper = styled(Link)`
   }
 `;
 
-const IconWrapper = styled.div`
-  svg {
-    width: 35px;
-    height: 35px;
-    color: #fff;
-    transition: color 0.3s ease, transform 0.3s ease;
-
-    &:hover {
-      color: #ddd;
-      transform: scale(1.1);
-    }
-  }
-`;
-
-const adminNavItems = [
-  {
-    path: "/admin",
-    label: "Home",
-    icon: (
-      <IconWrapper>
-        <IoHomeOutline size={35} color="#fff" />
-      </IconWrapper>
-    ),
-  },
-  {
-    path: "/admin/solicitacoes",
-    label: "Solicitações",
-    icon: (
-      <IconWrapper>
-      
-        <IoChatbubbleEllipsesOutline size={35} color="#fff" />
-      </IconWrapper>
-    ),
-  },
-  {
-    path: "/admin/usuarios",
-    label: "Usuarios",
-    icon: (
-      <IconWrapper>
-        <IoPersonAddOutline size={35} color="#fff" />
-      </IconWrapper>
-    ),
-  },
-  {
-    path: "/admin/tabela",
-    label: "Tabela de Pontos",
-    icon: (
-      <IconWrapper>
-      <LuLayoutDashboard size={35} color="#fff" />
-    </IconWrapper>
-    ),
-  },
-];
-
-const pepNavItems = [
-  {
-    path: "/pep",
-    label: "Home",
-    icon: (
-      <IconWrapper>
-        <IoHomeOutline size={35} color="#fff" />
-      </IconWrapper>
-    ),
-  },
-  {
-    path: "/pep/cursos",
-    label: "Cursos",
-    icon: (
-      <IconWrapper>
-        <ImFileText2 size={35} color="#fff" />
-      </IconWrapper>
-    ),
-  },
-  {
-    path: "/pep/solicitacoes",
-    label: "Solicitacoes",
-    icon: (
-      <IconWrapper>
-        <IoChatbubbleEllipsesOutline size={35} color="#fff" />
-      </IconWrapper>
-    ),
-  },
-  {
-    path: "/pep/tabela",
-    label: "Tabela",
-    icon: (
-      <IconWrapper>
-        <LuLayoutDashboard size={35} color="#fff" />
-      </IconWrapper>
-    ),
-  },
-];
-
-
-const servidorNavItems = [
-  {
-    path: "/servidor",
-    label: "Home",
-    icon: (
-      <IconWrapper>
-        <IoHomeOutline size={35} color="#fff" />
-      </IconWrapper>
-    ),
-  },
-  {
-    path: "/servidor/cursos",
-    label: "Cursos",
-    icon: (
-      <IconWrapper>
-        <ImFileText2 size={35} color="#fff" />
-      </IconWrapper>
-    ),
-  },
-  {
-    path: "/servidor/solicitacoes",
-    label: "Solicitações",
-    icon: (
-      <IconWrapper>
-      
-        <IoChatbubbleEllipsesOutline size={35} color="#fff" />
-      </IconWrapper>
-    ),
-  },
-  
-];
-
 const Sidebar = ({ type }) => {
   const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
 
   const handleLogout = () => {
-    localStorage.removeItem('token'); 
+    localStorage.removeItem("token");
     navigate("/login");
   };
+
+  const handleConfirmLogout = () => {
+    handleLogout();
+    setShowModal(false);
+  };
+
+  const handleCancelLogout = () => {
+    setShowModal(false);
+  };
+
   let navItems;
 
   if (type === "admin") {
-    navItems = adminNavItems;
+    navItems = [
+      { path: "/admin", label: "Home", icon: <IoHomeOutline size={35} color="#fff" /> },
+      { path: "/admin/solicitacoes", label: "Solicitações", icon: <IoChatbubbleEllipsesOutline size={35} color="#fff" /> },
+      { path: "/admin/usuarios", label: "Usuarios", icon: <IoPersonAddOutline size={35} color="#fff" /> },
+      { path: "/admin/tabela", label: "Tabela de Pontos", icon: <LuLayoutDashboard size={35} color="#fff" /> },
+    ];
   } else if (type === "pep") {
-    navItems = pepNavItems;
-  }else if (type === "servidor") {
-    navItems = servidorNavItems;
+    navItems = [
+      { path: "/pep", label: "Home", icon: <IoHomeOutline size={35} color="#fff" /> },
+      { path: "/pep/cursos", label: "Cursos", icon: <ImFileText2 size={35} color="#fff" /> },
+      { path: "/pep/solicitacoes", label: "Solicitacoes", icon: <IoChatbubbleEllipsesOutline size={35} color="#fff" /> },
+      { path: "/pep/tabela", label: "Tabela", icon: <LuLayoutDashboard size={35} color="#fff" /> },
+    ];
+  } else if (type === "servidor") {
+    navItems = [
+      { path: "/servidor", label: "Home", icon: <IoHomeOutline size={35} color="#fff" /> },
+      { path: "/servidor/cursos", label: "Cursos", icon: <ImFileText2 size={35} color="#fff" /> },
+      { path: "/servidor/solicitacoes", label: "Solicitações", icon: <IoChatbubbleEllipsesOutline size={35} color="#fff" /> },
+    ];
   } else {
     navItems = [];
   }
@@ -241,12 +125,16 @@ const Sidebar = ({ type }) => {
           ))}
         </ul>
       </nav>
-      <Link className="icon-sair" to={"/sair"}  onClick={handleLogout}>
+
+      <div className="icon-sair" onClick={() => setShowModal(true)}>
         <IconLogoutWrapper>
-          {" "}
-          <IoLogOutOutline size={25} />{" "}
+          <IoLogOutOutline size={25} />
         </IconLogoutWrapper>
-      </Link>
+      </div>
+
+      {showModal && (
+        <LogoutModal onCancel={handleCancelLogout} onConfirm={handleConfirmLogout} />
+      )}
     </SidebarContainer>
   );
 };
