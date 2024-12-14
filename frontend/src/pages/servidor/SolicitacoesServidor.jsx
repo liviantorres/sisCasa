@@ -74,6 +74,10 @@ const SolicitacoesServidor = () => {
   const [modalAdcSolicitacao, setModalAdcSolicitacao] = useState(null);
   const [modalAtividade, setModalAtividade] = useState(null);
 
+  const addSolicitacao = (novaSolicitacao) => {
+    setSolicitacoes((prevSolicitacoes) => [novaSolicitacao, ...prevSolicitacoes]);
+  };
+
   const fetchSolicitacoes = async () => {
     const token = localStorage.getItem("token");
     const userId = localStorage.getItem("id");
@@ -138,7 +142,7 @@ const SolicitacoesServidor = () => {
         </ScrollableAtividades>
 
         
-        {modalAtividade && <ModalAtividade onClose={closeModalAtividade} />}
+        {modalAtividade && <ModalAtividade onClose={closeModalAtividade} onAddSolicitacao={addSolicitacao} />}
         
       </ContainerConteudo>
     </>

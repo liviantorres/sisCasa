@@ -164,8 +164,7 @@ const P = styled.p`
   margin-left: 5px;
 `;
 
-
-const ModalCertificadoHoras = ({ solicitacao, onClose }) => {
+const ModalCertificadoHoras = ({ solicitacao, onClose, onStatusChange }) => {
   const [categorias, setCategorias] = useState([]);
   const [nomeRemetente, setNomeRemetente] = useState("");
   const [remetenteId, setIdRemetente] = useState("");
@@ -190,7 +189,6 @@ const ModalCertificadoHoras = ({ solicitacao, onClose }) => {
       return;
     }
 
-
     const horasData = {
       userId: solicitacao.usuarioId,
       codigo: String(solicitacao.atividadeTabela),
@@ -198,22 +196,17 @@ const ModalCertificadoHoras = ({ solicitacao, onClose }) => {
       horasConsideradas: horasConsideradas,
     };
 
-    await axios.put(
-      `http://localhost:3000/pontuacao/`, 
-      horasData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    
+    await axios.put(`http://localhost:3000/pontuacao/`, horasData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     const formData = new FormData();
     formData.append("status", "Aceito");
 
     try {
-      await axios.put(
+      const response = await axios.put(
         `http://localhost:3000/solicitacao/${solicitacao.id}/status`,
         formData,
         {
@@ -224,8 +217,6 @@ const ModalCertificadoHoras = ({ solicitacao, onClose }) => {
         }
       );
 
-    
-
       Swal.fire({
         icon: "success",
         title: "Solicitação Aceita",
@@ -235,8 +226,8 @@ const ModalCertificadoHoras = ({ solicitacao, onClose }) => {
           popup: "custom-swal-font",
         },
       }).then(() => {
+        onStatusChange("Aceito");
         onClose();
-        window.location.reload();
       });
     } catch (error) {
       console.error("Erro no PUT:", error.response?.data || error.message);
@@ -293,8 +284,8 @@ const ModalCertificadoHoras = ({ solicitacao, onClose }) => {
             popup: "custom-swal-font",
           },
         }).then(() => {
+          onStatusChange("Rejeitado");
           onClose();
-          window.location.reload();
         });
       } else {
         throw new Error("Erro ao rejeitar a solicitação.");
@@ -310,6 +301,17 @@ const ModalCertificadoHoras = ({ solicitacao, onClose }) => {
           popup: "custom-swal-font",
         },
       });
+    }
+  };
+
+  const handleOpenComprovante = () => {
+    if (solicitacao.comprovante) {
+      const baseURL = "http://localhost:3000/";
+      const comprovanteURL = `${baseURL}${solicitacao.comprovante.replace(
+        /\\/g,
+        "/"
+      )}`;
+      window.open(comprovanteURL, "_blank");
     }
   };
 
@@ -329,7 +331,6 @@ const ModalCertificadoHoras = ({ solicitacao, onClose }) => {
   };
 
   const fetchBuscarRemetente = async () => {
-
     try {
       const response = await axios.get(
         `http://localhost:3000/user/${solicitacao.usuarioId}`,
@@ -345,8 +346,6 @@ const ModalCertificadoHoras = ({ solicitacao, onClose }) => {
       console.log(error.message);
     }
   };
-  
-  
 
   useEffect(() => {
     fetchBuscarRemetente();
@@ -379,26 +378,26 @@ const ModalCertificadoHoras = ({ solicitacao, onClose }) => {
                 <P>Descrição não fornecida</P>
               )}
 
-<Label>Comprovante:</Label>
-            {solicitacao.comprovante ? (
-              <a
-                href={solicitacao.comprovante}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  color: "#000000ab",
-                  textDecoration: "underline",
-                  cursor: "pointer",
-                  fontFamily: "Poppins, sans-serif",
-                  fontWeight: "500",
-                }}
-              >
-                Visualizar Comprovante
-              </a>
-            ) : (
-              <P>Nenhum comprovante disponível</P>
-            )}
-             
+              <Label>Comprovante:</Label>
+              {solicitacao.comprovante ? (
+                <a
+                  href="#"
+                  onClick={handleOpenComprovante}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    color: "#000000ab",
+                    textDecoration: "underline",
+                    cursor: "pointer",
+                    fontFamily: "Poppins, sans-serif",
+                    fontWeight: "500",
+                  }}
+                >
+                  Visualizar Comprovante
+                </a>
+              ) : (
+                <P>Nenhum comprovante disponível</P>
+              )}
             </Div>
             <Div>
               <Label>Status:</Label>
@@ -407,9 +406,9 @@ const ModalCertificadoHoras = ({ solicitacao, onClose }) => {
                 <P>{solicitacao.status}</P>
               </ContainerStatus>
               <Label>tabela de pontos:</Label>
-             <P>{solicitacao.atividadeTabela}</P>
+              <P>{solicitacao.atividadeTabela}</P>
 
-             <Label>Horas consideradas:</Label>
+              <Label>Horas consideradas:</Label>
               <input
                 value={horasConsideradas}
                 onChange={(e) => setHorasConsideradas(e.target.value)}
@@ -423,7 +422,6 @@ const ModalCertificadoHoras = ({ solicitacao, onClose }) => {
               <P>{formatarData(solicitacao.data)}</P>
             </Div>
           </DivTop>
-          
 
           <Div>
             <Label>Motivo (se rejeitado):</Label>
@@ -432,7 +430,6 @@ const ModalCertificadoHoras = ({ solicitacao, onClose }) => {
               value={motivo}
               onChange={(e) => setMotivo(e.target.value)}
             />
-           
           </Div>
         </ContainerInputsLabels>
         <ContainerBotoes>

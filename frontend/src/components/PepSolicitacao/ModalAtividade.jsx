@@ -147,7 +147,7 @@ const Select = styled.select`
   }
 `;
 
-const ModalAtividade = ({ onClose }) => {
+const ModalAtividade = ({ onClose, onAddSolicitacao }) => {
   const [atividades, setAtividades] = useState([]);
   const [cursoId, setCursoId] = useState("");
   const [descricao, setDescricao] = useState("");
@@ -233,8 +233,8 @@ const ModalAtividade = ({ onClose }) => {
           popup: "custom-swal-font",
         },
       }).then(() => {
+        onAddSolicitacao(response.data);
         onClose(); 
-        window.location.reload()
       });
     
     } catch (error) {

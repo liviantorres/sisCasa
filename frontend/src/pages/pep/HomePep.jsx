@@ -80,11 +80,16 @@ const HomePep = () => {
          Authorization: `Bearer ${token}`
         }
       })
+
+      setAtividades((prevAtividades) =>
+        prevAtividades.filter((atividade) => atividade.id !== atividadeSelecionada.id)
+      );
+  
       
       console.log("Usuário adicionado a atividade", response.data);
       setModalInscrever(false);
       alert("Inscrito na atividade!");
-      window.location.reload();
+  
     } catch (error) {
       console.log(error.response);
     }

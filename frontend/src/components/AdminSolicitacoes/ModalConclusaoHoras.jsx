@@ -173,7 +173,7 @@ const FileUploadButton = styled.label`
   }
 `;
 
-const ModalConclusaoHoras = ({ solicitacao, onClose }) => {
+const ModalConclusaoHoras = ({ solicitacao, onClose, onStatusChange }) => {
   const [nomeRemetente, setNomeRemetente] = useState("");
   const [certificado, setCertificado] = useState(null);
   const token = localStorage.getItem("token");
@@ -217,8 +217,8 @@ const ModalConclusaoHoras = ({ solicitacao, onClose }) => {
           popup: "custom-swal-font",
         },
       }).then(() => {
+        onStatusChange("Aceito");
         onClose();
-        window.location.reload();
       });
     } catch (error) {
       console.error(error.message);
@@ -260,8 +260,8 @@ const ModalConclusaoHoras = ({ solicitacao, onClose }) => {
             popup: "custom-swal-font",
           },
         }).then(() => {
+          onStatusChange("Rejeitado");
           onClose();
-          window.location.reload();
         });
       } else {
         throw new Error("Erro ao rejeitar a solicitação.");

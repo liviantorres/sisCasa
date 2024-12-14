@@ -56,7 +56,9 @@ const SolicitacoesAdmin = () => {
     fetchSolicitacoes();
   }, []);
 
-
+  const addSolicitacao = (novaSolicitacao) => {
+    setSolicitacoes((prevSolicitacoes) => [novaSolicitacao, ...prevSolicitacoes]);
+  };
 
   return (
     <>
@@ -69,7 +71,7 @@ const SolicitacoesAdmin = () => {
             <Solicitacao
               key={index}
               solicitacao={solicitacao}
-           
+          
             />
           ))}
         </ScrollableAtividades>

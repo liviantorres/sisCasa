@@ -198,7 +198,7 @@ const FileUploadButton = styled.label`
   }
 `;
 
-const ModalCertificadoCurso = ({ onClose, solicitacao }) => {
+const ModalCertificadoCurso = ({ onClose, solicitacao, onStatusChange }) => {
   const [nomeDoCurso, setNomeDoCurso] = useState([]);
   const [nomeDoProfessor, setNomeDoProfessor] = useState([]);
   const [motivo, setMotivo] = useState("");
@@ -267,27 +267,36 @@ const ModalCertificadoCurso = ({ onClose, solicitacao }) => {
       });
       return;
     }
-
-   
-    const horasData = {
-      userId: solicitacao.usuarioId,
-      codigo: String(solicitacao.atividadeTabela),
-      horasSubmetidas: nomeDoCurso.cargaHoraria,
-      horasConsideradas: nomeDoCurso.cargaHoraria,
-    };
-
-    await axios.put(`http://localhost:3000/pontuacao/`, horasData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
+  
+    console.log("remetente", remetente);
+  
+    const hasPepRole = solicitacao.usuario?.Roles?.some(
+      (role) => role.roleName === "pep"
+    );
+  
+    if (hasPepRole) {
+      const horasData = {
+        userId: solicitacao.usuarioId,
+        codigo: String(solicitacao.atividadeTabela),
+        horasSubmetidas: nomeDoCurso.cargaHoraria,
+        horasConsideradas: nomeDoCurso.cargaHoraria,
+      };
+  
+      await axios.put(`http://localhost:3000/pontuacao/`, horasData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    } else {
+      console.log("Usuário não tem permissão PEP. Ignorando a atualização de horas.");
+    }
+  
     const formData = new FormData();
     formData.append("certificado", certificado);
     formData.append("status", "Aceito");
-
+  
     try {
-      await axios.put(
+      const response = await axios.put(
         `http://localhost:3000/solicitacao/${solicitacao.id}/status`,
         formData,
         {
@@ -297,7 +306,7 @@ const ModalCertificadoCurso = ({ onClose, solicitacao }) => {
           },
         }
       );
-
+  
       Swal.fire({
         icon: "success",
         title: "Solicitação Aceita",
@@ -307,8 +316,8 @@ const ModalCertificadoCurso = ({ onClose, solicitacao }) => {
           popup: "custom-swal-font",
         },
       }).then(() => {
+        onStatusChange("Aceito");
         onClose();
-        window.location.reload();
       });
     } catch (error) {
       console.error(error.message);
@@ -323,6 +332,7 @@ const ModalCertificadoCurso = ({ onClose, solicitacao }) => {
       });
     }
   };
+  
   const handleReject = async () => {
     const token = localStorage.getItem("token");
     const formData = new FormData();
@@ -350,8 +360,8 @@ const ModalCertificadoCurso = ({ onClose, solicitacao }) => {
             popup: "custom-swal-font",
           },
         }).then(() => {
+          onStatusChange("Rejeitado");
           onClose();
-          window.location.reload();
         });
       } else {
         throw new Error("Erro ao rejeitar a solicitação.");

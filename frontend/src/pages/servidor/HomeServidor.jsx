@@ -72,23 +72,30 @@ const HomeServidor = () => {
     setModalInscrever(false)
   };
   
-  const handleSave = async () =>{
-
+  const handleSave = async () => {
     try {
-      const response = axios.post(`http://localhost:3000/atividade/${atividadeSelecionada.id}/aluno/${userId}`,{
-        headers: {
-         Authorization: `Bearer ${token}`
+      await axios.post(
+        `http://localhost:3000/atividade/${atividadeSelecionada.id}/aluno/${userId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      })
-      
-      console.log("Usuário adicionado a atividade", response.data);
+      );
+  
+      setAtividades((prevAtividades) =>
+        prevAtividades.filter((atividade) => atividade.id !== atividadeSelecionada.id)
+      );
+  
       setModalInscrever(false);
       alert("Inscrito na atividade!");
-      window.location.reload();
     } catch (error) {
-      console.log(error.response);
+      console.error("Erro ao se inscrever na atividade:", error);
+      alert("Ocorreu um erro ao tentar se inscrever na atividade.");
     }
   };
+  
 
   return (
     <>
