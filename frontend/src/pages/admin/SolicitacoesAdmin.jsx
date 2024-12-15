@@ -25,6 +25,13 @@ overflow-y: auto;
 padding-right: 20px;
 `;
 
+const MensagemVazia = styled.h3`
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  text-align: center;
+  color: #202b3b;
+`
+
 const SolicitacoesAdmin = () => {
   const [solicitacoes, setSolicitacoes] = useState([]);
 
@@ -67,13 +74,16 @@ const SolicitacoesAdmin = () => {
         <Titulo>Solicitações Recebidas</Titulo>
         
         <ScrollableAtividades>
-          {solicitacoes.map((solicitacao, index) => (
-            <Solicitacao
-              key={index}
-              solicitacao={solicitacao}
-          
-            />
-          ))}
+          {solicitacoes.length === 0 ? (
+            <MensagemVazia>Nenhuma solicitação recebida.</MensagemVazia>
+          ) : (
+            solicitacoes.map((solicitacao, index) => (
+              <Solicitacao
+                key={index}
+                solicitacao={solicitacao}
+              />
+            ))
+          )}
         </ScrollableAtividades>
       </ContainerConteudo>
     </>

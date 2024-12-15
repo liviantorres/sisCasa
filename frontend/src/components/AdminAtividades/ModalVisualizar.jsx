@@ -112,47 +112,47 @@ const Header = styled.div`
   color: #ffff;
 `;
 
-const ModalVisualizar = ({ onClose, modalFrequencia, modalAprovacao, atividade }) => {
-  const [professor, setProfessor] = useState({})
+const ModalVisualizar = ({ onClose, modalFrequencia, modalAprovacao, atividade, eProfessor }) => {
+  const [professor, setProfessor] = useState({});
 
   const handleOpenModalFrequencia = () => {
     modalFrequencia(atividade);
   };
 
-  const handleOpenModal = () =>{
+  const handleOpenModal = () => {
     modalAprovacao(atividade);
   };
 
-  const fetchProfessor = async () =>{
-try {
-  const token = localStorage.getItem("token");
-  const response = await axios.get(`http://localhost:3000/user/${atividade.professorId}`,
-    {
-      headers:{
-        Authorization: `Bearer ${token}`
-      }
+  const fetchProfessor = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(
+        `http://localhost:3000/user/${atividade.professorId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("prof", response.data);
+      setProfessor(response.data);
+    } catch (error) {
+      console.log(error);
     }
-  )
-  console.log("prof", response.data)
-  setProfessor(response.data);
-} catch (error) {
-  console.log(error)
-}
-  }
+  };
 
   useEffect(() => {
     if (atividade && atividade.professorId) {
       fetchProfessor();
     }
   }, [atividade]);
-  
-  
+
   return (
     <Overlay onClick={onClose}>
       <ContainerAdc onClick={(e) => e.stopPropagation()}>
         <HeaderContainer>
           <Header>VISUALIZAR ATIVIDADE</Header>
-          <CloseIcon onClick={onClose} /> 
+          <CloseIcon onClick={onClose} />
         </HeaderContainer>
         <ContainerInputsLabels>
           <Div>
@@ -164,7 +164,7 @@ try {
           <Div>
             {atividade.categoria !== "edital" && (
               <>
-               <Label>Professor:</Label>
+                <Label>Professor:</Label>
                 <P>{professor?.nomeCompleto || "Carregando..."}</P>
                 <Label>Carga Horária:</Label>
                 <P>{atividade.cargaHoraria}h</P>
@@ -174,16 +174,16 @@ try {
             <P>{atividade.link}</P>
           </Div>
         </ContainerInputsLabels>
-          {atividade.categoria === "curso" && (
-            <ContainerBotoes>
+        {atividade.categoria === "curso" && eProfessor && ( 
+          <ContainerBotoes>
             <Button onClick={handleOpenModalFrequencia}>Frequência</Button>
-            <Button onClick={handleOpenModal} >Aprovação</Button>
-            </ContainerBotoes>
-          )}
-        
+            <Button onClick={handleOpenModal}>Aprovação</Button>
+          </ContainerBotoes>
+        )}
       </ContainerAdc>
     </Overlay>
   );
 };
+
 
 export default ModalVisualizar;

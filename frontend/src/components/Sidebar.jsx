@@ -57,6 +57,7 @@ const IconLogoutWrapper = styled.div`
     height: 35px;
     color: #fff;
     transition: color 0.3s ease, transform 0.3s ease;
+    cursor: pointer;
 
     &:hover {
       color: #de2d41;
