@@ -108,14 +108,6 @@ const CursosServidor = () => {
   const token = localStorage.getItem("token");
   const id = localStorage.getItem("id");
 
-  const botao = [
-    {
-      texto: "Visualizar",
-      cor: "#04D361",
-      onClick: () => handleOpenModalFrequencia(atividade)
-    },
-  ];
-
   const fetchAtividades = async () => {
     try {
       const response = await axios.get(
@@ -269,7 +261,7 @@ const CursosServidor = () => {
         </ScrollableAtividades>
         {modalFrequencia && <ModalFrequencia atividade={atividadeSelecionada} onClose={handleCloseModalFrequencia}></ModalFrequencia>}
         {modalVisualizar && <ModalVisualizar atividade={atividadeSelecionada}  alunos={atividadeSelecionada.Users} onClose={handleCloseModalVisualizar}></ModalVisualizar>}
-        {modalVisualizarAtividade && <ModalVisualizarAtividade atividade={atividadeSelecionada}  alunos={atividadeSelecionada.Users} onClose={handleCloseModalVisualizarAtividade}></ModalVisualizarAtividade>}
+        {modalVisualizarAtividade && <ModalVisualizarAtividade  eProfessor={conteudoAtual === "professor"}  atividade={atividadeSelecionada}  alunos={atividadeSelecionada.Users} onClose={handleCloseModalVisualizarAtividade}></ModalVisualizarAtividade>}
       </ContainerConteudo>
     </>
   );
