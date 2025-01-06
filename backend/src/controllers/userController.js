@@ -3,6 +3,8 @@ const User = require('../models/User');
 const Role = require('../models/Role');
 const Atividade = require('../models/Atividade');
 const UserAtividade = require('../models/UserAtividade');
+const bcrypt = require('bcrypt');
+
 
 exports.getUser = async (req, res) => {
   try {
@@ -48,13 +50,18 @@ exports.getAllUsers = async (req, res) => {
 
 exports.editUser = async (req, res) => {
   const { userId } = req.params;
-  const { nomeCompleto, siape, cpf, dataDeNascimento, whatsapp, email, password, roleIds } = req.body;
+  const { nomeCompleto, siape, cpf, dataDeNascimento, whatsapp, email, password, roleIds, horasConcluidas } = req.body;
+
+  if (!nomeCompleto || !siape || !cpf || !dataDeNascimento || !whatsapp || !email) {
+    return res.status(400).json({ message: 'Campos obrigatórios faltando' });
+  }
 
   try {
     const user = await User.findByPk(userId);
     if (!user) {
       return res.status(404).json({ message: 'Usuário não encontrado' });
     }
+
     const updateData = {
       nomeCompleto,
       siape,
@@ -62,14 +69,16 @@ exports.editUser = async (req, res) => {
       dataDeNascimento,
       whatsapp,
       email,
-      horasConcluidas
+      horasConcluidas: horasConcluidas || user.horasConcluidas, // Mantém o valor atual se não for fornecido
     };
 
+    // Se a senha for fornecida, atualiza a senha
     if (password) {
       const salt = await bcrypt.genSalt(10);
       updateData.password = await bcrypt.hash(password, salt);
     }
 
+    // Atualiza o usuário
     await user.update(updateData);
 
     if (roleIds && roleIds.length > 0) {
@@ -78,7 +87,7 @@ exports.editUser = async (req, res) => {
     }
 
     const updatedUser = await User.findByPk(userId, {
-      include: { model: Role, through: { attributes: [] } }, 
+      include: { model: Role, through: { attributes: [] } },
     });
 
     return res.status(200).json(updatedUser);
@@ -144,14 +153,14 @@ exports.listarUsuariosPorAtividade = async (req, res) => {
 };
 
 exports.getUsersByAtividade = async (req, res) => {
-  const { atividadeId } = req.params; // ID da atividade passado pela URL
+  const { atividadeId } = req.params; 
   console.log(`Buscando usuários para a atividade ID ${atividadeId}...`);
   try {
     const atividade = await Atividade.findByPk(atividadeId, {
       include: {
         model: User,
-        through: { attributes: [] }, // Exclui os campos da tabela intermediária
-        attributes: ['id', 'nomeCompleto', 'email'], // Escolha os campos que deseja retornar
+        through: { attributes: [] }, 
+        attributes: ['id', 'nomeCompleto', 'email'], 
       },
     });
 
@@ -159,7 +168,7 @@ exports.getUsersByAtividade = async (req, res) => {
       return res.status(404).json({ message: 'Atividade não encontrada' });
     }
 
-    return res.status(200).json(atividade.Users); // Retorna apenas os usuários associados
+    return res.status(200).json(atividade.Users);
   } catch (error) {
     console.error('Erro ao buscar usuários para a atividade:', error.message);
     return res.status(500).json({ message: 'Erro no servidor', error: error.message });

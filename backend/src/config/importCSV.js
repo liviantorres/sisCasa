@@ -3,9 +3,8 @@ const csv = require('csv-parser');
 const Atividade = require('../models/AtividadeTabela'); 
 const Categoria = require('../models/Categoria'); 
 
-async function importCSV() {
+async function importCSV(caminhoDoArquivo) {
   const resultados = [];
-  const caminhoDoArquivo = './tabelaDePontos.csv';
 
   fs.createReadStream(caminhoDoArquivo)
     .pipe(csv())
@@ -24,7 +23,7 @@ async function importCSV() {
         const horasSubmetidas = linha['Horas submetidas'] !== '#REF!' ? parseInt(linha['Horas submetidas']?.trim()) : null;
         const horasConsideradas = linha['Horas consideradas'] !== '#REF!' ? parseInt(linha['Horas consideradas']?.trim()) : null;
         const metrica = linha['Metrica']?.trim();
-        
+
         if (categoriaNome && !atividadeNome) {
           const match = categoriaNome.match(/CATEGORIA (\w+)\s*[-–]\s*(.*)/); 
           if (match) {
@@ -35,7 +34,6 @@ async function importCSV() {
               categoriaAtual = await Categoria.findOne({ where: { nome: categoriaNumero } });
 
               if (!categoriaAtual) {
-             
                 categoriaAtual = await Categoria.create({
                   nome: categoriaNumero,
                   descricao: categoriaDescricao
@@ -56,18 +54,38 @@ async function importCSV() {
           const codigoAtividade = categoriaNome.trim(); 
 
           try {
-            await Atividade.create({
-              codigo: codigoAtividade,  
-              nome: atividadeNome,  
-              metrica: metrica, 
-              teto_autorizado: horasAutorizadas,
-              horas_submetidas: horasSubmetidas,
-              horas_consideradas: horasConsideradas,
-              categoriaId: categoriaAtual.id, 
-            
-            });
+        
+            const atividadeExistente = await Atividade.findOne({ where: { nome: atividadeNome, categoriaId: categoriaAtual.id } });
 
-            console.log(`Atividade '${atividadeNome}' associada à categoria '${categoriaAtual.nome}' com sucesso.`);
+            if (atividadeExistente) {
+         
+              await Atividade.update(
+                {
+                  codigo: codigoAtividade,  
+                  nome: atividadeNome,  
+                  metrica: metrica, 
+                  teto_autorizado: horasAutorizadas,
+                  horas_submetidas: horasSubmetidas,
+                  horas_consideradas: horasConsideradas,
+                },
+                {
+                  where: { id: atividadeExistente.id }
+                }
+              );
+              console.log(`Atividade '${atividadeNome}' já existe. Dados atualizados.`);
+            } else {
+         
+              await Atividade.create({
+                codigo: codigoAtividade,  
+                nome: atividadeNome,  
+                metrica: metrica, 
+                teto_autorizado: horasAutorizadas,
+                horas_submetidas: horasSubmetidas,
+                horas_consideradas: horasConsideradas,
+                categoriaId: categoriaAtual.id, 
+              });
+              console.log(`Atividade '${atividadeNome}' associada à categoria '${categoriaAtual.nome}' criada com sucesso.`);
+            }
           } catch (error) {
             console.error(`Erro ao associar a atividade '${atividadeNome}' à categoria '${categoriaAtual.nome}': ${error.message}`);
           }

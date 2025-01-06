@@ -21,23 +21,15 @@ app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Rotas públicas
 app.use('/auth', authRoutes);
-
-// Rotas de Usuários
 app.use('/user', userRoutes);
-
-// Rotas de Atividades
 app.use('/atividade', atividadeRoutes);
-
-// Rotas de Solicitações
 app.use('/solicitacao', solicitacaoRoutes);
-
 app.use('/categorias', categoriaRoutes);
-
 app.use('/pontuacao', pontuacaoRoutes);
-
 app.use('/frequencia', frequenciaRoutes);
+
+
 
 
 
@@ -54,7 +46,7 @@ sequelize.authenticate()
   })
   .then(() => {
     console.log('Papéis inseridos com sucesso.');
-    return importCSV(); 
+    return importCSV('./tabelaDePontos.csv'); 
   })
   .then(() => {
     console.log('Dados do CSV importados com sucesso.');

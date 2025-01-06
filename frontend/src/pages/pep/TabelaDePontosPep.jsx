@@ -18,13 +18,14 @@ const Titulo = styled.h2`
 
 const ContainerInfoStyled = styled.div`
   font-family: "Archivo", sans-serif;
-  background-color: #6750A4;
-  color: white;
+  background-color: #D3CEDE;
+  color: #000;
   text-align: center;
   padding: 20px;
   border-radius: 8px;
   margin-bottom: 20px;
 `;
+
 
 const TitleStyled = styled.h1`
   font-size: 1.5em;
@@ -47,11 +48,12 @@ const TableStyled = styled.table`
   font-family: "Archivo", sans-serif;
   width: 100%;
   border-collapse: collapse;
-  background-color: #6750A4;
-  color: white;
+  background-color: #D3CEDE;
+  color: #000;
   text-align: center;
   margin-top: 20px;
 `;
+
 
 const CategoryTitleStyled = styled.th`
   height: 50px;
@@ -63,11 +65,11 @@ const LinkStyled = styled.a`
 `;
 
 const ThStyled = styled.th`
+font-weight: 400;
   padding: 10px;
   text-align: left;
   border: 1px solid white;
 `;
-
 const MenuStyled = styled.div`
   .dropdown {
     display: flex;
