@@ -102,26 +102,6 @@ const Div = styled.div`
   margin: 40px;
 `;
 
-const Input = styled.input`
-  font-family: "Archivo", sans-serif;
-  font-weight: 100;
-  width: 90%;
-  height: 20px;
-  margin-top: 10px;
-  margin-bottom: 20px;
-  padding: 5px;
-  border: 1px solid #ccc;
-  font-size: 16px;
-  border-radius: 6px;
-  background-color: #f2eeee;
-
-  &:focus {
-    border-color: #774fd1;
-    outline: none;
-    box-shadow: 0 0 2px rgba(119, 79, 209, 0.7);
-  }
-`;
-
 const FileUploadButton = styled.label`
   display: flex;
   flex-direction: row;

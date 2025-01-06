@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { IoIosClose } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
@@ -100,13 +100,13 @@ const Column = styled.div`
   flex: 1;
 `;
 
-const ModalEditarPerfil = ({ isOpen, close, userData, onSave, roles, availableRoles }) => {
+const ModalEditarPerfil = ({ isOpen, close, userData, onSave, availableRoles }) => {
   const [nomeCompleto, setNomeCompleto] = useState(userData.nomeCompleto);
   const [email, setEmail] = useState(userData.email);
   const [siape, setSiape] = useState(userData.siape);
   const [cpf, setCpf] = useState(userData.cpf);
   const [whatsapp, setWhatsapp] = useState(userData.whatsapp);
-  const [selectedRoles, setSelectedRoles] = useState(userData.Roles.map(role => role.id));
+  const [selectedRoles, setSelectedRoles] = useState([]); 
   const navigate = useNavigate();
 
   const formattedDataDeNascimento = userData.dataDeNascimento
@@ -116,14 +116,19 @@ const ModalEditarPerfil = ({ isOpen, close, userData, onSave, roles, availableRo
   const [dataDeNascimentoSecund, setDataDeNascimentoSecund] = useState(formattedDataDeNascimento);
 
   const handleRoleChange = (roleId) => {
-    if (roleId === 1 && selectedRoles.includes(1)) return; 
-
     setSelectedRoles((prev) =>
       prev.includes(roleId)
         ? prev.filter((id) => id !== roleId)
         : [...prev, roleId]
     );
   };
+
+ 
+  useEffect(() => {
+    if (userData && userData.Roles) {
+      setSelectedRoles(userData.Roles.map(role => role.id));
+    }
+  }, [userData]);
 
   if (!isOpen) return null;
 
@@ -140,12 +145,20 @@ const ModalEditarPerfil = ({ isOpen, close, userData, onSave, roles, availableRo
       roleIds: selectedRoles,
     };
 
-    const usuarioId = localStorage.getItem("id");
+    const usuarioId = userData.id;
 
-    onSave(usuarioId, updatedData);
+    console.log('Dados atualizados:', updatedData); 
+
+    onSave(usuarioId, updatedData);  
     close();
-    navigate('/admin/perfil');
+   
   };
+
+  const isAdmin = userData.Roles.some(role => role.name === 'admin');
+
+  const rolesToDisplay = isAdmin
+    ? availableRoles
+    : availableRoles.filter(role => role.name !== 'admin');
 
   return (
     <ModalBackground>
@@ -198,14 +211,13 @@ const ModalEditarPerfil = ({ isOpen, close, userData, onSave, roles, availableRo
             />
 
             <Label>Roles</Label>
-            {availableRoles.map((role) => (
+            {rolesToDisplay.map((role) => (
               <div key={role.id}>
                 <input
                   type="checkbox"
                   id={`role-${role.id}`}
                   checked={selectedRoles.includes(role.id)}
                   onChange={() => handleRoleChange(role.id)}
-                  disabled={role.name === 'admin' && selectedRoles.includes(role.id)}
                 />
                 <label htmlFor={`role-${role.id}`}>{role.name}</label>
               </div>

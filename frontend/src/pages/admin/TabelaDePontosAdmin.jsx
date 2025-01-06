@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import Header from "../../components/Header";
 import axios from "axios";
+import TabelaDePontos from '../../components/AdminTabela/TabelaDePontos.jsx'; 
+import { IoMdAddCircleOutline } from "react-icons/io";
 
 const ContainerConteudo = styled.div`
   margin: 20px;
@@ -18,8 +20,8 @@ const Titulo = styled.h2`
 
 const ContainerInfoStyled = styled.div`
   font-family: "Archivo", sans-serif;
-  background-color: #6750A4;
-  color: white;
+  background-color: #D3CEDE;
+  color: #000;
   text-align: center;
   padding: 20px;
   border-radius: 8px;
@@ -47,8 +49,8 @@ const TableStyled = styled.table`
   font-family: "Archivo", sans-serif;
   width: 100%;
   border-collapse: collapse;
-  background-color: #6750A4;
-  color: white;
+  background-color: #D3CEDE;
+  color: #000;
   text-align: center;
   margin-top: 20px;
 `;
@@ -57,18 +59,19 @@ const CategoryTitleStyled = styled.th`
   height: 50px;
   width: 15px;
 `;
-
-const LinkStyled = styled.a`
-  color: white;  
-`;
-
 const ThStyled = styled.th`
+font-weight: 400;
   padding: 10px;
   text-align: left;
   border: 1px solid white;
 `;
 
 const MenuStyled = styled.div`
+  display: flex;
+  justify-content: space-between; /* Isso vai colocar os itens na mesma linha */
+  align-items: center; /* Para alinhar verticalmente os itens */
+  margin-bottom: 20px; /* Adiciona um espaço inferior */
+  
   .dropdown {
     display: flex;
     position: relative;
@@ -122,42 +125,69 @@ const ScrollableAtividades = styled.div`
   padding-right: 20px;
 `;
 
+const Botao = styled.button`
+  background-color: #774fd1;
+  font-family: "Arquivo", sans-serif;
+  font-weight: 600;
+  display: flex;
+  text-transform: uppercase;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 15%;
+  gap: 4px;
+  height: 3rem;
+  border-radius: 8px;
+  border: none;
+  background-color: #774FD1;
+  text-transform: uppercase;
+  letter-spacing: 0.75px;
+  color: #ffffff;
+  transition: 200ms;
+  &:hover {
+    cursor: pointer;
+    background-color: "#774FD1";
+    transform: scale(1.05);
+  }
+`;
+
 const TabelaDePontosAdmin = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [categorias, setCategorias] = useState([]);
-  const [participacao, setParticipacao] = useState([])
-
-  const token = localStorage.getItem('token');
-  const id = localStorage.getItem('id')
+  const [participacao, setParticipacao] = useState([]);
+  const [isTabelaDePontosOpen, setIsTabelaDePontosOpen] = useState(false);
+  const [file, setFile] = useState(null); 
+  const token = localStorage.getItem("token");
+  const id = localStorage.getItem("id");
 
   const fetchCategorias = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/categorias`, {
+      const response = await axios.get("http://localhost:3000/categorias", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       setCategorias(response.data);
-      console.log(response.data);
     } catch (error) {
-      console.error("Erro ao buscar atividades:", error);
+      console.error("Erro ao buscar categorias:", error);
     }
   };
 
-  const fetchParticipacoes = async () =>{
-    console.log(id);
+  const fetchParticipacoes = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/pontuacao/${id}`,{
-        headers:{
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        `http://localhost:3000/pontuacao/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       setParticipacao(response.data);
-      console.log(participacao)
     } catch (error) {
-      console.log("Erro ao buscar participacoes: ", error)
+      console.error("Erro ao buscar participações:", error);
     }
-  }
+  };
 
   useEffect(() => {
     fetchCategorias();
@@ -166,6 +196,48 @@ const TabelaDePontosAdmin = () => {
 
   const handleCategoryChange = (category) => {
     setSelectedCategory(category);
+  };
+
+  const handleFileChange = (event) => {
+    const selectedFile = event.target.files[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+    }
+  };
+
+  const handleCsvUpload = async () => {
+    if (file) {
+      const formData = new FormData();
+      formData.append("file", file);
+      try {
+        const response = await axios.post(
+          "http://localhost:3000/pontuacao/atualizarTabela",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        alert("Dados atualizados com sucesso!");
+  
+        // Recarregar as categorias e participações após o upload
+        fetchCategorias();
+        fetchParticipacoes();
+  
+        setIsTabelaDePontosOpen(false); // Fechar o modal após o upload
+        setFile(null); // Limpar o arquivo selecionado
+      } catch (error) {
+        console.error(
+          "Erro ao enviar dados para o backend:",
+          error.response?.data || error.message
+        );
+        alert("Erro ao atualizar dados.");
+      }
+    } else {
+      console.error("Nenhum arquivo selecionado.");
+    }
   };
 
   const renderCategoryTitle = () => {
@@ -181,7 +253,11 @@ const TabelaDePontosAdmin = () => {
       );
     }
 
-    return <CategoryTitleStyled colSpan="6">Selecione uma categoria</CategoryTitleStyled>;
+    return (
+      <CategoryTitleStyled colSpan="6">
+        Selecione uma categoria
+      </CategoryTitleStyled>
+    );
   };
 
   const renderTableContent = () => {
@@ -192,11 +268,11 @@ const TabelaDePontosAdmin = () => {
         </tr>
       );
     }
-  
+
     const selectedCategoryData = categorias.find(
       (category) => category.nome === selectedCategory
     );
-  
+
     if (!selectedCategoryData) {
       return (
         <tr>
@@ -204,16 +280,12 @@ const TabelaDePontosAdmin = () => {
         </tr>
       );
     }
-  
-    return selectedCategoryData.atividades.map((atividade, index) => {
-    console.log("atividadeId " + atividade.id);
-    console.log("Atividades:", selectedCategoryData.atividades);
 
-  
+    return selectedCategoryData.atividades.map((atividade) => {
       const participacaoUsuario = participacao.find(
         (p) => p.atividadeTabelaId === atividade.id
       );
-  
+
       return (
         <tr key={atividade.id}>
           <ThStyled>{atividade.codigo}</ThStyled>
@@ -224,28 +296,14 @@ const TabelaDePontosAdmin = () => {
             {participacaoUsuario ? participacaoUsuario.horasSubmetidas : "N/A"}
           </ThStyled>
           <ThStyled>
-            {participacaoUsuario ? participacaoUsuario.horasConsideradas : "N/A"}
+            {participacaoUsuario
+              ? participacaoUsuario.horasConsideradas
+              : "N/A"}
           </ThStyled>
         </tr>
       );
     });
   };
-
-  const renderTableFooter = () => {
-    const totalHorasConsideradas = participacao.reduce((total, item) => {
-      return total + (item.horasConsideradas || 0);
-    }, 0);
-  
-    return (
-      <tr>
-        <ThStyled colSpan="5" style={{ textAlign: "right", fontWeight: "bold" }}>
-          Total de Horas Consideradas:
-        </ThStyled>
-        <ThStyled style={{ fontWeight: "bold" }}>{totalHorasConsideradas}</ThStyled>
-      </tr>
-    );
-  };
-  
 
   return (
     <>
@@ -265,8 +323,8 @@ const TabelaDePontosAdmin = () => {
         <DescriptionStyled>
           Serão cumpridas 128 horas de atividades formativas sendo,
           obrigatoriamente, 64 horas em atividades na CATEGORIA I e no máximo 64
-          horas de atividades em, pelo menos, duas das demais CATEGORIAS II, III, IV
-          (Ensino, Pesquisa, Extensão e Gestão).
+          horas de atividades em, pelo menos, duas das demais CATEGORIAS II,
+          III, IV (Ensino, Pesquisa, Extensão e Gestão).
         </DescriptionStyled>
       </ContainerInfoStyled>
 
@@ -290,32 +348,33 @@ const TabelaDePontosAdmin = () => {
             ))}
           </div>
         </div>
+        <Botao onClick={() => setIsTabelaDePontosOpen(true)}>  <IoMdAddCircleOutline size={18} /> Atualizar Tabela</Botao>
       </MenuStyled>
-      <ScrollableAtividades>
 
-      <TableStyled>
-        <thead>
-          <tr>{renderCategoryTitle()}</tr>
-          <tr>
-            <ThStyled>Itens de cada categoria</ThStyled>
-            <ThStyled>
-              ATIVIDADES (Definição das Atividades no link:{" "}
-              <LinkStyled href="https://eideia.ufc.br/wp-content/uploads/2024/03/casa-programa-de-formacao-em-docencia-do-ensino-superior-070324.pdf">
-                PDF
-              </LinkStyled>
-              )
-            </ThStyled>
-            <ThStyled>Métrica</ThStyled>
-            <ThStyled>
-              Teto autorizado para cada atividade/ação docente (h)
-            </ThStyled>
-            <ThStyled>Horas Submetidas</ThStyled>
-            <ThStyled>Horas Consideradas</ThStyled>
-          </tr>
-        </thead>
-        <tbody>{renderTableContent()}</tbody>
-        <tfoot>{renderTableFooter()}</tfoot>
-      </TableStyled>
+      {isTabelaDePontosOpen && (
+        <TabelaDePontos
+          onClose={() => setIsTabelaDePontosOpen(false)} 
+          onConfirm={handleCsvUpload}
+          onFileChange={handleFileChange} 
+          file={file} 
+        />
+      )}
+
+      <ScrollableAtividades>
+        <TableStyled>
+          <thead>
+            <tr>{renderCategoryTitle()}</tr>
+            <tr>
+              <ThStyled>Itens de cada categoria</ThStyled>
+              <ThStyled>ATIVIDADES</ThStyled>
+              <ThStyled>Métrica</ThStyled>
+              <ThStyled>Teto autorizado</ThStyled>
+              <ThStyled>Horas Submetidas</ThStyled>
+              <ThStyled>Horas Consideradas</ThStyled>
+            </tr>
+          </thead>
+          <tbody>{renderTableContent()}</tbody>
+        </TableStyled>
       </ScrollableAtividades>
     </>
   );

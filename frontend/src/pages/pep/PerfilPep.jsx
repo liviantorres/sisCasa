@@ -86,7 +86,6 @@ const EditIcon = styled(FaEdit)`
   }
 `;
 
-// Barra de Progresso
 const ProgressBar = styled.div`
   width: 100%;
   background-color: #ddd;
@@ -133,7 +132,7 @@ const PerfilPep = () => {
   const [userData, setUserData] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [roles, setRoles] = useState([]); 
-  const [horasConcluidas, setHorasConcluidas] = useState(null)
+  const [horasConcluidas, setHorasConcluidas] = useState(null);
 
   const percentage = (horasConcluidas / 128) * 100;
 
@@ -159,16 +158,12 @@ const PerfilPep = () => {
       setUserData(response.data);
       setRoles(response.data.Roles);
       setHorasConcluidas(response.data.horasConcluidas);
-      console.log(horasConcluidas)
-      console.log("roles " + roles)
-      console.log(userData)
     } catch (error) {
       if (error.response) {
         setErrorMessage(error.response.data.message || 'Falha ao buscar dados do usuário');
       } else {
         setErrorMessage('Erro ao conectar com o servidor');
       }
-      console.error('Erro ao buscar dados do usuário:', error);
     }
   };
 
@@ -178,7 +173,6 @@ const PerfilPep = () => {
 
   const handleSave = async (userId, updatedData) => {
     const token = localStorage.getItem('token'); 
-   
   
     try {
       const response = await axios.put(`http://localhost:3000/user/editar/${userId}`, updatedData, {
@@ -227,12 +221,10 @@ const PerfilPep = () => {
             <div>
               <InfoAdicional>CPF: {userData.cpf}</InfoAdicional>
               <InfoAdicional>Função: {roles.length > 0 ? roles.map(role => role.roleName).join(", ") : "Nenhum papel atribuído"}</InfoAdicional>
-
             </div>
             <div>
               <InfoAdicional>Data de Nascimento: {userData.dataDeNascimento}</InfoAdicional>
               <InfoAdicional>WhatsApp: {userData.whatsapp}</InfoAdicional>
-              
             </div>
           </ContainerBottom>
         </InfoPerfil>
@@ -244,12 +236,13 @@ const PerfilPep = () => {
         userData={userData}
         onSave={handleSave}
         roles={roles}
-        availableRoles = {filteredRoles}
+        availableRoles={filteredRoles} 
       />
 
       {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
     </>
   );
 };
+
 
 export default PerfilPep;
