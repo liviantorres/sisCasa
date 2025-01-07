@@ -245,14 +245,15 @@ const CursosPep = () => {
                 key={atividade.id}
                 titulo={atividade.titulo}
                 descricao={atividade.descricao}
+                categoria={atividade.categoria}
                 botoes={[
                   {
-                    texto: "Frequencia",
+                    texto: "Frequência",
                     cor: "#47248F",
                     onClick: () => handleOpenModalFrequencia(atividade)
                   },
                   {
-                    texto: "Visualizar",
+                    texto: "Situação",
                     cor: "#47248F",
                     onClick: () => handleOpenModalVisualizar(atividade)
                   },

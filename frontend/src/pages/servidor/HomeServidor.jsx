@@ -110,7 +110,8 @@ const HomeServidor = () => {
                 key={atividade.id}
                 titulo={atividade.titulo}
                 descricao={atividade.descricao}
-                cargaHoraria={`${atividade.cargaHoraria}h`}
+                cargaHoraria={`${atividade.cargaHoraria}`}
+                categoria={atividade.categoria}
                 botoes={[
                   {
                     texto: "Inscrever-se",

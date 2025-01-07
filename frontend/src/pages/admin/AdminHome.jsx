@@ -292,7 +292,8 @@ const AdminHome = () => {
                 key={atividade.id}
                 titulo={atividade.titulo}
                 descricao={atividade.descricao}
-                cargaHoraria={`${atividade.cargaHoraria}h`}
+                categoria={atividade.categoria}
+                cargaHoraria={`${atividade.cargaHoraria}`}
                 botoes={[
                   {
                     texto: "Editar",
