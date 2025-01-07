@@ -237,6 +237,7 @@ const CursosServidor = () => {
                 key={atividade.id}
                 titulo={atividade.titulo}
                 descricao={atividade.descricao}
+                categoria={atividade.categoria}
                 botoes={[
                   {
                     texto: "Frequencia",
