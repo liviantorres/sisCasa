@@ -127,7 +127,7 @@ const ModalVisualizar = ({ onClose, modalFrequencia, modalAprovacao, atividade, 
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        `http://localhost:3000/user/${atividade.professorId}`,
+        `http://200.129.40.161:3000/user/${atividade.professorId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

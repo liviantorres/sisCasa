@@ -192,7 +192,7 @@ const ModalNovaFrequencia = ({ onClose, atividade, onNovaFrequenciaSalva}) => {
   const fetchAlunos = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:3000/user/${atividade.id}/atividades`,{
+      const response = await axios.get(`http://200.129.40.161:3000/user/${atividade.id}/atividades`,{
           headers:{
               Authorization: `Bearer ${token}`,
           }
@@ -234,7 +234,7 @@ const ModalNovaFrequencia = ({ onClose, atividade, onNovaFrequenciaSalva}) => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.post(
-        `http://localhost:3000/frequencia/`,
+        `http://200.129.40.161:3000/frequencia/`,
         novaFrequencia,
         {
           headers: {

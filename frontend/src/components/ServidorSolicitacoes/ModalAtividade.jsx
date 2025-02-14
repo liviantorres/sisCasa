@@ -161,7 +161,7 @@ const ModalAtividade = ({ onClose, onAddSolicitacao }) => {
   const fetchAtividades = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/atividade/${id}/atividades`,
+        `http://200.129.40.161:3000/atividade/${id}/atividades`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -176,7 +176,7 @@ const ModalAtividade = ({ onClose, onAddSolicitacao }) => {
 
   const fetchAtividadesDaTabela = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/categorias", {
+      const response = await axios.get("http://200.129.40.161:3000/categorias", {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (Array.isArray(response.data)) {
@@ -208,7 +208,7 @@ const ModalAtividade = ({ onClose, onAddSolicitacao }) => {
       console.log("Payload enviado:", novaSolicitacao);
 
       const response = await axios.post(
-        `http://localhost:3000/solicitacao/`,
+        `http://200.129.40.161:3000/solicitacao/`,
         novaSolicitacao,
         {
           headers: {

@@ -106,7 +106,7 @@ const AdcUsuarioAdmin = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/auth/register",
+        "http://200.129.40.161:3000/auth/register",
         novoUsuario,
         {
           headers: {
@@ -133,7 +133,7 @@ const AdcUsuarioAdmin = () => {
   const fetchUsuarios = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await axios.get("http://localhost:3000/user/admin", {
+      const response = await axios.get("http://200.129.40.161:3000/user/admin", {
         headers: {
           Authorization: `Bearer ${token}`,
         },

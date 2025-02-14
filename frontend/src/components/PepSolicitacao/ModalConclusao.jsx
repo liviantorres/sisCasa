@@ -185,7 +185,7 @@ const ModalConclusao = ({ onClose, onAddSolicitacao }) => {
 
   const fetchUsuario = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/user/${id}`, {
+      const response = await axios.get(`http://200.129.40.161:3000/user/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -217,7 +217,7 @@ const ModalConclusao = ({ onClose, onAddSolicitacao }) => {
         };
 
         const response = await axios.post(
-          `http://localhost:3000/solicitacao/`,
+          `http://200.129.40.161:3000/solicitacao/`,
           novaSolicitacao,
           {
             headers: {

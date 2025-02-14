@@ -86,48 +86,6 @@ const EditIcon = styled(FaEdit)`
   }
 `;
 
-// Barra de Progresso
-const ProgressBar = styled.div`
-  width: 100%;
-  background-color: #ddd;
-  border-radius: 20px;
-  margin: 20px 0;
-  height: 20px;
-  overflow: hidden;
-  margin-top: 20px;
-`;
-
-const Progresso = styled.h3`
-  font-family: "Archivo", sans-serif;
-  margin-top: 20px;
-  margin-bottom: 20px;
-  & h4{
-    color: #000000be;
-  }
-`;
-
-const Progress = styled.div`
-  width: ${({ percentage }) => percentage}%;
-  background-color: #774FD1;
-  height: 100%;
-  transition: width 0.3s ease;
-`;
-
-const CursoInfo = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-family: "Archivo", sans-serif;
-  font-size: 18px;
-  color: #444;
-  margin-top: 20px;
-
-  & svg {
-    color: #774FD1;
-    font-size: 24px;
-  }
-`;
-
 const PerfilServidor = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [userData, setUserData] = useState(null);
@@ -150,7 +108,7 @@ const PerfilServidor = () => {
     const token = localStorage.getItem('token');
 
     try {
-      const response = await axios.get('http://localhost:3000/user/usuario', {
+      const response = await axios.get('http://200.129.40.161:3000/user/usuario', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -177,7 +135,7 @@ const PerfilServidor = () => {
 
     try {
       const response = await axios.put(
-        `http://localhost:3000/user/editar/${userId}`,
+        `http://200.129.40.161:3000/user/editar/${userId}`,
         updatedData,
         {
           headers: {

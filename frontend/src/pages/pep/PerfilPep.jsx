@@ -150,7 +150,7 @@ const PerfilPep = () => {
     const token = localStorage.getItem('token');
   
     try {
-      const response = await axios.get('http://localhost:3000/user/usuario', {
+      const response = await axios.get('http://200.129.40.161:3000/user/usuario', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -175,7 +175,7 @@ const PerfilPep = () => {
     const token = localStorage.getItem('token'); 
   
     try {
-      const response = await axios.put(`http://localhost:3000/user/editar/${userId}`, updatedData, {
+      const response = await axios.put(`http://200.129.40.161:3000/user/editar/${userId}`, updatedData, {
         headers: {
           Authorization: `Bearer ${token}` 
         }

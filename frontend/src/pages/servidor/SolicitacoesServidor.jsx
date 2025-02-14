@@ -83,7 +83,7 @@ const SolicitacoesServidor = () => {
     const userId = localStorage.getItem("id");
     try {
       const response = await axios.get(
-        `http://localhost:3000/solicitacao/${userId}/usuario`,
+        `http://200.129.40.161:3000/solicitacao/${userId}/usuario`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

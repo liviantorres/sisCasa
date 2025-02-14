@@ -163,7 +163,7 @@ const ModalAtualizarFrequencia = ({ atividade, data, onClose }) => {
         };
   
         await axios.put(
-          `http://localhost:3000/frequencia/${id}`,
+          `http://200.129.40.161:3000/frequencia/${id}`,
           frequenciaAtualizada,
           {
             headers: {
@@ -189,7 +189,7 @@ const ModalAtualizarFrequencia = ({ atividade, data, onClose }) => {
     const token = localStorage.getItem("token");
     try {
       const response = await axios.get(
-        `http://localhost:3000/frequencia/atividade/${atividade.id}/`,
+        `http://200.129.40.161:3000/frequencia/atividade/${atividade.id}/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

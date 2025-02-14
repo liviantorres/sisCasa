@@ -187,7 +187,7 @@ const ModalContabilizarHoras = ({ onClose, onAddSolicitacao }) => {
 
   const fetchAtividadesDaTabela = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/categorias", {
+      const response = await axios.get("http://200.129.40.161:3000/categorias", {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (Array.isArray(response.data)) {
@@ -221,7 +221,7 @@ const ModalContabilizarHoras = ({ onClose, onAddSolicitacao }) => {
       console.log("atividade " + selectedAtividadeId)
       
       const response = await axios.post(
-        `http://localhost:3000/solicitacao/`,
+        `http://200.129.40.161:3000/solicitacao/`,
         formData,
         {
           headers: {

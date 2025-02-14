@@ -43,7 +43,7 @@ const HomeServidor = () => {
   const fetchAtividades = async () => {
    
     try {
-      const response = await axios.get(`http://localhost:3000/atividade/${userId}/atividades-geral`, {
+      const response = await axios.get(`http://200.129.40.161:3000/atividade/${userId}/atividades-geral`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -75,7 +75,7 @@ const HomeServidor = () => {
   const handleSave = async () => {
     try {
       await axios.post(
-        `http://localhost:3000/atividade/${atividadeSelecionada.id}/aluno/${userId}`,
+        `http://200.129.40.161:3000/atividade/${atividadeSelecionada.id}/aluno/${userId}`,
         {},
         {
           headers: {

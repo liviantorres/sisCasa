@@ -156,7 +156,7 @@ const ModalVisualizarSolicitacao = ({ solicitacao, onClose }) => {
 
   const handleOpenCertificado = () => {
     if (solicitacao.certificado) {
-      const baseURL = "http://localhost:3000/";
+      const baseURL = "http://200.129.40.161:3000/";
       const certificadoURL = `${baseURL}${solicitacao.certificado.replace(
         /\\/g,
         "/"
@@ -169,7 +169,7 @@ const ModalVisualizarSolicitacao = ({ solicitacao, onClose }) => {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await axios.get(`http://localhost:3000/atividade/buscar/${solicitacao.cursoId}`,{
+      const response = await axios.get(`http://200.129.40.161:3000/atividade/buscar/${solicitacao.cursoId}`,{
         headers:{
           Authorization: `Bearer ${token}`
         }})
@@ -185,7 +185,7 @@ const ModalVisualizarSolicitacao = ({ solicitacao, onClose }) => {
     const id = localStorage.getItem("id");
     const token = localStorage.getItem("token");
     try {
-      const response = await axios.get(`http://localhost:3000/user/${id}`, {
+      const response = await axios.get(`http://200.129.40.161:3000/user/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

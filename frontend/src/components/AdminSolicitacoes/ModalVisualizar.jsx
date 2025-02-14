@@ -209,7 +209,7 @@ const ModalVisualizar = ({ onClose, solicitacao }) => {
 
     try {
       const response = await axios.get(
-        `http://localhost:3000/atividade/buscar/${solicitacao.cursoId}`,
+        `http://200.129.40.161:3000/atividade/buscar/${solicitacao.cursoId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -227,7 +227,7 @@ const ModalVisualizar = ({ onClose, solicitacao }) => {
 
     try {
       const response = await axios.get(
-        `http://localhost:3000/user/${solicitacao.usuarioId}`,
+        `http://200.129.40.161:3000/user/${solicitacao.usuarioId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -270,7 +270,7 @@ const ModalVisualizar = ({ onClose, solicitacao }) => {
 
     try {
       await axios.put(
-        `http://localhost:3000/solicitacao/${solicitacao.id}/status`,
+        `http://200.129.40.161:3000/solicitacao/${solicitacao.id}/status`,
         formData,
         {
           headers: {
@@ -313,7 +313,7 @@ const ModalVisualizar = ({ onClose, solicitacao }) => {
   
     try {
       const response = await axios.put(
-        `http://localhost:3000/solicitacao/${solicitacao.id}/status`,
+        `http://200.129.40.161:3000/solicitacao/${solicitacao.id}/status`,
         formData,
         {
           headers: {

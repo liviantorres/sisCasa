@@ -68,9 +68,9 @@ font-weight: 400;
 
 const MenuStyled = styled.div`
   display: flex;
-  justify-content: space-between; /* Isso vai colocar os itens na mesma linha */
-  align-items: center; /* Para alinhar verticalmente os itens */
-  margin-bottom: 20px; /* Adiciona um espaço inferior */
+  justify-content: space-between; 
+  align-items: center; 
+  margin-bottom: 20px; 
   
   .dropdown {
     display: flex;
@@ -162,7 +162,7 @@ const TabelaDePontosAdmin = () => {
 
   const fetchCategorias = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/categorias", {
+      const response = await axios.get("http://200.129.40.161:3000/categorias", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -176,7 +176,7 @@ const TabelaDePontosAdmin = () => {
   const fetchParticipacoes = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/pontuacao/${id}`,
+        `http://200.129.40.161:3000/pontuacao/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -211,7 +211,7 @@ const TabelaDePontosAdmin = () => {
       formData.append("file", file);
       try {
         const response = await axios.post(
-          "http://localhost:3000/pontuacao/atualizarTabela",
+          "http://200.129.40.161:3000/pontuacao/atualizarTabela",
           formData,
           {
             headers: {
@@ -222,12 +222,12 @@ const TabelaDePontosAdmin = () => {
         );
         alert("Dados atualizados com sucesso!");
   
-        // Recarregar as categorias e participações após o upload
+       
         fetchCategorias();
         fetchParticipacoes();
   
-        setIsTabelaDePontosOpen(false); // Fechar o modal após o upload
-        setFile(null); // Limpar o arquivo selecionado
+        setIsTabelaDePontosOpen(false); 
+        setFile(null); 
       } catch (error) {
         console.error(
           "Erro ao enviar dados para o backend:",

@@ -46,7 +46,7 @@ const SolicitacoesAdmin = () => {
     const token = localStorage.getItem("token");
     try {
       const response = await axios.get(
-        `http://localhost:3000/solicitacao/`,
+        `http://200.129.40.161:3000/solicitacao/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

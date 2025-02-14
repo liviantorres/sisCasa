@@ -196,7 +196,7 @@ const ModalCertificadoHoras = ({ solicitacao, onClose, onStatusChange }) => {
       horasConsideradas: horasConsideradas,
     };
 
-    await axios.put(`http://localhost:3000/pontuacao/`, horasData, {
+    await axios.put(`http://200.129.40.161:3000/pontuacao/`, horasData, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -207,7 +207,7 @@ const ModalCertificadoHoras = ({ solicitacao, onClose, onStatusChange }) => {
 
     try {
       const response = await axios.put(
-        `http://localhost:3000/solicitacao/${solicitacao.id}/status`,
+        `http://200.129.40.161:3000/solicitacao/${solicitacao.id}/status`,
         formData,
         {
           headers: {
@@ -264,7 +264,7 @@ const ModalCertificadoHoras = ({ solicitacao, onClose, onStatusChange }) => {
 
     try {
       const response = await axios.put(
-        `http://localhost:3000/solicitacao/${solicitacao.id}/status`,
+        `http://200.129.40.161:3000/solicitacao/${solicitacao.id}/status`,
         formData,
         {
           headers: {
@@ -306,7 +306,7 @@ const ModalCertificadoHoras = ({ solicitacao, onClose, onStatusChange }) => {
 
   const handleOpenComprovante = () => {
     if (solicitacao.comprovante) {
-      const baseURL = "http://localhost:3000/";
+      const baseURL = "http://200.129.40.161:3000/";
       const comprovanteURL = `${baseURL}${solicitacao.comprovante.replace(
         /\\/g,
         "/"
@@ -317,7 +317,7 @@ const ModalCertificadoHoras = ({ solicitacao, onClose, onStatusChange }) => {
 
   const fetchAtividadesDaTabela = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/categorias", {
+      const response = await axios.get("http://200.129.40.161:3000/categorias", {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (Array.isArray(response.data)) {
@@ -333,7 +333,7 @@ const ModalCertificadoHoras = ({ solicitacao, onClose, onStatusChange }) => {
   const fetchBuscarRemetente = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/user/${solicitacao.usuarioId}`,
+        `http://200.129.40.161:3000/user/${solicitacao.usuarioId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

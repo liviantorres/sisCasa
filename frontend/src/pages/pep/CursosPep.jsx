@@ -119,7 +119,7 @@ const CursosPep = () => {
   const fetchAtividades = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/atividade/${id}/atividades`,
+        `http://200.129.40.161:3000/atividade/${id}/atividades`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -138,7 +138,7 @@ const CursosPep = () => {
   const fetchAtividadesProfessor = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/atividade/${id}/atividades-professor`,
+        `http://200.129.40.161:3000/atividade/${id}/atividades-professor`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
