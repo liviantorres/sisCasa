@@ -57,8 +57,15 @@ sequelize.authenticate()
     console.error('Erro durante a configuração do banco de dados:', error);
     process.exit(1); 
   });
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
-});
+  const options = {
+    key: fs.readFileSync('../../scasa.ufc.br-privada.key'), 
+    cert: fs.readFileSync('./fullchain.pem'),   
+    ca: fs.readFileSync('./gs_root.pem')        
+  };
+  const PORT = process.env.PORT || 3000;
+  /*app.listen(PORT, () => {
+    console.log(`Servidor rodando na porta ${PORT}`);
+  }); */
+  https.createServer(options, app).listen(PORT, () => {
+    console.log(`Servidor HTTPS rodando na porta ${PORT}`);
+  });
