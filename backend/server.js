@@ -59,8 +59,8 @@ sequelize.authenticate()
   });
   const options = {
     key: fs.readFileSync('../../scasa.ufc.br-privada.key'), 
-    cert: fs.readFileSync('./fullchain.pem'),   
-    ca: fs.readFileSync('./gs_root.pem')        
+    cert: fs.readFileSync('./src/fullchain.pem'),   
+    ca: fs.readFileSync('./src/gs_root.pem')        
   };
   const PORT = process.env.PORT || 3000;
   /*app.listen(PORT, () => {
