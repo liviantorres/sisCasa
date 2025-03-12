@@ -220,7 +220,7 @@ const Register = () => {
     };
 
     try {
-      const response = await axios.post("http://localhost:3000/auth/register", requestBody);
+      const response = await axios.post("https://scasa.ufc.br/api/auth/register", requestBody);
 
       if (response.status === 201) {
         alert('Usuário cadastrado com sucesso!');

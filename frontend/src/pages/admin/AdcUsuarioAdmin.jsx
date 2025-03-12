@@ -106,7 +106,7 @@ const AdcUsuarioAdmin = () => {
 
     try {
       const response = await axios.post(
-        "http://200.129.40.161:3000/auth/register",
+        "https://scasa.ufc.br/api/auth/register",
         novoUsuario,
         {
           headers: {
@@ -133,7 +133,7 @@ const AdcUsuarioAdmin = () => {
   const fetchUsuarios = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await axios.get("http://200.129.40.161:3000/user/admin", {
+      const response = await axios.get("https://scasa.ufc.br/api/user/admin", {
         headers: {
           Authorization: `Bearer ${token}`,
         },

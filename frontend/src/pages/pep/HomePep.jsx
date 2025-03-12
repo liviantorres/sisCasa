@@ -43,7 +43,7 @@ const HomePep = () => {
   const fetchAtividades = async () => {
    
     try {
-      const response = await axios.get(`http://200.129.40.161:3000/atividade/${userId}/atividades-geral`, {
+      const response = await axios.get(`https://scasa.ufc.br/api/atividade/${userId}/atividades-geral`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -75,7 +75,7 @@ const HomePep = () => {
   const handleSave = async () =>{
 
     try {
-      const response = axios.post(`http://200.129.40.161:3000/atividade/${atividadeSelecionada.id}/aluno/${userId}`,{
+      const response = axios.post(`https://scasa.ufc.br/api/atividade/${atividadeSelecionada.id}/aluno/${userId}`,{
         headers: {
          Authorization: `Bearer ${token}`
         }

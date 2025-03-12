@@ -162,7 +162,7 @@ const TabelaDePontosAdmin = () => {
 
   const fetchCategorias = async () => {
     try {
-      const response = await axios.get("http://200.129.40.161:3000/categorias", {
+      const response = await axios.get("https://scasa.ufc.br/api/categorias", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -176,7 +176,7 @@ const TabelaDePontosAdmin = () => {
   const fetchParticipacoes = async () => {
     try {
       const response = await axios.get(
-        `http://200.129.40.161:3000/pontuacao/${id}`,
+        `https://scasa.ufc.br/api/pontuacao/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -211,7 +211,7 @@ const TabelaDePontosAdmin = () => {
       formData.append("file", file);
       try {
         const response = await axios.post(
-          "http://200.129.40.161:3000/pontuacao/atualizarTabela",
+          "https://scasa.ufc.br/api/pontuacao/atualizarTabela",
           formData,
           {
             headers: {

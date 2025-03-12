@@ -163,7 +163,7 @@ const AdminHome = () => {
   const fetchProfessores = async () => {
     const token = localStorage.getItem('token'); 
     try {
-      const response = await axios.get("http://200.129.40.161:3000/user/admin", {
+      const response = await axios.get("https://scasa.ufc.br/api/user/admin", {
         headers: {
           Authorization: `Bearer ${token}`, 
         }
@@ -177,7 +177,7 @@ const AdminHome = () => {
   const fetchAtividades = async () => {
     const token = localStorage.getItem('token'); 
     try {
-      const response = await axios.get("http://200.129.40.161:3000/atividade/", {
+      const response = await axios.get("https://scasa.ufc.br/api/atividade/", {
         headers: {
           Authorization: `Bearer ${token}`, 
         }
@@ -202,7 +202,7 @@ const AdminHome = () => {
   
     try {
       console.log("Enviando nova atividade:", novaAtividade);
-      const response = await axios.post("http://200.129.40.161:3000/atividade/criar", novaAtividade, {
+      const response = await axios.post("https://scasa.ufc.br/api/atividade/criar", novaAtividade, {
         headers: {
           Authorization: `Bearer ${token}`, 
         }
@@ -232,7 +232,7 @@ const AdminHome = () => {
     };
   
     try {
-      const response = await axios.put(`http://200.129.40.161:3000/atividade/editar/${id}`, updatedAtividade, {
+      const response = await axios.put(`https://scasa.ufc.br/api/atividade/editar/${id}`, updatedAtividade, {
         headers: {
           Authorization: `Bearer ${token}`, 
         }
@@ -259,7 +259,7 @@ const AdminHome = () => {
     }
   
     try {
-      const response = await axios.delete(`http://200.129.40.161:3000/atividade/deletar/${id}`, {
+      const response = await axios.delete(`https://scasa.ufc.br/api/atividade/deletar/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`, 
         }

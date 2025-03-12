@@ -185,7 +185,7 @@ const ModalConclusao = ({ onClose, onAddSolicitacao }) => {
 
   const fetchUsuario = async () => {
     try {
-      const response = await axios.get(`http://200.129.40.161:3000/user/${id}`, {
+      const response = await axios.get(`https://scasa.ufc.br/api/user/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -217,7 +217,7 @@ const ModalConclusao = ({ onClose, onAddSolicitacao }) => {
         };
 
         const response = await axios.post(
-          `http://200.129.40.161:3000/solicitacao/`,
+          `https://scasa.ufc.br/api/solicitacao/`,
           novaSolicitacao,
           {
             headers: {

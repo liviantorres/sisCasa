@@ -134,7 +134,7 @@ const TabelaDePontosPep = () => {
 
   const fetchCategorias = async () => {
     try {
-      const response = await axios.get(`http://200.129.40.161:3000/categorias`, {
+      const response = await axios.get(`https://scasa.ufc.br/api/categorias`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -149,7 +149,7 @@ const TabelaDePontosPep = () => {
   const fetchParticipacoes = async () =>{
     console.log(id);
     try {
-      const response = await axios.get(`http://200.129.40.161:3000/pontuacao/${id}`,{
+      const response = await axios.get(`https://scasa.ufc.br/api/pontuacao/${id}`,{
         headers:{
           Authorization: `Bearer ${token}`,
         },

@@ -187,7 +187,7 @@ const ModalContabilizarHoras = ({ onClose, onAddSolicitacao }) => {
 
   const fetchAtividadesDaTabela = async () => {
     try {
-      const response = await axios.get("http://200.129.40.161:3000/categorias", {
+      const response = await axios.get("https://scasa.ufc.br/api/categorias", {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (Array.isArray(response.data)) {
@@ -221,7 +221,7 @@ const ModalContabilizarHoras = ({ onClose, onAddSolicitacao }) => {
       console.log("atividade " + selectedAtividadeId)
       
       const response = await axios.post(
-        `http://200.129.40.161:3000/solicitacao/`,
+        `https://scasa.ufc.br/api/solicitacao/`,
         formData,
         {
           headers: {

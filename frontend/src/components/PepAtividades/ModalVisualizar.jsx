@@ -168,7 +168,7 @@ const ModalVisualizar = ({ alunos, onClose, atividade }) => {
       const token = localStorage.getItem("token");
       const requests = alunos.map((aluno) => {
         return axios.put(
-          `http://200.129.40.161:3000/atividade/${atividade.id}/aluno/${aluno.id}/situacao`,
+          `https://scasa.ufc.br/api/atividade/${atividade.id}/aluno/${aluno.id}/situacao`,
           { situacao: situacoes[aluno.id] },
           { headers: { Authorization: `Bearer ${token}` } }
         );

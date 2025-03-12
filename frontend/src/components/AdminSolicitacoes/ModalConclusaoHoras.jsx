@@ -198,7 +198,7 @@ const ModalConclusaoHoras = ({ solicitacao, onClose, onStatusChange }) => {
 
     try {
       await axios.put(
-        `http://200.129.40.161:3000/solicitacao/${solicitacao.id}/status`,
+        `https://scasa.ufc.br/api/solicitacao/${solicitacao.id}/status`,
         formData,
         {
           headers: {
@@ -240,7 +240,7 @@ const ModalConclusaoHoras = ({ solicitacao, onClose, onStatusChange }) => {
 
     try {
       const response = await axios.put(
-        `http://200.129.40.161:3000/solicitacao/${solicitacao.id}/status`,
+        `https://scasa.ufc.br/api/solicitacao/${solicitacao.id}/status`,
         formData,
         {
           headers: {
@@ -284,7 +284,7 @@ const ModalConclusaoHoras = ({ solicitacao, onClose, onStatusChange }) => {
     const token = localStorage.getItem("token");
     try {
       const response = await axios.get(
-        `http://200.129.40.161:3000/user/${solicitacao.usuarioId}`,
+        `https://scasa.ufc.br/api/user/${solicitacao.usuarioId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

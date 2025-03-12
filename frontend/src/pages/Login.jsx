@@ -213,7 +213,7 @@ const Login = () => {
 
     try {
     
-      const response = await axios.post("http://localhost:3000/auth/login", {
+      const response = await axios.post("https://scasa.ufc.br/api/auth/login", {
         email,
         password,
         roleId: Number(roleId)

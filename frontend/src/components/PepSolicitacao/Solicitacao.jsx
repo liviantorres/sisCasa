@@ -216,7 +216,7 @@ const Solicitacao = ({ solicitacao }) => {
         const token = localStorage.getItem('token'); 
 
         try {
-            const response = await fetch(`http://200.129.40.161:3000/solicitacao/${solicitacaoId}/comprovante`, {
+            const response = await fetch(`https://scasa.ufc.br/api/solicitacao/${solicitacaoId}/comprovante`, {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${token}`, 

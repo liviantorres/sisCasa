@@ -167,7 +167,7 @@ const ModalAtividade = ({ onClose, onAddSolicitacao }) => {
   const fetchAtividades = async () => {
     try {
       const response = await axios.get(
-        `http://200.129.40.161:3000/atividade/${id}/atividades`,
+        `https://scasa.ufc.br/api/atividade/${id}/atividades`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -182,7 +182,7 @@ const ModalAtividade = ({ onClose, onAddSolicitacao }) => {
 
   const fetchAtividadesDaTabela = async () => {
     try {
-      const response = await axios.get("http://200.129.40.161:3000/categorias", {
+      const response = await axios.get("https://scasa.ufc.br/api/categorias", {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (Array.isArray(response.data)) {
@@ -215,7 +215,7 @@ const ModalAtividade = ({ onClose, onAddSolicitacao }) => {
       console.log("Payload enviado:", novaSolicitacao);
 
       const response = await axios.post(
-        `http://200.129.40.161:3000/solicitacao/`,
+        `https://scasa.ufc.br/api/solicitacao/`,
         novaSolicitacao,
         {
           headers: {

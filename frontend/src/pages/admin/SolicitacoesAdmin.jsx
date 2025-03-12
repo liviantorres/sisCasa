@@ -46,7 +46,7 @@ const SolicitacoesAdmin = () => {
     const token = localStorage.getItem("token");
     try {
       const response = await axios.get(
-        `http://200.129.40.161:3000/solicitacao/`,
+        `https://scasa.ufc.br/api/solicitacao/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

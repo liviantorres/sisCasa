@@ -108,7 +108,7 @@ const PerfilServidor = () => {
     const token = localStorage.getItem('token');
 
     try {
-      const response = await axios.get('http://200.129.40.161:3000/user/usuario', {
+      const response = await axios.get('https://scasa.ufc.br/api/user/usuario', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -135,7 +135,7 @@ const PerfilServidor = () => {
 
     try {
       const response = await axios.put(
-        `http://200.129.40.161:3000/user/editar/${userId}`,
+        `https://scasa.ufc.br/api/user/editar/${userId}`,
         updatedData,
         {
           headers: {

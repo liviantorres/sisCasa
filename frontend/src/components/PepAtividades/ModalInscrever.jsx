@@ -122,7 +122,7 @@ const ModalInscrever = ({ onClose, atividade, onSave}) => {
     const token = localStorage.getItem("token");
     try {
       const response = await axios.get(
-        `http://200.129.40.161:3000/user/${atividade.professorId}`,
+        `https://scasa.ufc.br/api/user/${atividade.professorId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
