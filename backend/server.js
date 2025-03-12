@@ -10,8 +10,6 @@ const solicitacaoRoutes = require('./src/routes/solicitacaoRoutes');
 const pontuacaoRoutes = require('./src/routes/pontuacaoRoutes');
 const categoriaRoutes = require('./src/routes/categoriaRoutes');
 const frequenciaRoutes = require('./src/routes/frequenciaRoutes');
-const https = require('https');
-const fs = require('fs');
 
 const express = require('express');
 const app = express();
@@ -57,15 +55,8 @@ sequelize.authenticate()
     console.error('Erro durante a configuração do banco de dados:', error);
     process.exit(1); 
   });
-  const options = {
-    key: fs.readFileSync('../../scasa.ufc.br-privada.key'), 
-    cert: fs.readFileSync('./src/fullchain.pem'),   
-    ca: fs.readFileSync('./src/gs_root.pem')        
-  };
-  const PORT = process.env.PORT || 3000;
-  /*app.listen(PORT, () => {
-    console.log(`Servidor rodando na porta ${PORT}`);
-  }); */
-  https.createServer(options, app).listen(PORT, () => {
-    console.log(`Servidor HTTPS rodando na porta ${PORT}`);
-  });
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
+});
