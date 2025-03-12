@@ -10,6 +10,8 @@ const solicitacaoRoutes = require('./src/routes/solicitacaoRoutes');
 const pontuacaoRoutes = require('./src/routes/pontuacaoRoutes');
 const categoriaRoutes = require('./src/routes/categoriaRoutes');
 const frequenciaRoutes = require('./src/routes/frequenciaRoutes');
+const https = require('https');
+const fs = require('fs');
 
 const express = require('express');
 const app = express();
